@@ -1,24 +1,31 @@
-"""Autoregressive Cartesian Decoder — Ablation baseline.
+"""Autoregressive Cartesian Decoder — Ablation baseline (from scratch).
 
-Predicts boundary points one at a time, each conditioned on all
-previously predicted points. Uses teacher forcing during training.
+Predicts boundary points sequentially, each conditioned on all previously
+predicted points via causal self-attention + cross-attention to encoder.
+All attention mechanisms implemented manually (no nn.TransformerDecoder).
 """
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+from typing import Optional
+
+from .encoder import MultiHeadAttention, FeedForwardNetwork
+from .detr_decoder import CrossAttention, DecoderLayer
 
 
 class AutoregressiveDecoder(nn.Module):
-    """Sequential point prediction via autoregressive Transformer decoder.
+    """Sequential boundary prediction via causal Transformer decoder (from scratch).
 
-    Generates boundary points one by one, where each prediction is
-    conditioned on encoder features and all previously generated points.
+    Each point is predicted conditioned on encoder features and all previously
+    generated points. Uses causal masking to prevent attending to future positions.
+    Teacher forcing during training; autoregressive sampling at inference.
     """
 
     def __init__(
         self,
         d_model: int = 256,
-        nhead: int = 8,
+        num_heads: int = 8,
         num_layers: int = 6,
         num_points: int = 64,
         dropout: float = 0.1,
@@ -27,30 +34,23 @@ class AutoregressiveDecoder(nn.Module):
         self.num_points = num_points
         self.d_model = d_model
 
-        # Input embedding for point coordinates
+        # Input embedding: map 2D coordinates to d_model
         self.point_embed = nn.Linear(2, d_model)
 
-        # Start token (learned)
-        self.start_token = nn.Parameter(torch.randn(1, 1, d_model))
+        # Learned start-of-sequence token
+        self.start_token = nn.Parameter(torch.randn(1, 1, d_model) * 0.02)
 
-        # Positional encoding for sequence position
-        self.pos_embed = nn.Embedding(num_points + 1, d_model)
+        # Learned positional embeddings for sequence positions
+        self.pos_embed = nn.Embedding(num_points, d_model)
 
-        # Transformer decoder
-        decoder_layer = nn.TransformerDecoderLayer(
-            d_model=d_model,
-            nhead=nhead,
-            dim_feedforward=d_model * 4,
-            dropout=dropout,
-            activation="gelu",
-            batch_first=True,
-            norm_first=True,
-        )
-        self.transformer_decoder = nn.TransformerDecoder(
-            decoder_layer, num_layers=num_layers
-        )
+        # Stacked decoder layers (same architecture as DETR but with causal mask)
+        self.layers = nn.ModuleList([
+            DecoderLayer(d_model, num_heads, d_model * 4, dropout)
+            for _ in range(num_layers)
+        ])
+        self.norm = nn.LayerNorm(d_model)
 
-        # Output head
+        # Output head: predict 2D coordinate
         self.output_head = nn.Sequential(
             nn.Linear(d_model, d_model // 2),
             nn.GELU(),
@@ -58,13 +58,21 @@ class AutoregressiveDecoder(nn.Module):
             nn.Sigmoid(),
         )
 
+    def _causal_mask(self, seq_len: int, device: torch.device) -> torch.Tensor:
+        """Generate causal (lower-triangular) attention mask.
+
+        Returns mask where 1 = attend, 0 = block.
+        """
+        mask = torch.tril(torch.ones(seq_len, seq_len, device=device))
+        return mask
+
     def forward(
-        self, encoder_output: torch.Tensor, target_points: torch.Tensor = None
+        self, encoder_output: torch.Tensor, target_points: Optional[torch.Tensor] = None
     ) -> dict:
         """
         Args:
-            encoder_output: (B, seq_len, d_model)
-            target_points: (B, N, 2) — GT points for teacher forcing (training only)
+            encoder_output: (B, seq_len, d_model) from encoder
+            target_points: (B, N, 2) GT points for teacher forcing (training only)
 
         Returns:
             dict with 'points': (B, N, 2)
@@ -76,56 +84,72 @@ class AutoregressiveDecoder(nn.Module):
     def _forward_teacher_forcing(
         self, encoder_output: torch.Tensor, target_points: torch.Tensor
     ) -> dict:
+        """Training mode: all positions predicted in parallel with causal mask."""
         B = encoder_output.shape[0]
+        device = encoder_output.device
 
-        # Embed target points and prepend start token
+        # Embed target points and prepend start token (shift right)
         embedded = self.point_embed(target_points)  # (B, N, d_model)
-        start = self.start_token.expand(B, -1, -1)
+        start = self.start_token.expand(B, -1, -1)  # (B, 1, d_model)
         tgt = torch.cat([start, embedded[:, :-1]], dim=1)  # (B, N, d_model)
 
         # Add positional encoding
-        positions = torch.arange(self.num_points, device=tgt.device)
+        positions = torch.arange(self.num_points, device=device)
         tgt = tgt + self.pos_embed(positions).unsqueeze(0)
 
-        # Causal mask
-        causal_mask = nn.Transformer.generate_square_subsequent_mask(
-            self.num_points, device=tgt.device
-        )
+        # Causal mask: prevent attending to future tokens
+        causal_mask = self._causal_mask(self.num_points, device)
 
-        decoded = self.transformer_decoder(
-            tgt, encoder_output, tgt_mask=causal_mask
-        )
-        points = self.output_head(decoded)  # (B, N, 2)
+        # Pass through decoder layers
+        x = tgt
+        for layer in self.layers:
+            x = layer(x, encoder_output, self_attn_mask=causal_mask)
+        x = self.norm(x)
 
+        points = self.output_head(x)  # (B, N, 2)
         return {"points": points}
 
     @torch.no_grad()
     def _forward_autoregressive(self, encoder_output: torch.Tensor) -> dict:
+        """Inference mode: generate points one by one."""
         B = encoder_output.shape[0]
         device = encoder_output.device
 
-        generated = []
-        current_input = self.start_token.expand(B, -1, -1)
+        # Start with just the start token
+        generated_embeds = self.start_token.expand(B, -1, -1)  # (B, 1, d_model)
+        generated_points = []
 
         for i in range(self.num_points):
-            pos = self.pos_embed(torch.tensor([i], device=device))
-            tgt = current_input + pos
+            seq_len = generated_embeds.shape[1]
 
-            decoded = self.transformer_decoder(tgt, encoder_output)
-            point = self.output_head(decoded[:, -1:])  # (B, 1, 2)
-            generated.append(point)
+            # Add positional encoding to current sequence
+            positions = torch.arange(seq_len, device=device)
+            tgt = generated_embeds + self.pos_embed(positions).unsqueeze(0)
 
-            # Next input
-            next_embed = self.point_embed(point)
-            current_input = torch.cat([current_input, next_embed], dim=1)
+            # Causal mask for current length
+            causal_mask = self._causal_mask(seq_len, device)
 
-        points = torch.cat(generated, dim=1)  # (B, N, 2)
+            # Forward through all layers
+            x = tgt
+            for layer in self.layers:
+                x = layer(x, encoder_output, self_attn_mask=causal_mask)
+            x = self.norm(x)
+
+            # Predict next point from last position
+            next_point = self.output_head(x[:, -1:])  # (B, 1, 2)
+            generated_points.append(next_point)
+
+            # Embed and append for next iteration
+            next_embed = self.point_embed(next_point)  # (B, 1, d_model)
+            generated_embeds = torch.cat([generated_embeds, next_embed], dim=1)
+
+        points = torch.cat(generated_points, dim=1)  # (B, N, 2)
         return {"points": points}
 
 
 class AutoregressiveLoss(nn.Module):
-    """Simple MSE loss for autoregressive predictions (already ordered)."""
+    """MSE loss for autoregressive predictions (points are already ordered)."""
 
     def forward(self, pred: dict, target: dict) -> dict:
-        loss = nn.functional.mse_loss(pred["points"], target["points"])
+        loss = F.mse_loss(pred["points"], target["points"])
         return {"total": loss}

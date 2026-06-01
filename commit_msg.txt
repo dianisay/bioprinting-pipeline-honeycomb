@@ -1,20 +1,12 @@
-Rewrite encoder from scratch: manual ResNet-50 + Transformer
+Rewrite DETR and autoregressive decoders from scratch
 
-Replace torchvision.models.resnet50() and nn.TransformerEncoder with
-fully hand-implemented architectures:
+Replace nn.TransformerDecoder with manual implementations:
 
-ResNet-50 (from scratch):
-- BottleneckBlock: 1x1 reduce → 3x3 spatial → 1x1 expand + skip
-- ResNet50Backbone: stem + 4 layers [3,4,6,3] blocks
-- Optional ImageNet weight loading via state_dict transfer
-- Kaiming initialization for conv layers
+- CrossAttention: Q from decoder, K/V from encoder memory
+- DecoderLayer: Self-Attn → Cross-Attn → FFN (Pre-LN residuals)
+- DETRDecoder: N learned queries through stacked DecoderLayers
+- AutoregressiveDecoder: causal mask + sequential generation
 
-Transformer Encoder (from scratch):
-- ScaledDotProductAttention: softmax(QK^T / sqrt(d_k)) V
-- MultiHeadAttention: project → split heads → attend → concat → project
-- FeedForwardNetwork: Linear → GELU → Linear with dropout
-- TransformerEncoderLayer: Pre-LN residual connections
-- TransformerEncoder: N stacked layers + final LayerNorm
-- LearnedPositionalEncoding2D: separate row/col embeddings
-
-All tests pass with identical interface (B, 3, 256, 256) → (B, 64, 256).
+Reuses MultiHeadAttention and FeedForwardNetwork from encoder.py.
+Now all 4 model files (encoder + 3 decoders) are fully from-scratch
+with zero high-level nn.Transformer* calls.
