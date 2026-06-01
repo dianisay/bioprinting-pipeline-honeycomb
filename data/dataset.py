@@ -130,6 +130,13 @@ class WoundBoundaryDataset(Dataset):
         if sample["source"] == "synthetic" and "centroid" in sample:
             centroid = sample["centroid"]
             radii_arr = sample["radii"]
+
+            # Resample radii if stored count differs from requested num_radii
+            if len(radii_arr) != self.num_radii:
+                original_angles = np.linspace(0, 2 * np.pi, len(radii_arr), endpoint=False)
+                target_angles = np.linspace(0, 2 * np.pi, self.num_radii, endpoint=False)
+                radii_arr = np.interp(target_angles, original_angles, radii_arr, period=2 * np.pi)
+
             angles = np.linspace(0, 2 * np.pi * (1 - 1 / self.num_radii), self.num_radii)
             points = np.stack([
                 centroid[0] + radii_arr * np.cos(angles),

@@ -1,9 +1,0 @@
-Add data pipeline: polar conversion, synthetic generator, dataset
-
-- polar_conversion.py: mask -> polar GT via ray casting from centroid
-- synthetic_generator.py: star-convex wounds on skin-texture backgrounds
-  with exact polar ground truth from the generation process
-- dataset.py: PyTorch Dataset combining FUSeg + synthetic sources,
-  with train/val/test splits and augmentation (flip, brightness)
-- Verified: centroid error < 0.001, 10/10 valid conversions,
-  polar-cartesian roundtrip error = 0, Dataset shapes correct
