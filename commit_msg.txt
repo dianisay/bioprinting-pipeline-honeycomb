@@ -1,12 +1,9 @@
-Rewrite DETR and autoregressive decoders from scratch
+Add data pipeline: polar conversion, synthetic generator, dataset
 
-Replace nn.TransformerDecoder with manual implementations:
-
-- CrossAttention: Q from decoder, K/V from encoder memory
-- DecoderLayer: Self-Attn → Cross-Attn → FFN (Pre-LN residuals)
-- DETRDecoder: N learned queries through stacked DecoderLayers
-- AutoregressiveDecoder: causal mask + sequential generation
-
-Reuses MultiHeadAttention and FeedForwardNetwork from encoder.py.
-Now all 4 model files (encoder + 3 decoders) are fully from-scratch
-with zero high-level nn.Transformer* calls.
+- polar_conversion.py: mask -> polar GT via ray casting from centroid
+- synthetic_generator.py: star-convex wounds on skin-texture backgrounds
+  with exact polar ground truth from the generation process
+- dataset.py: PyTorch Dataset combining FUSeg + synthetic sources,
+  with train/val/test splits and augmentation (flip, brightness)
+- Verified: centroid error < 0.001, 10/10 valid conversions,
+  polar-cartesian roundtrip error = 0, Dataset shapes correct
