@@ -1,91 +1,142 @@
-# Autonomous In-Situ Robotic Bioprinting Pipeline
+# Robotic Bioprinting Pipeline
 
-**CNN-Transformer-Based Machine Learning for 3D Motion Planning and Control in In-Situ Robotic Bioprinters for Superficial Tissue Regeneration**
-
-Diana Paola Ayala Roldán — PhD in Computational Sciences, Tecnológico de Monterrey (2026)
+**A robot that heals wounds automatically using AI and 3D printing.**
 
 ---
 
-## Overview
+## What Does This Do?
 
-End-to-end autonomous pipeline that takes a single RGB wound image and produces a 3D robotic deposition trajectory, executed with closed-loop visual monitoring. The system combines deep learning for wound boundary detection with computational geometry for trajectory generation and robot control.
+Imagine someone has a wound on their skin. This system:
 
-## Architecture
+1. **Looks** at the wound with a camera
+2. **Understands** where the wound edges are (using AI — a neural network we built from scratch)
+3. **Plans** a path for a robot arm to fill the wound with bio-material (like a 3D printer, but for skin)
+4. **Moves** the robot arm along that path, printing healing material into the wound
+
+All of this happens automatically — no human needs to control the robot.
+
+---
+
+## How It Works (The 5 Steps)
 
 ```
-RGB Image → [Module 1: CNN-Transformer] → Wound Boundary (polar)
-         → [Module 2: Multi-View 3D Reconstruction] → Surface Mesh
-         → [Module 3: Conformal Honeycomb + TSP] → 3D Toolpath
-         → [Module 4: IK + PID Control] → Joint Commands
-         → [Module 5: Closed-Loop Execution] → Deposited Material
+Photo of wound
+      ↓
+[Step 1] AI finds the wound boundary
+      ↓
+[Step 2] Build a 3D map of the wound surface
+      ↓
+[Step 3] Plan a honeycomb filling pattern (like a beehive)
+      ↓
+[Step 4] Calculate how the robot arm should move
+      ↓
+[Step 5] Robot prints bio-material into the wound
 ```
 
-## Key Contribution
+---
 
-A **polar-parameterized decoder** that predicts wound boundaries as radii at fixed angular intervals around a centroid. This guarantees:
-- Ordered waypoints by construction
-- Closed-loop contour (zero closure error)
-- Graceful degradation for nearly star-convex wounds
+## What's Special About This?
+
+We invented a new way for the AI to describe wound shapes: **polar coordinates**.
+
+Instead of saying "the wound is at these 64 random points," we say:
+- "The center is HERE"
+- "The edge is THIS far away in each direction"
+
+This guarantees the boundary is always a clean, closed shape — no gaps, no crossings.
+
+---
 
 ## Project Structure
 
 ```
 diana-bioprinting-pipeline/
-├── models/              # Neural network architectures
-│   ├── encoder.py       # ResNet-50 + Transformer encoder
-│   ├── polar_decoder.py # Proposed polar decoder
-│   ├── detr_decoder.py  # Ablation: DETR-style parallel
-│   └── autoregressive_decoder.py  # Ablation: autoregressive
-├── modules/             # Pipeline modules (2-5)
-│   ├── reconstruction.py    # Multi-view 3D reconstruction
-│   ├── trajectory.py        # Conformal honeycomb + TSP
-│   ├── motion_planning.py   # IK + manipulability
-│   ├── robot_control.py     # PID + CoppeliaSim interface
-│   └── execution.py         # Closed-loop monitoring
-├── training/            # Training scripts
-│   ├── train.py         # Main training loop
-│   ├── evaluate.py      # Evaluation metrics
-│   └── ablation.py      # Ablation study runner
-├── utils/               # Shared utilities
-│   ├── kinematics.py    # FK/IK for 8-DOF system
-│   ├── conformal.py     # Conformal mapping
-│   ├── tsp_solver.py    # PuLP MILP solver
-│   ├── metrics.py       # Chamfer, Hausdorff, IoU
-│   └── visualization.py # Plotting utilities
-├── notebooks/           # Jupyter notebooks (experiments + figures)
-├── data/                # Dataset (not tracked in git)
-├── configs/             # Hyperparameter configs
-├── tests/               # Unit tests
-├── results/             # Experimental results
-├── figures/             # Generated figures for thesis
-├── docs/                # Planning documents
-├── requirements.txt
-└── README.md
+│
+├── models/                  ← The AI brain (neural networks)
+│   ├── encoder.py           ← Looks at the image (ResNet-50 + Transformer)
+│   ├── polar_decoder.py     ← Our invention: predicts wound boundary
+│   ├── detr_decoder.py      ← Alternative method (for comparison)
+│   └── autoregressive_decoder.py  ← Another alternative (for comparison)
+│
+├── modules/                 ← The robotics brain
+│   ├── stl_analysis.py      ← Reads 3D scaffold shapes
+│   ├── honeycomb.py         ← Creates honeycomb fill patterns
+│   ├── conformal_mapping.py ← Maps flat patterns onto curved surfaces
+│   ├── tsp_solver.py        ← Finds the shortest path between cells
+│   ├── trajectory_planner.py← Puts it all together into a robot path
+│   ├── robot_model.py       ← Describes our 8-joint robot arm
+│   ├── inverse_kinematics.py← Figures out joint angles from positions
+│   └── visualization_3d.py  ← Makes pretty 3D plots
+│
+├── training/                ← Scripts to train the AI
+│   ├── train.py             ← Train one model
+│   ├── evaluate.py          ← Test how good the model is
+│   └── ablation.py          ← Compare all 3 methods fairly
+│
+├── notebooks/               ← Interactive demos (Jupyter)
+│   ├── 00_demo.ipynb        ← START HERE — quick visual demo
+│   └── 01_ablation_study_kaggle.ipynb  ← Full training (run on Kaggle GPU)
+│
+├── data/                    ← Input data (wound images, 3D meshes)
+├── tests/                   ← Automated tests (verify everything works)
+├── results/                 ← Output (trained models, figures, metrics)
+├── figures/                 ← Generated images for the thesis
+├── configs/                 ← Settings and hyperparameters
+└── requirements.txt         ← Python packages needed
 ```
 
-## Tech Stack
-
-| Component | Tool |
-|---|---|
-| Deep Learning | PyTorch |
-| Robotics/Kinematics | numpy + scipy + spatialmath-python |
-| Optimization (TSP) | PuLP (CBC solver) |
-| 3D Reconstruction | OpenCV + Open3D |
-| Simulation | CoppeliaSim (Python ZeroMQ API) |
-| Control | Custom PID (numpy) |
-| Visualization | matplotlib + plotly |
+---
 
 ## Quick Start
 
 ```bash
+# 1. Clone this repo
+git clone https://github.com/dianisay/diana-bioprinting-pipeline.git
+cd diana-bioprinting-pipeline
+
+# 2. Install dependencies
 pip install -r requirements.txt
+
+# 3. Run the demo notebook
+jupyter lab notebooks/00_demo.ipynb
 ```
 
-## Training (Kaggle)
+---
 
-The CNN-Transformer training is designed to run on Kaggle with GPU:
-- Upload `models/`, `training/`, `utils/`, and `data/` to a Kaggle dataset
-- Run the training notebook from `notebooks/01_train_cnn_transformer.ipynb`
+## Tools Used
+
+| What | Tool |
+|------|------|
+| AI / Neural Networks | PyTorch (built from scratch) |
+| Math & Optimization | NumPy, SciPy, PuLP |
+| 3D Geometry | Open3D, OpenCV |
+| Robot Simulation | CoppeliaSim |
+| Visualization | Matplotlib, Plotly |
+| Training (GPU) | Kaggle |
+
+---
+
+## Training the AI (on Kaggle)
+
+The neural network needs a GPU to train efficiently. We use Kaggle (free GPUs):
+
+1. Upload this repo to Kaggle as a dataset
+2. Open `notebooks/01_ablation_study_kaggle.ipynb`
+3. Enable GPU accelerator
+4. Run all cells (~2-3 hours)
+5. Download results
+
+---
+
+## Who Made This?
+
+**Diana Paola Ayala Roldán**
+PhD in Computational Sciences, Tecnológico de Monterrey (2026)
+
+This is the code behind the thesis:
+*"CNN-Transformer-Based Machine Learning for 3D Motion Planning and Control in In-Situ Robotic Bioprinters for Superficial Tissue Regeneration"*
+
+---
 
 ## License
 
