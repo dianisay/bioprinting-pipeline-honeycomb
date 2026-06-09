@@ -15,6 +15,9 @@ from models.detr_decoder import DETRDecoder
 from models.autoregressive_decoder import AutoregressiveDecoder
 from data.dataset import create_dataloaders
 from utils.metrics import chamfer_distance, hausdorff_distance, boundary_iou, closure_error, ordering_consistency
+from utils.logging_config import get_logger
+
+logger = get_logger("training.evaluate")
 
 
 def load_model(checkpoint_path: str, device: torch.device):
@@ -68,6 +71,7 @@ def evaluate(
     Reports mean, std, min, max for each metric.
     """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.info("Loading checkpoint: %s (device=%s)", checkpoint_path, device)
     encoder, decoder, decoder_type = load_model(checkpoint_path, device)
     encoder.eval()
     decoder.eval()
@@ -78,6 +82,7 @@ def evaluate(
         batch_size=batch_size,
     )
 
+    logger.info("Evaluating %s on %d test samples", decoder_type, len(test_loader.dataset))
     print(f"Evaluating {decoder_type} on {len(test_loader.dataset)} test samples...")
 
     all_metrics = {
@@ -138,6 +143,9 @@ def evaluate(
         output_path = str(Path(checkpoint_path).parent / "eval_results.json")
     with open(output_path, "w") as f:
         json.dump(results, f, indent=2)
+    logger.info("Eval complete: chamfer=%.4f hausdorff=%.4f iou=%.4f -> %s",
+                results["chamfer"]["mean"], results["hausdorff"]["mean"],
+                results["iou"]["mean"], output_path)
     print(f"\nResults saved to: {output_path}")
 
     return results

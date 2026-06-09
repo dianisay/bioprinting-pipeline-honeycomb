@@ -4,12 +4,15 @@ Combines honeycomb grid, TSP ordering, and UV trajectory generation.
 Translates Section 4 of MuffinFresa_ConformalMapping.m.
 """
 
+import logging
 import numpy as np
 from typing import Dict, Tuple
 
 from .honeycomb import create_hex_grid, hexagon_perimeter, compute_grid_params, line_points
 from .tsp_solver import optimize_visitation_order
 from .conformal_mapping import uv_to_xyz, compute_nozzle_orientations, apply_workspace_transform
+
+logger = logging.getLogger("bioprint.modules.trajectory_planner")
 
 
 def generate_uv_trajectories(
@@ -147,6 +150,8 @@ def plan_full_trajectory(
 
     # Grid parameters
     nx, ny, hex_side = compute_grid_params(void_width, void_length)
+    logger.info("Honeycomb grid: %dx%d cells, hex_side=%.1fmm, wall=%.1fmm (%d layers)",
+                nx, ny, hex_side, wall_height, int(np.ceil(wall_height / layer_height)))
     print(f"  Honeycomb: {nx}x{ny} cells, hex_side={hex_side:.1f}mm")
     print(f"  Wall height={wall_height:.1f}mm ({int(np.ceil(wall_height/layer_height))} layers)")
 
@@ -182,6 +187,7 @@ def plan_full_trajectory(
     traj_m, normals_t = apply_workspace_transform(traj_xyz, normals, z_offset)
 
     n_pts = traj_uv.shape[1]
+    logger.info("Trajectory planned: %d points (UV -> XYZ -> workspace)", n_pts)
     print(f"  Total trajectory points: {n_pts}")
 
     return {

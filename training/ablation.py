@@ -14,6 +14,9 @@ from pathlib import Path
 from training.train import Trainer
 from training.evaluate import evaluate
 from data.dataset import create_dataloaders
+from utils.logging_config import get_logger
+
+logger = get_logger("training.ablation")
 
 
 def run_ablation(
@@ -40,6 +43,7 @@ def run_ablation(
     decoder_types = ["polar", "detr", "autoregressive"]
     all_results = {}
 
+    logger.info("Starting ablation study: decoders=%s epochs=%d lr=%s", decoder_types, max_epochs, lr)
     print("=" * 70)
     print("ABLATION STUDY: Polar vs DETR vs Autoregressive Decoder")
     print("=" * 70)
@@ -120,6 +124,7 @@ def run_ablation(
     comparison_path = Path(output_dir) / "ablation_comparison.json"
     with open(comparison_path, "w") as f:
         json.dump(all_results, f, indent=2)
+    logger.info("Ablation complete in %.1f min -> %s", total_time / 60, comparison_path)
     print(f"  Comparison saved to: {comparison_path}")
 
     return all_results

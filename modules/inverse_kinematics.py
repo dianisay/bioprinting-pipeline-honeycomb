@@ -6,6 +6,7 @@ avoidance and Super-Twisting sliding-mode control for the 8-DOF system.
 Translates Sections 8 and 7 (APF+STW) of test_obstacle_avoidance.m.
 """
 
+import logging
 import numpy as np
 from typing import Dict, Optional, Tuple
 from scipy.optimize import minimize
@@ -17,6 +18,8 @@ from .robot_model import (
     home_configuration,
     JOINT_LIMITS,
 )
+
+logger = logging.getLogger("bioprint.modules.inverse_kinematics")
 
 
 class IKParams:
@@ -325,6 +328,7 @@ class InverseKinematicsSolver:
         self.q_prev = home_configuration()
         self.q_prev_good = home_configuration()
 
+        logger.info("Solving IK for %d trajectory points", N)
         print(f"  Solving IK for {N} points...")
 
         for i in range(N):
@@ -340,8 +344,11 @@ class InverseKinematicsSolver:
             phases[i] = info["phase"]
 
             if (i + 1) % 100 == 0:
+                logger.debug("  IK [%d/%d] err=%.3fmm mu=%.4f", i + 1, N, errors[i] * 1000, mu_values[i])
                 print(f"    [{i+1}/{N}] err={errors[i]*1000:.3f}mm, mu={mu_values[i]:.4f}")
 
+        logger.info("IK complete: max_err=%.3fmm mean_err=%.3fmm APF_count=%d/%d",
+                    errors.max() * 1000, errors.mean() * 1000, (phases > 0).sum(), N)
         print(f"  IK complete. Max err: {errors.max()*1000:.3f}mm, "
               f"Mean err: {errors.mean()*1000:.3f}mm")
         print(f"  APF activated: {(phases > 0).sum()}/{N} points")
