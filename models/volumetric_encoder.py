@@ -58,6 +58,7 @@ class ResNet18Backbone(nn.Module):
                 nn.Conv2d(self.in_channels, channels, 1, stride, bias=False),
                 nn.BatchNorm2d(channels),
             ))
+            self.in_channels = channels
         for _ in range(num_blocks):
             layers.append(self._build_block(channels))
             self.in_channels = channels
