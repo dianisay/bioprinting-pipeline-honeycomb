@@ -8,8 +8,8 @@
 
 Imagine someone has a wound on their skin. This system:
 
-1. **Looks** at the wound with a camera
-2. **Understands** where the wound edges are (using AI — a neural network we built from scratch)
+1. **Looks** at the wound from 8 camera angles (like a CT scanner)
+2. **Reconstructs** the full 3D wound shape — boundary, depth, and layer-wise fill pattern
 3. **Plans** a path for a robot arm to fill the wound with bio-material (like a 3D printer, but for skin)
 4. **Moves** the robot arm along that path, printing healing material into the wound
 
@@ -20,30 +20,35 @@ All of this happens automatically — no human needs to control the robot.
 ## How It Works (The 5 Steps)
 
 ```
-Photo of wound
+8 photos of wound (multi-view)
       ↓
-[Step 1] AI finds the wound boundary
+[Step 1] AI reconstructs 3D wound volume (CT-style fusion)
       ↓
-[Step 2] Build a 3D map of the wound surface
+[Step 2] Predict boundary + depth + layer-wise fill instructions
       ↓
 [Step 3] Plan a honeycomb filling pattern (like a beehive)
       ↓
 [Step 4] Calculate how the robot arm should move
       ↓
-[Step 5] Robot prints bio-material into the wound
+[Step 5] Robot prints bio-material layer by layer
 ```
 
 ---
 
 ## What's Special About This?
 
-We invented a new way for the AI to describe wound shapes: **polar coordinates**.
+Two key innovations:
 
-Instead of saying "the wound is at these 64 random points," we say:
-- "The center is HERE"
-- "The edge is THIS far away in each direction"
+### 1. CT-Style Volumetric Reconstruction
+Instead of one photo, we use **8 orthogonal views** fused into a 3D voxel grid — similar to how a CT scanner reconstructs 3D anatomy from 2D X-ray projections. A 3D Transformer then reasons about how depth relates to boundary.
 
-This guarantees the boundary is always a clean, closed shape — no gaps, no crossings.
+### 2. Layer-Aware Polar Decoding
+Instead of flat 2D boundaries, our `PolarDecoder3DLayered` predicts:
+- **Boundary**: wound edge in 64 radial directions
+- **Depth**: how deep the wound is at each angle
+- **Layer fill**: how much bio-ink to deposit per layer (cone-shaped fill pattern)
+
+This produces direct bioprinting instructions — no post-processing needed.
 
 ---
 
@@ -52,37 +57,54 @@ This guarantees the boundary is always a clean, closed shape — no gaps, no cro
 ```
 diana-bioprinting-pipeline/
 │
-├── models/                  ← The AI brain (neural networks)
-│   ├── encoder.py           ← Looks at the image (ResNet-50 + Transformer)
-│   ├── polar_decoder.py     ← Our invention: predicts wound boundary
-│   ├── detr_decoder.py      ← Alternative method (for comparison)
-│   └── autoregressive_decoder.py  ← Another alternative (for comparison)
+├── models/                       ← Neural networks
+│   ├── encoder.py                ← Single-view encoder (ResNet-50 + Transformer)
+│   ├── volumetric_encoder.py     ← Multi-view CT-style encoder (8× ResNet-18 + 3D Transformer)
+│   ├── volumetric_decoder.py     ← Layer-aware polar decoder (boundary + depth + fill)
+│   ├── polar_decoder.py          ← 2D polar decoder (ablation baseline)
+│   ├── detr_decoder.py           ← DETR-style decoder (ablation comparison)
+│   └── autoregressive_decoder.py ← Autoregressive decoder (ablation comparison)
 │
-├── modules/                 ← The robotics brain
-│   ├── stl_analysis.py      ← Reads 3D scaffold shapes
-│   ├── honeycomb.py         ← Creates honeycomb fill patterns
-│   ├── conformal_mapping.py ← Maps flat patterns onto curved surfaces
-│   ├── tsp_solver.py        ← Finds the shortest path between cells
-│   ├── trajectory_planner.py← Puts it all together into a robot path
-│   ├── robot_model.py       ← Describes our 8-joint robot arm
-│   ├── inverse_kinematics.py← Figures out joint angles from positions
-│   └── visualization_3d.py  ← Makes pretty 3D plots
+├── modules/                      ← Robotics brain
+│   ├── stl_analysis.py           ← Reads 3D scaffold shapes
+│   ├── honeycomb.py              ← Creates honeycomb fill patterns
+│   ├── conformal_mapping.py      ← Maps flat patterns onto curved surfaces
+│   ├── tsp_solver.py             ← Finds the shortest path between cells (MILP)
+│   ├── trajectory_planner.py     ← Full UV→XYZ trajectory generation
+│   ├── robot_model.py            ← 8-DOF robot arm (UR5 + XY gantry)
+│   ├── inverse_kinematics.py     ← IK with APF + Super-Twisting control
+│   └── visualization_3d.py       ← 3D plotting utilities
 │
-├── training/                ← Scripts to train the AI
-│   ├── train.py             ← Train one model
-│   ├── evaluate.py          ← Test how good the model is
-│   └── ablation.py          ← Compare all 3 methods fairly
+├── training/                     ← Training scripts
+│   ├── train.py                  ← Train one model
+│   ├── evaluate.py               ← Evaluate on test set (Chamfer, IoU, etc.)
+│   └── ablation.py               ← Compare all decoder variants fairly
 │
-├── notebooks/               ← Interactive demos (Jupyter)
-│   ├── 00_demo.ipynb        ← START HERE — quick visual demo
-│   └── 01_ablation_study_kaggle.ipynb  ← Full training (run on Kaggle GPU)
+├── data/                         ← Data loading and generation
+│   ├── dataset.py                ← Single-view wound dataset
+│   ├── multiview_dataset.py      ← Multi-view synthetic wound generator + loader
+│   ├── polar_conversion.py       ← Mask ↔ polar coordinate conversion
+│   └── synthetic_generator.py    ← Star-convex wound shape generator
 │
-├── data/                    ← Input data (wound images, 3D meshes)
-├── tests/                   ← Automated tests (verify everything works)
-├── results/                 ← Output (trained models, figures, metrics)
-├── figures/                 ← Generated images for the thesis
-├── configs/                 ← Settings and hyperparameters
-└── requirements.txt         ← Python packages needed
+├── notebooks/                    ← Interactive experiments (Jupyter / Kaggle)
+│   ├── 00_demo.ipynb             ← Quick visual demo
+│   ├── 01_ablation_study_kaggle.ipynb       ← 2D ablation (Polar vs DETR vs AR)
+│   └── 02_volumetric_ablation_kaggle.ipynb  ← Volumetric CT-style training ★
+│
+├── utils/                        ← Shared utilities
+│   ├── logging_config.py         ← Centralized logging (console + rotating file)
+│   ├── metrics.py                ← Chamfer, Hausdorff, IoU, closure metrics
+│   └── visualization.py          ← Plotting helpers
+│
+├── tests/                        ← Automated tests
+│   ├── test_models.py            ← All decoders sanity check
+│   ├── test_volumetric.py        ← Volumetric encoder + decoder + loss + gradients
+│   ├── test_training_pipeline.py ← Full train→eval loop (CPU, 2 epochs)
+│   └── test_trajectory_pipeline.py ← Honeycomb + TSP + IK integration
+│
+├── logs/                         ← Runtime logs (auto-generated, gitignored)
+├── configs/                      ← Hyperparameters
+└── requirements.txt              ← Python packages needed
 ```
 
 ---
@@ -97,8 +119,47 @@ cd diana-bioprinting-pipeline
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Run the demo notebook
+# 3. Run tests (verify everything works)
+python tests/test_models.py
+python tests/test_volumetric.py
+
+# 4. Run the demo notebook
 jupyter lab notebooks/00_demo.ipynb
+```
+
+---
+
+## Training on Kaggle
+
+The neural networks need a GPU to train. We use Kaggle (free T4/P100 GPUs):
+
+### Notebook 01: 2D Ablation Study
+Compares three decoder architectures (Polar, DETR, Autoregressive) with the same single-view encoder. Produces Table 4.1 in the thesis.
+
+### Notebook 02: Volumetric CT-Style Training ★
+Trains the full `VolumetricWoundEncoder3D` + `PolarDecoder3DLayered` pipeline. This is the main contribution.
+
+**Steps:**
+1. Upload this repo to Kaggle as a dataset
+2. Open `notebooks/02_volumetric_ablation_kaggle.ipynb`
+3. Enable **GPU T4 x2** accelerator
+4. Run all cells (~1-2 hours)
+5. Download the `results/` folder (checkpoints + metrics)
+
+The notebook generates synthetic multi-view data, trains the volumetric model, and outputs all metrics needed for Chapter 4 of the thesis.
+
+---
+
+## Logging
+
+All modules log to `logs/pipeline.log` (rotating, 5MB max). To see live logs during training:
+
+```bash
+# Windows PowerShell
+Get-Content logs\pipeline.log -Wait
+
+# Linux/Mac
+tail -f logs/pipeline.log
 ```
 
 ---
@@ -113,18 +174,6 @@ jupyter lab notebooks/00_demo.ipynb
 | Robot Simulation | CoppeliaSim |
 | Visualization | Matplotlib, Plotly |
 | Training (GPU) | Kaggle |
-
----
-
-## Training the AI (on Kaggle)
-
-The neural network needs a GPU to train efficiently. We use Kaggle (free GPUs):
-
-1. Upload this repo to Kaggle as a dataset
-2. Open `notebooks/01_ablation_study_kaggle.ipynb`
-3. Enable GPU accelerator
-4. Run all cells (~2-3 hours)
-5. Download results
 
 ---
 
