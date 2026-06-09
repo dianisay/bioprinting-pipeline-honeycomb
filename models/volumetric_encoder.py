@@ -15,12 +15,15 @@ Encoder stages:
 4. Prediction heads: Boundary, depth, layer fill pattern
 """
 
+import logging
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
 import numpy as np
 from typing import Optional, Dict, Tuple
+
+logger = logging.getLogger("bioprint.models.volumetric_encoder")
 
 
 # ============================================================
@@ -58,6 +61,7 @@ class ResNet18Backbone(nn.Module):
                 nn.Conv2d(self.in_channels, channels, 1, stride, bias=False),
                 nn.BatchNorm2d(channels),
             ))
+            self.in_channels = channels
         for _ in range(num_blocks):
             layers.append(self._build_block(channels))
             self.in_channels = channels
@@ -94,9 +98,9 @@ class ResNet18Backbone(nn.Module):
             }
             model_dict.update(compatible)
             self.load_state_dict(model_dict)
-            print(f"Loaded {len(compatible)}/{len(model_dict)} pretrained parameters")
+            logger.info("Loaded %d/%d pretrained ImageNet parameters", len(compatible), len(model_dict))
         except Exception as e:
-            print(f"Could not load pretrained weights: {e}")
+            logger.warning("Could not load pretrained weights: %s", e)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """(B, 3, 256, 256) → (B, 512, 8, 8)"""
@@ -376,6 +380,10 @@ class VolumetricWoundEncoder3D(nn.Module):
             num_layers=num_layers,
             dropout=dropout,
         )
+
+        num_params = sum(p.numel() for p in self.parameters())
+        logger.info("VolumetricWoundEncoder3D: views=%d grid=%d^3 d_model=%d params=%s",
+                    num_views, grid_size, d_model, f"{num_params:,}")
 
     def forward(
         self,

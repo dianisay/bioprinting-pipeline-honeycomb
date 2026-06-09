@@ -14,12 +14,15 @@ This matches real bioprinting: wounds have depth, and healing requires
 gradient-based material deposition.
 """
 
+import logging
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
 import numpy as np
 from typing import Dict, Optional
+
+logger = logging.getLogger("bioprint.models.volumetric_decoder")
 
 
 class PolarDecoder3DLayered(nn.Module):
@@ -54,6 +57,9 @@ class PolarDecoder3DLayered(nn.Module):
         self.num_radii = num_radii
         self.num_layers = num_layers
         self.max_depth_mm = max_depth_mm
+
+        logger.info("PolarDecoder3DLayered: radii=%d layers=%d max_depth=%.1fmm",
+                    num_radii, num_layers, max_depth_mm)
 
         # Fixed angles (not learned) — evenly spaced around 360°
         angles = torch.linspace(

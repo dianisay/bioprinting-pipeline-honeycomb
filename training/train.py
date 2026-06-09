@@ -21,6 +21,9 @@ from models.polar_decoder import PolarDecoder, PolarBoundaryLoss
 from models.detr_decoder import DETRDecoder, HungarianLoss
 from models.autoregressive_decoder import AutoregressiveDecoder, AutoregressiveLoss
 from data.dataset import create_dataloaders
+from utils.logging_config import get_logger
+
+logger = get_logger("training.train")
 
 
 class Trainer:
@@ -54,7 +57,7 @@ class Trainer:
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
             self.device = torch.device(device)
-        print(f"Using device: {self.device}")
+        logger.info("Using device: %s", self.device)
 
         # Build model
         self.encoder = CNNTransformerEncoder(
@@ -113,6 +116,8 @@ class Trainer:
         best_val_loss = float("inf")
         patience_counter = 0
 
+        logger.info("Training %s decoder | epochs=%d patience=%d", self.decoder_type, self.max_epochs, self.patience)
+        logger.info("  Train batches: %d, Val batches: %d", len(train_loader), len(val_loader))
         print(f"\nTraining {self.decoder_type} decoder")
         print(f"  Epochs: {self.max_epochs}, Patience: {self.patience}")
         print(f"  Train batches: {len(train_loader)}, Val batches: {len(val_loader)}")
@@ -146,9 +151,11 @@ class Trainer:
                 best_val_loss = val_loss
                 patience_counter = 0
                 self._save_checkpoint("best.pth", epoch, val_loss)
+                logger.debug("New best val_loss=%.6f at epoch %d", val_loss, epoch)
             else:
                 patience_counter += 1
                 if patience_counter >= self.patience:
+                    logger.info("Early stopping at epoch %d (patience=%d)", epoch, self.patience)
                     print(f"\n  Early stopping at epoch {epoch} (patience={self.patience})")
                     break
 
@@ -156,6 +163,7 @@ class Trainer:
         self._save_checkpoint("final.pth", epoch, val_loss)
         self._save_history()
 
+        logger.info("Training complete: best_val_loss=%.4f saved to %s", best_val_loss, self.output_dir)
         print(f"\n  Best val loss: {best_val_loss:.4f}")
         print(f"  Results saved to: {self.output_dir}")
 

@@ -25,11 +25,14 @@ Dataset structure:
         └── ...
 """
 
+import logging
 import numpy as np
 import cv2
 from pathlib import Path
 from typing import Dict, Tuple, List
 import math
+
+logger = logging.getLogger("bioprint.data.multiview_dataset")
 
 
 class Wound3DModel:
@@ -238,6 +241,8 @@ class MultiViewWoundDataset:
             if (sample_idx + 1) % 10 == 0:
                 print(f"Generated {sample_idx + 1}/{self.num_samples} samples")
 
+        logger.info("Dataset generated: %d train, %d test, %d views/sample -> %s",
+                    num_train, self.num_samples - num_train, self.num_views, self.output_dir)
         print(f"\n✓ Dataset saved to {self.output_dir}")
         print(f"  Train: {num_train} samples")
         print(f"  Test: {self.num_samples - num_train} samples")
@@ -364,6 +369,7 @@ class MultiViewWoundLoader:
 
         # Find all sample directories
         self.samples = sorted([d for d in self.dataset_dir.iterdir() if d.is_dir()])
+        logger.info("MultiViewWoundLoader: %d samples from %s split", len(self.samples), split)
         print(f"Loaded {len(self.samples)} samples from {split} split")
 
     def __len__(self) -> int:

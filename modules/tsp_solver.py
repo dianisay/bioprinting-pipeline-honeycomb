@@ -4,8 +4,11 @@ Uses Miller-Tucker-Zemlin (MTZ) formulation solved via PuLP (MILP).
 Translates Section 3b of MuffinFresa_ConformalMapping.m.
 """
 
+import logging
 import numpy as np
 from typing import Optional
+
+logger = logging.getLogger("bioprint.modules.tsp_solver")
 
 
 def solve_tsp_mtz(distance_matrix: np.ndarray, time_limit: int = 60) -> np.ndarray:
@@ -70,6 +73,7 @@ def solve_tsp_mtz(distance_matrix: np.ndarray, time_limit: int = 60) -> np.ndarr
     prob.solve(solver)
 
     if prob.status != pulp.constants.LpStatusOptimal:
+        logger.warning("TSP solver did not find optimal solution (status=%d), using sequential order", prob.status)
         print("TSP solver did not find optimal solution, using sequential order.")
         return np.arange(n)
 
@@ -157,6 +161,7 @@ def optimize_visitation_order(
     seq_cost = sum(D[i, i + 1] for i in range(n - 1))
     opt_cost = sum(D[tour_order[i], tour_order[i + 1]] for i in range(n - 1))
     savings = 100 * (seq_cost - opt_cost) / (seq_cost + 1e-10)
+    logger.info("TSP optimized: %d cells, seq=%.1fmm opt=%.1fmm saved=%.1f%%", n, seq_cost, opt_cost, savings)
     print(f"  TSP: sequential={seq_cost:.1f}mm, optimal={opt_cost:.1f}mm (saved {savings:.1f}%)")
 
     return cell_indices[tour_order]
