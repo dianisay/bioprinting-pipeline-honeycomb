@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wound-bioprinter"
+version = "1.0.0"
+description = "Autonomous 3D wound reconstruction and honeycomb bioprinting via CNN-Transformer vision"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Diana Paola Ayala Roldan", email = "diana.ayala@tec.mx"},
+]
+keywords = ["bioprinting", "wound-reconstruction", "robotics", "deep-learning", "polar-decoder"]
+
+dependencies = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "matplotlib>=3.7.0",
+    "opencv-python>=4.8.0",
+    "open3d>=0.17.0",
+    "scikit-learn>=1.3.0",
+    "PuLP>=2.7.0",
+    "spatialmath-python>=1.1.0",
+    "plotly>=5.15.0",
+    "pandas>=2.0.0",
+    "Pillow>=10.0.0",
+    "tqdm>=4.65.0",
+    "numpy-stl>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "jupyterlab>=4.0.0",
+    "ipywidgets>=8.0.0",
+]
+hardware = [
+    "pyrealsense2>=2.50.0",
+]
+
+[project.urls]
+Repository = "https://github.com/dianisay/diana-bioprinting-pipeline"
+Thesis = "https://github.com/dianisay/livemesh"
+
+[tool.setuptools.packages.find]
+include = ["models*", "modules*", "training*", "data*", "utils*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

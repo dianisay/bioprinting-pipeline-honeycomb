@@ -1,69 +1,72 @@
-# Robotic Bioprinting Pipeline
+# WoundBioprinter
 
-**A robot that heals wounds automatically using AI and 3D printing.**
+**Autonomous 3D wound reconstruction and honeycomb bioprinting via CNN-Transformer vision.**
 
----
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
+[![PyTorch 2.0+](https://img.shields.io/badge/pytorch-2.0+-orange.svg)](https://pytorch.org)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## What Does This Do?
-
-Imagine someone has a wound on their skin. This system:
-
-1. **Looks** at the wound from 8 camera angles (like a CT scanner)
-2. **Reconstructs** the full 3D wound shape -- boundary, depth, and layer-wise fill pattern
-3. **Plans** a path for a robot arm to fill the wound with bio-material (like a 3D printer, but for skin)
-4. **Moves** the robot arm along that path, printing healing material into the wound
-
-All of this happens automatically -- no human needs to control the robot.
-
-The system operates in **closed-loop**: after each layer of material is deposited,
-an eye-in-hand depth sensor (Intel RealSense D405) re-scans the wound to verify
-the fill and correct the next layer if needed.
+> **Phase 1** of the doctoral thesis *"CNN-Based ML for 3D Motion Planning and Control in In-Situ Robotic Bioprinters"* ? developed at [Tecnologico de Monterrey](https://tec.mx).
+>
+> For the MIT collaboration extension (geodesic toolpaths, DeepCurrents surface reconstruction), see [LiveMesh](https://github.com/dianisay/livemesh).
 
 ---
 
-## How It Works (The 6 Steps)
+## Overview
+
+A camera-to-deposition pipeline for in-situ wound bioprinting:
 
 ```
-8 photos of wound (multi-view) + depth sensor
-            |
-[Step 1] AI reconstructs 3D wound volume (CT-style fusion)
-            |
-[Step 2] Predict boundary + depth + layer-wise fill instructions
-            |
-[Step 3] Depth sensor validates prediction (fusion)
-            |
-[Step 4] Plan a honeycomb filling pattern (like a beehive)
-            |
-[Step 5] Calculate how the robot arm should move
-            |
-[Step 6] Robot prints layer -> re-scan -> correct -> repeat
+8 RGB views (eye-in-hand)
+        |
+   PERCEIVE -------- CT-style volumetric encoder (8x ResNet-18 + 3D Transformer)
+        |              PolarDecoder3DLayered -> boundary + depth + layer fill
+        v
+   SENSE ----------- Intel RealSense D405 depth validation
+        |              Confidence-weighted fusion (predicted + measured)
+        v
+   PLAN ------------ Honeycomb lattice generation on wound void
+        |              TSP optimization (MILP) for minimal nozzle travel
+        |              Conformal mapping (UV -> curved surface XYZ)
+        v
+   EXECUTE --------- 8-DOF inverse kinematics (UR5 + XY gantry)
+        |              PID + Super-Twisting control
+        v
+   FEEDBACK -------- Re-scan -> verify fill -> correct next layer
+        |
+        '---- closed loop ----'
 ```
 
 ---
 
-## What's Special About This?
+## Key Contributions
 
-Two key innovations:
+### 1. Volumetric Wound Reconstruction (CT-style)
 
-### 1. CT-Style Volumetric Reconstruction
-Instead of one photo, we use **8 orthogonal views** fused into a 3D voxel grid -- similar to how a CT scanner reconstructs 3D anatomy from 2D X-ray projections. A 3D Transformer then reasons about how depth relates to boundary.
+Instead of a single photo, we capture **8 orthogonal views** and fuse them into a 3D voxel grid ? analogous to CT reconstruction from 2D projections. A 3D Transformer then contextualizes depth from boundary geometry.
 
-### 2. Layer-Aware Polar Decoding
-Instead of flat 2D boundaries, our `PolarDecoder3DLayered` predicts:
-- **Boundary**: wound edge in 64 radial directions
-- **Depth**: how deep the wound is at each angle
-- **Layer fill**: how much bio-ink to deposit per layer (cone-shaped fill pattern)
+### 2. Layer-Aware Polar Decoder
 
-This produces direct bioprinting instructions -- no post-processing needed.
+`PolarDecoder3DLayered` predicts wound geometry as:
+- **Boundary**: 64 radii in polar coordinates (guaranteed closed, ordered)
+- **Depth profile**: per-angle wound depth in mm
+- **Layer fill**: bioink amount per layer (cone-shaped deposition)
+
+Direct bioprinting instructions ? no post-processing.
 
 ### 3. Closed-Loop Depth Feedback
-An eye-in-hand RGB-D sensor (Intel RealSense D405, ~$300) provides real-time depth
-validation during printing:
-- **Before printing**: sensor measurement fuses with AI prediction to refine depth estimate
-- **After each layer**: re-scan verifies fill quality; correction adjusts next layer
-- **Result**: 99% wound fill even with 15% initial prediction error (validated in simulation)
 
-This makes the system robust to prediction inaccuracies and surface variability.
+An eye-in-hand RealSense D405 provides real-time depth validation:
+- Before printing: fuse AI prediction with sensor measurement
+- After each layer: re-scan, compute residual, correct next pass
+- Result: **99% fill accuracy** with 15% initial prediction error (simulation)
+
+### 4. Honeycomb Infill Strategy
+
+Conformal honeycomb lattice + TSP-optimized nozzle path provides:
+- Uniform structural support
+- Minimal travel distance
+- Feasibility validation (boundary-fit check)
 
 ---
 
@@ -72,146 +75,157 @@ This makes the system robust to prediction inaccuracies and surface variability.
 ```
 diana-bioprinting-pipeline/
 |
-+-- models/                             # Neural networks
-|   +-- encoder.py                      # Single-view encoder (ResNet-50 + Transformer)
-|   +-- volumetric_encoder.py           # Multi-view CT-style encoder (8x ResNet-18 + 3D Transformer)
-|   +-- volumetric_decoder.py           # Layer-aware polar decoder (boundary + depth + fill)
-|   +-- polar_decoder.py                # 2D polar decoder (ablation baseline)
-|   +-- detr_decoder.py                 # DETR-style decoder (ablation comparison)
-|   +-- autoregressive_decoder.py       # Autoregressive decoder (ablation comparison)
++-- models/                        # Neural network architectures
+|   +-- encoder.py                    ResNet-50 + 6-layer Transformer (single-view)
+|   +-- volumetric_encoder.py         8x ResNet-18 + volumetric fusion + 3D Transformer
+|   +-- volumetric_decoder.py         PolarDecoder3DLayered (boundary + depth + layers)
+|   +-- polar_decoder.py              2D PolarDecoder (ablation baseline)
+|   +-- detr_decoder.py               DETR-style decoder (ablation)
+|   +-- autoregressive_decoder.py     Autoregressive decoder (ablation)
 |
-+-- modules/                            # Robotics brain
-|   +-- stl_analysis.py                 # Reads 3D scaffold shapes
-|   +-- honeycomb.py                    # Creates honeycomb fill patterns
-|   +-- conformal_mapping.py            # Maps flat patterns onto curved surfaces
-|   +-- tsp_solver.py                   # Finds the shortest path between cells (MILP)
-|   +-- trajectory_planner.py           # Full UV->XYZ trajectory generation
-|   +-- wound_to_trajectory.py          # Bridge: decoder output -> trajectory planner input
-|   +-- depth_sensor.py                 # RealSense D405 model (simulated + real interface)
-|   +-- depth_fusion.py                 # Fuse predicted + measured depth (confidence-weighted)
-|   +-- closed_loop_controller.py       # Scan-deposit-verify-correct printing loop
-|   +-- robot_model.py                  # 8-DOF robot arm (UR5 + XY gantry)
-|   +-- inverse_kinematics.py           # IK with APF + Super-Twisting control
-|   +-- visualization_3d.py             # 3D plotting utilities
++-- modules/                       # Robotics + control
+|   +-- honeycomb.py                  Conformal honeycomb lattice generation
+|   +-- conformal_mapping.py          UV -> curved surface XYZ mapping
+|   +-- tsp_solver.py                 TSP via MILP (PuLP)
+|   +-- trajectory_planner.py         Full trajectory: hex grid -> waypoints
+|   +-- wound_to_trajectory.py        Bridge: decoder output -> planner input
+|   +-- depth_sensor.py               RealSense D405 model (sim + hardware)
+|   +-- depth_fusion.py               Confidence-weighted depth blending
+|   +-- closed_loop_controller.py     Scan-deposit-verify-correct loop
+|   +-- robot_model.py                8-DOF UR5 + XY gantry kinematics
+|   +-- inverse_kinematics.py         IK solver (L-BFGS-B + APF + STW)
+|   +-- stl_analysis.py               Scaffold geometry extraction
+|   +-- visualization_3d.py           3D plotting
 |
-+-- training/                           # Training scripts
-|   +-- train.py                        # Train one model
-|   +-- evaluate.py                     # Evaluate on test set (Chamfer, IoU, etc.)
-|   +-- ablation.py                     # Compare all decoder variants fairly
++-- training/                      # Training & evaluation
+|   +-- train.py                      Trainer with early stopping
+|   +-- evaluate.py                   Test-set metrics
+|   +-- ablation.py                   3-decoder comparison script
 |
-+-- data/                               # Data loading and generation
-|   +-- dataset.py                      # Single-view wound dataset
-|   +-- multiview_dataset.py            # Multi-view synthetic wound generator + loader
-|   +-- polar_conversion.py             # Mask -> polar coordinate conversion
-|   +-- synthetic_generator.py          # Star-convex wound shape generator
++-- data/                          # Data loading
+|   +-- dataset.py                    Single-view wound dataset
+|   +-- multiview_dataset.py          Multi-view synthetic generator + loader
+|   +-- polar_conversion.py           Mask <-> polar coordinates
+|   +-- synthetic_generator.py        Star-convex wound shapes
 |
-+-- notebooks/                          # Interactive experiments (Jupyter / Kaggle)
-|   +-- 00_demo.ipynb                   # Quick visual demo
-|   +-- 01-ablation-study-kaggle.ipynb   # 2D ablation (Polar vs DETR vs AR)
-|   +-- 02_volumetric_ablation_kaggle.ipynb  # Volumetric CT-style training
++-- notebooks/                     # Kaggle experiments
+|   +-- 01-ablation-study-kaggle.ipynb     2D ablation (Polar vs DETR vs AR)
+|   +-- 02_volumetric_ablation_kaggle.ipynb  4-variant volumetric ablation
 |
-+-- scripts/                            # Standalone scripts
-|   +-- demo_pipeline.py                # End-to-end pipeline demo (image -> robot)
++-- scripts/
+|   +-- demo_pipeline.py              End-to-end demo (image -> robot)
 |
-+-- utils/                              # Shared utilities
-|   +-- logging_config.py               # Centralized logging (console + rotating file)
-|   +-- metrics.py                      # Chamfer, Hausdorff, IoU, closure metrics
-|   +-- visualization.py                # Plotting helpers
-|
-+-- tests/                              # Automated tests
-|   +-- test_models.py                  # All decoders sanity check
-|   +-- test_volumetric.py              # Volumetric encoder + decoder + loss + gradients
-|   +-- test_training_pipeline.py       # Full train->eval loop (CPU, 2 epochs)
-|   +-- test_trajectory_pipeline.py     # Honeycomb + TSP + IK integration
-|
-+-- logs/                               # Runtime logs (auto-generated, gitignored)
-+-- configs/                            # Hyperparameters
-+-- requirements.txt                    # Python packages needed
++-- tests/                         # Automated tests
++-- configs/                       # Hyperparameters
++-- requirements.txt
++-- pyproject.toml
+```
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/dianisay/diana-bioprinting-pipeline.git
+cd diana-bioprinting-pipeline
+pip install -e .
+```
+
+Or without editable install:
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
 ## Quick Start
 
-```bash
-# 1. Clone this repo
-git clone https://github.com/dianisay/diana-bioprinting-pipeline.git
-cd diana-bioprinting-pipeline
+```python
+from models.volumetric_encoder import VolumetricWoundEncoder3D
+from models.volumetric_decoder import PolarDecoder3DLayered
+import torch
 
-# 2. Install dependencies
-pip install -r requirements.txt
+# 8-view wound images (B, 8, 3, 256, 256)
+views = torch.randn(1, 8, 3, 256, 256)
 
-# 3. Run tests (verify everything works)
-python tests/test_models.py
-python tests/test_volumetric.py
+encoder = VolumetricWoundEncoder3D(d_model=256, num_views=8, grid_size=8)
+decoder = PolarDecoder3DLayered(d_model=256, num_radii=64, num_layers=4, max_depth_mm=5.0)
 
-# 4. Run end-to-end pipeline demo
-python scripts/demo_pipeline.py
+enc_out = encoder(views, return_voxel_grid=True)
+pred = decoder(enc_out['features'])
 
-# 5. Run the demo notebook
-jupyter lab notebooks/00_demo.ipynb
+print(f"Boundary: {pred['radii'].shape}")        # (1, 64) radii
+print(f"Depth: {pred['depth'].shape}")            # (1, 64) mm
+print(f"Layer fill: {pred['layer_amounts'].shape}")  # (1, 64, 4)
+print(f"Voxel grid: {enc_out['voxel_grid'].shape}")  # (1, 256, 8, 8, 8)
 ```
 
 ---
 
-## Training on Kaggle
+## Kaggle Training
 
-The neural networks need a GPU to train. We use Kaggle (free T4/P100 GPUs):
+Both notebooks are Kaggle-ready. Upload this repo as a dataset, then:
 
-### Notebook 01: 2D Ablation Study
-Compares three decoder architectures (Polar, DETR, Autoregressive) with the same single-view encoder. Produces Table 4.1 in the thesis.
+### Notebook 02: 4-Variant Volumetric Ablation (main result)
 
-### Notebook 02: Volumetric CT-Style Training
-Trains the full `VolumetricWoundEncoder3D` + `PolarDecoder3DLayered` pipeline. This is the main contribution.
+Trains and compares:
+1. **Baseline** ? single-view + 2D polar (no depth)
+2. **WoundBioprinter** ? single-view + 3D polar (depth + layers)
+3. **WoundBioprinter3D** ? RGB-D input + 3D polar
+4. **Volumetric** ? 8-view CT-style + 3D polar (our contribution)
 
-**Steps:**
-1. Upload this repo to Kaggle as a dataset
-2. Open `notebooks/02_volumetric_ablation_kaggle.ipynb`
-3. Enable **GPU T4 x2** accelerator
-4. Run all cells (~1-2 hours)
-5. Download the `results/` folder (checkpoints + metrics)
+Metrics: Chamfer distance (mm), Depth MAE (mm), Layer MAE, Honeycomb Feasibility (%), inference time (ms).
 
-The notebook generates synthetic multi-view data, trains the volumetric model, and outputs all metrics needed for Chapter 4 of the thesis.
+Runtime: ~2-3 hours on P100.
+
+### Notebook 01: 2D Decoder Ablation
+
+Compares Polar vs DETR vs Autoregressive decoders (single-view, boundary-only).
 
 ---
 
-## Logging
+## Closed-Loop Printing Architecture
 
-All modules log to `logs/pipeline.log` (rotating, 5MB max). To see live logs during training:
-
-```bash
-# Windows PowerShell
-Get-Content logs\pipeline.log -Wait
-
-# Linux/Mac
-tail -f logs/pipeline.log
+```
+          +---> DEPOSIT layer k
+          |          |
+     PLAN layer     SENSE (RealSense D405)
+          ^          |
+          |     VERIFY fill quality
+          |          |
+          +----<-- CORRECT (adjust layer k+1)
 ```
 
----
-
-## Tools Used
-
-| What | Tool |
-|------|------|
-| AI / Neural Networks | PyTorch (built from scratch) |
-| Math & Optimization | NumPy, SciPy, PuLP |
-| 3D Geometry | Open3D, OpenCV |
-| Robot Simulation | CoppeliaSim |
-| Visualization | Matplotlib, Plotly |
-| Training (GPU) | Kaggle |
+The `closed_loop_controller.py` orchestrates this cycle, achieving robust
+deposition even with untrained models or noisy depth predictions.
 
 ---
 
-## Who Made This?
+## Relation to LiveMesh
 
-**Diana Paola Ayala Roldan**
-PhD in Computational Sciences, Tecnologico de Monterrey (2026)
+This repository represents the **core bioprinting pipeline** developed at Tecnologico de Monterrey. The subsequent MIT CSAIL collaboration extended this work with:
 
-This is the code behind the thesis:
-*"CNN-Transformer-Based Machine Learning for 3D Motion Planning and Control in In-Situ Robotic Bioprinters for Superficial Tissue Regeneration"*
+- **Geodesic toolpaths** (boundary-parallel, curvature-adaptive)
+- **DeepCurrents** surface reconstruction (mesh-free)
+- **Optimal-transport coverage metrics**
+
+That extension lives at [github.com/dianisay/livemesh](https://github.com/dianisay/livemesh).
 
 ---
+
+## Citation
+
+```bibtex
+@phdthesis{roldan2026bioprinting,
+    title  = {CNN-Transformer-Based Machine Learning for 3D Motion Planning
+              and Control in In-Situ Robotic Bioprinters for Superficial
+              Tissue Regeneration},
+    author = {Ayala Rold\'an, Diana Paola},
+    school = {Tecnol\'ogico de Monterrey},
+    year   = {2026},
+}
+```
 
 ## License
 
-Academic use -- PhD thesis project.
+MIT
