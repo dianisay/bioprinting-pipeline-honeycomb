@@ -107,7 +107,7 @@ diana-bioprinting-pipeline/
 |
 +-- notebooks/                          # Interactive experiments (Jupyter / Kaggle)
 |   +-- 00_demo.ipynb                   # Quick visual demo
-|   +-- 01_ablation_study_kaggle.ipynb  # 2D ablation (Polar vs DETR vs AR)
+|   +-- 01-ablation-study-kaggle.ipynb   # 2D ablation (Polar vs DETR vs AR)
 |   +-- 02_volumetric_ablation_kaggle.ipynb  # Volumetric CT-style training
 |
 +-- scripts/                            # Standalone scripts

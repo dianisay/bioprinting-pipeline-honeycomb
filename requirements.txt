@@ -14,3 +14,6 @@ Pillow>=10.0.0
 tqdm>=4.65.0
 jupyterlab>=4.0.0
 ipywidgets>=8.0.0
+numpy-stl>=3.0.0
+# Optional: only needed for physical RealSense D405 hardware interface
+# pyrealsense2>=2.50.0
