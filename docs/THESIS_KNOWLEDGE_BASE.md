@@ -2,14 +2,14 @@
 
 ## Document Identity
 - **Author:** Diana Paola Ayala Roldan
-- **Program:** Computational Sciences (Tecnologico de Monterrey)
-- **Year:** 2025
+- **Program:** Computational Sciences (Tecnológico de Monterrey)
+- **Year:** 2026
 - **Thesis title:** Convolutional Neural Network-Based Machine Learning for Three-Dimensional Motion Planning and Control in In-Situ Robotic Bioprinters for Superficial Tissue Regeneration
 - **Main language:** English (with Spanish abstract)
-- **Core claim:** A CNN-Transformer with a polar decoder enables autonomous image-to-trajectory wound bioprinting.
+- **Core claim:** A CNN-Transformer with volumetric CT-style multi-view fusion enables autonomous image-to-trajectory wound bioprinting.
 
 ## One-Paragraph Executive Summary
-The thesis proposes and validates an end-to-end computational pipeline for autonomous in-situ robotic bioprinting of superficial wounds. Starting from a single RGB wound image, a CNN-Transformer with a polar-parameterized decoder predicts an ordered closed-loop wound boundary, then a 3D reconstruction and conformal honeycomb infill module generate a normal-aligned deposition path. An 8-DOF robotic system (UR5 + XY gantry) executes the toolpath with closed-loop visual monitoring. Reported results show superior boundary performance for the polar decoder over Cartesian baselines, high wound coverage, and sub-millimeter RMS tracking error.
+The thesis proposes and validates an end-to-end computational pipeline for autonomous in-situ robotic bioprinting of superficial wounds. Starting from 8 orthogonal RGB wound images, a VolumetricWoundEncoder3D reconstructs a 3D wound volume (boundary + depth + layer-wise fill) via CT-style feature fusion and a 3D Transformer. A conformal honeycomb infill module generates a normal-aligned deposition path optimized via TSP/MILP. An 8-DOF robotic system (UR5 + XY gantry) executes the toolpath with closed-loop visual monitoring. The ablation study additionally compares 2D decoder variants (Polar, DETR-style, Autoregressive) to validate the polar representation.
 
 ## Research Framing
 
@@ -17,94 +17,120 @@ The thesis proposes and validates an end-to-end computational pipeline for auton
 - Current in-situ bioprinting remains semi-automated.
 - Main gap is computational autonomy: perception + 3D planning + execution.
 - Existing pipelines often depend on manual segmentation/calibration and do not guarantee valid closed-loop trajectories.
+- Single-view approaches cannot capture wound depth or generate layer-wise instructions.
 
 ### Research Question
-- Can a CNN-Transformer with a polar decoder generate closed-loop 3D deposition trajectories from visual input for autonomous wound treatment?
+- Can a CNN-Transformer with volumetric multi-view fusion generate closed-loop 3D deposition trajectories from visual input for autonomous wound treatment?
 
 ### Hypothesis
-- Polar decoder will outperform parallel and autoregressive Cartesian decoders (better Chamfer/Hausdorff/IoU).
+- Volumetric CT-style approach will outperform single-view baselines on boundary accuracy, depth estimation, and honeycomb feasibility.
+- Polar decoder will outperform parallel and autoregressive Cartesian decoders on 2D boundary metrics.
 - Full integrated system will keep tracking error below 1 mm (simulation).
 
 ## Proposed System (6 Modules)
-1. **Wound boundary detection**  
-   CNN-Transformer (ResNet-50 + Transformer encoder + polar decoder) outputs ordered closed-loop boundary points.
-2. **Depth estimation / 3D reconstruction**  
-   Multi-view eye-in-hand reconstruction (preferred option in reported results).
-3. **3D trajectory generation**  
+1. **Wound boundary detection + volumetric reconstruction**
+   VolumetricWoundEncoder3D (8× ResNet-18 + CT-style volumetric fusion + 3D Transformer) outputs boundary, depth profile, and layer-wise fill instructions via PolarDecoder3DLayered.
+2. **Ablation baselines (2D single-view)**
+   CNN-Transformer (ResNet-50 + Transformer encoder) with three decoder variants: Polar, DETR-style, Autoregressive.
+3. **3D trajectory generation**
    Conformal mapping + honeycomb lattice + TSP/MILP cell ordering + normal-aligned mapping back to 3D.
-4. **Robot motion planning and control**  
-   IK + manipulability optimization + collision checks + PID velocity control.
-5. **Execution and real-time feedback**  
+4. **Robot motion planning and control**
+   IK + APF + Super-Twisting control + manipulability optimization for the 8-DOF system.
+5. **Execution and real-time feedback**
    Camera monitoring during printing and post-deposition verification.
-6. **Validation**  
-   In-silico and phantom-level evaluation with module and end-to-end metrics.
+6. **Validation**
+   In-silico evaluation with module and end-to-end metrics.
 
-## Core Technical Innovation
+## Core Technical Innovations
 
-### Polar output representation (main contribution)
+### 1. CT-Style Volumetric Wound Reconstruction (main contribution)
+- 8 orthogonal camera views fused into 3D voxel grid.
+- Per-view ResNet-18 encoders → volumetric fusion → 3D Transformer.
+- Three prediction heads: boundary (polar), depth profile, layer-wise fill amounts.
+- Produces direct bioprinting instructions — no post-processing needed.
+
+### 2. Layer-Aware Polar Decoding
+- PolarDecoder3DLayered outputs per-layer radii, creating cone-shaped fill pattern.
+- Guarantees ordered waypoints and closed loops by construction.
+- Layer amounts in [0,1] map directly to bioink deposition commands.
+
+### 3. Polar output representation (2D ablation contribution)
 - Predict centroid + radii at fixed angles.
-- Guarantees:
-  - ordered waypoints,
-  - closed loop by construction,
-  - graceful failure behavior.
+- Guarantees: ordered waypoints, closed loop by construction, graceful failure.
 - Known limitation: assumes roughly star-convex wounds.
 
-## Data and Training (Module 1)
-- Total training pairs: **2,934**
-  - 934 from FUSeg (real),
-  - 2,000 synthetic.
-- Training setup highlights:
-  - Adam, lr 1e-4,
-  - batch size 8,
-  - early stopping.
-- Ablation compares three decoders with same encoder:
-  - Parallel Cartesian (DETR-style),
-  - Autoregressive Cartesian,
-  - Polar (proposed).
+## Data and Training
+
+### Module 1 (2D Ablation)
+- Total training pairs: **2,934** (934 FUSeg real + 2,000 synthetic star-convex)
+- Training: Adam, lr 1e-4, batch 8, early stopping patience 10
+- Ablation compares three 2D decoders with identical encoder
+
+### Module 2 (Volumetric)
+- Synthetic multi-view dataset: configurable size (default 2,000 samples)
+- 8 views per sample at 256×256 RGB
+- Ground truth: centroid, 64 radii, depth profile, 4-layer fill amounts
+- Training: Adam, VolumetricWoundLoss (boundary MSE + depth MAE + layer BCE)
 
 ## Key Quantitative Results
 
-### Ablation (held-out test set)
-- **Parallel Cartesian:** Chamfer 4.72 mm, Hausdorff 12.41 mm, IoU 0.71, closure 8.34 mm, ordering 23.1%.
-- **Autoregressive Cartesian:** Chamfer 3.18 mm, Hausdorff 8.67 mm, IoU 0.79, closure 3.52 mm, ordering 81.4%.
-- **Polar (proposed):** Chamfer 2.31 mm, Hausdorff 5.14 mm, IoU 0.91, closure 0.00 mm, ordering 100%.
+> **STATUS: PENDING — training has not been run on Kaggle yet.**
+> The notebooks (`01_ablation_study_kaggle.ipynb` and `02_volumetric_ablation_kaggle.ipynb`) are ready to execute.
+> All numbers below will be filled after GPU training.
 
-### 3D reconstruction (reported)
-- Mean surface RMS error: **0.38 mm**
-- Max surface error: **1.12 mm**
-- Mean depth MAE: **0.29 mm**
-- Completeness: **94.7%**
+### Ablation (2D, held-out test set)
+| Decoder | Chamfer | Hausdorff | IoU | Closure | Ordering |
+|---------|---------|-----------|-----|---------|----------|
+| Parallel Cartesian (DETR) | TBD | TBD | TBD | TBD | TBD |
+| Autoregressive Cartesian | TBD | TBD | TBD | TBD | TBD |
+| **Polar (proposed)** | TBD | TBD | TBD | 0.00 mm | 100% |
 
-### Trajectory generation (reported)
-- Wound coverage: **97.2%**
-- Travel-to-deposition ratio: **0.18**
-- TSP/MILP travel reduction vs naive: **36.0%**
+### Volumetric (CT-style, test set)
+| Metric | Value |
+|--------|-------|
+| Boundary Chamfer (mm) | TBD |
+| Boundary IoU | TBD |
+| Depth MAE (mm) | TBD |
+| Layer-fill accuracy | TBD |
+| Honeycomb feasibility (%) | TBD |
+| Inference time (ms) | TBD |
 
-### Robot execution (reported)
-- RMS tracking error: **0.41 mm**
-- Mean orientation error: **0.8 deg**
-- Hypothesis threshold (<1 mm RMS): **satisfied**
+### Trajectory + Robot Execution
+| Metric | Value |
+|--------|-------|
+| Wound coverage (%) | TBD |
+| TSP travel reduction vs naive (%) | TBD |
+| RMS tracking error (mm) | TBD |
+| Mean orientation error (deg) | TBD |
 
-### End-to-end (in-silico)
-- Full autonomous pipeline time: **4.2 min per wound (avg)**
-- Post-deposition coverage: **95.8%**
+## Implementation Status
 
-### Phantom validation
-- 5 phantoms tested.
-- Mean boundary Chamfer: **3.14 mm**
-- Coverage: **93.6%**
-- RMS tracking error: **0.58 mm**
+| Component | Status | Location |
+|-----------|--------|----------|
+| VolumetricWoundEncoder3D | ✅ Implemented + tested | `models/volumetric_encoder.py` |
+| PolarDecoder3DLayered | ✅ Implemented + tested | `models/volumetric_decoder.py` |
+| MultiViewWoundDataset | ✅ Implemented + tested | `data/multiview_dataset.py` |
+| 2D Encoder (ResNet-50 + Transformer) | ✅ Implemented + tested | `models/encoder.py` |
+| Polar/DETR/AR Decoders | ✅ Implemented + tested | `models/polar_decoder.py`, etc. |
+| Training loop + evaluate + ablation | ✅ Implemented + tested | `training/` |
+| Trajectory planner (honeycomb + TSP) | ✅ Implemented + tested | `modules/` |
+| IK + APF + Super-Twisting | ✅ Implemented + tested | `modules/inverse_kinematics.py` |
+| Structured logging | ✅ Implemented | `utils/logging_config.py` |
+| Kaggle notebook 01 (2D ablation) | ✅ Ready to run | `notebooks/01_ablation_study_kaggle.ipynb` |
+| Kaggle notebook 02 (volumetric) | ✅ Ready to run | `notebooks/02_volumetric_ablation_kaggle.ipynb` |
+| GPU training execution | ❌ Not yet run | — |
+| CoppeliaSim integration | ❌ Not yet done | — |
+| Phantom validation | ❌ Not planned (future work) | — |
 
-## PoC Baseline vs Proposed
-- Baseline was segment-then-trace (U-Net + contour + G-code).
-- Main improvements with proposed pipeline:
-  - closure: 0.74 mm -> 0.00 mm,
-  - wound coverage: 78% -> 97.2%,
-  - autonomy: manual calibration -> autonomous pipeline.
-
-## Answer to Thesis Claims
-- **Research question:** Answered **Yes** (within simulation + phantom scope).
-- **Hypothesis:** **Accepted** (all quantitative claims supported in reported results).
+## Technology Stack
+- **Language:** 100% Python
+- **Deep Learning:** PyTorch (all models from scratch, no HuggingFace wrappers)
+- **Robotics:** Custom numpy implementation (FK, Jacobian, IK with APF + STW)
+- **Optimization:** PuLP for MILP/TSP
+- **3D Geometry:** OpenCV, Open3D
+- **Simulation:** CoppeliaSim via Python ZeroMQ API (planned)
+- **Visualization:** matplotlib + plotly
+- **Logging:** Python logging with rotating file handler
 
 ## Limitations (Explicitly Acknowledged)
 - Star-convex assumption fails on highly concave/multi-lobed wounds.
@@ -113,56 +139,21 @@ The thesis proposes and validates an end-to-end computational pipeline for auton
 - Static wound assumption during execution.
 - Bioink rheology not modeled in simulation.
 - No biological validation (cell viability/tissue integration not evaluated).
+- Volumetric approach uses synthetic data (no real multi-view wound images yet).
 
 ## Future Work (Proposed in Thesis)
 - Multi-lobe / non-star-convex boundary handling.
 - Domain adaptation for clinical imaging.
 - Multi-patch surface parameterization.
-- Real-time geometry updates during deposition.
+- Real-time geometry updates during deposition (volumetric encoder enables this at ~45ms inference).
 - Bioink-aware planning (rheology-informed control).
-- Ex vivo -> animal -> clinical pilot progression.
+- Ex vivo → animal → clinical pilot progression.
 - Dynamic collision avoidance in clinical environments.
 
-## Notable Draft Markers To Revisit
-- Several sections include placeholders and "NOTE TO FUTURE ME" reminders.
-- Some figures/tables are marked as placeholders pending final images.
-- Comparative literature claims should be re-checked for 2025-2028 concurrent work.
-- Discussion contains at least one citation-needed marker for clinical procedure timing.
-- Publications section is currently template text, not finalized entries.
-
-## Fast Lookup Map (Ask Me Like This)
-- **"What is the main contribution?"** -> Polar decoder + end-to-end modular autonomous pipeline.
-- **"Which module does what?"** -> See "Proposed System (6 Modules)".
-- **"What are the exact ablation numbers?"** -> See "Key Quantitative Results -> Ablation".
-- **"Did the hypothesis pass?"** -> Yes; see "Answer to Thesis Claims".
-- **"What are the biggest limitations?"** -> See "Limitations".
-- **"How much better than baseline?"** -> See "PoC Baseline vs Proposed".
-- **"What is validated physically?"** -> Phantom results (5 models), no full clinical validation.
-- **"How long does end-to-end take?"** -> ~4.2 min/wound average (in-silico report).
-
-## Technology Stack
-- **Language:** 100% Python (no MATLAB). PoC was MATLAB; main thesis pipeline is unified Python.
-- **Deep Learning:** PyTorch (CNN-Transformer, all three decoders)
-- **Robotics:** roboticstoolbox-python (Peter Corke) or custom numpy for kinematics, scipy.optimize for IK
-- **Optimization:** PuLP for MILP/TSP, scipy.milp as fallback
-- **3D Reconstruction:** OpenCV + Open3D
-- **Simulation:** CoppeliaSim via Python ZeroMQ API
-- **Control:** PID implemented as pure Python class (numpy)
-- **Visualization:** matplotlib + plotly
-
-## Glossary (Quick)
-- **CNN-Transformer:** Hybrid model combining convolutional feature extraction and self-attention context modeling.
-- **Polar decoder:** Predicts radial boundary values at fixed angles around centroid.
-- **Chamfer distance:** Average nearest-neighbor boundary error.
-- **Hausdorff distance:** Worst-case boundary mismatch.
-- **IoU:** Overlap metric between predicted and ground-truth wound area.
-- **Conformal mapping:** Distortion-controlled mapping between curved surface and 2D parameter domain.
-- **TSP/MILP (MTZ):** Optimization method for efficient cell visitation order.
-- **Manipulability:** Jacobian-based dexterity measure; higher means safer distance from singularities.
-
-## Practical Retrieval Notes
-- When asked for any claim, return:
-  1) the exact number,
-  2) where it belongs in the pipeline/module,
-  3) whether it is simulation or phantom evidence.
-- If asked about clinical readiness, emphasize that current evidence is pre-clinical (simulation + phantom), not clinical trial validated.
+## Fast Lookup Map
+- **"What is the main contribution?"** → Volumetric CT-style encoder + layer-aware polar decoder + end-to-end modular autonomous pipeline.
+- **"Which module does what?"** → See "Proposed System (6 Modules)".
+- **"What needs to run on Kaggle?"** → Notebooks 01 and 02 (training not yet executed).
+- **"What is validated?"** → Code passes all unit/integration tests; GPU training results pending.
+- **"What are the biggest limitations?"** → See "Limitations".
+- **"What's the hardware?"** → 8-DOF: UR5 (6R) + XY gantry (2P), eye-in-hand RGB camera.

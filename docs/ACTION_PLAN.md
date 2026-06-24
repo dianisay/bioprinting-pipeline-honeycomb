@@ -7,14 +7,17 @@
 - Abstract en inglés y español (con placeholders numéricos)
 - References.bib con ~90 entradas (algunas con autores genéricos que corregir)
 - Diseño metodológico completo de los 6 módulos
+- **✅ TODO el código implementado y testeado** (CNN-Transformer, 3 decoders 2D, VolumetricWoundEncoder3D, PolarDecoder3DLayered, trajectory planner, IK solver)
+- **✅ Notebooks Kaggle listos** para generar resultados (01_ablation + 02_volumetric)
+- **✅ Tesis actualizada** con sección de reconstrucción volumétrica CT-style
+- **✅ Structured logging** en todos los módulos
 
 ### Lo que FALTA (todo lo crítico)
 - **104 valores numéricos en rojo** en Results que necesitan datos reales
 - **34 valores en rojo** en Discussion que dependen de los de Results
 - **11 valores en rojo** en Conclusions
 - **23 figuras PLACEHOLDER** que necesitan imágenes reales de experimentos
-- **Implementación completa** de todo el código (CNN, Transformer, decoders, pipeline)
-- **Experimentos** que generen los datos reales
+- **Correr notebooks en Kaggle GPU** (2-3 horas cada uno → genera todos los datos)
 - **5 notas "NOTE TO FUTURE ME"** pendientes
 
 ---
@@ -23,29 +26,16 @@
 
 ---
 
-### FASE 0: Setup del Entorno (1 semana)
+### FASE 0: Setup del Entorno — ✅ COMPLETADA
 
-**Objetivo:** Tener todo listo para programar sin fricción.
+**Estado:** COMPLETADA. Repo en GitHub, entorno funcional, tests pasan.
 
-- [ ] **0.1** Crear repositorio Git para el código de la tesis
-- [ ] **0.2** Configurar entorno Python (PyTorch, torchvision, matplotlib, scipy, roboticstoolbox-python, PuLP, Open3D)
-- [ ] **0.3** Configurar CoppeliaSim + ZeroMQ remote API (Python)
-- [ ] **0.4** Descargar y preparar dataset FUSeg (1,210 imágenes, usar las 934 filtradas)
-- [ ] **0.5** Verificar que el modelo URDF del UR5 + gantry funciona en CoppeliaSim
-- [ ] **0.6** Definir estructura de carpetas del proyecto:
-  ```
-  /code
-    /module1_boundary_detection
-    /module2_3d_reconstruction
-    /module3_trajectory_generation
-    /module4_robot_planning
-    /module5_execution
-    /module6_validation
-    /poc_baseline
-    /data
-    /results
-    /figures
-  ```
+- [x] **0.1** Crear repositorio Git → `github.com/dianisay/diana-bioprinting-pipeline`
+- [x] **0.2** Configurar entorno Python (PyTorch, torchvision, matplotlib, scipy, PuLP, Open3D, OpenCV)
+- [ ] **0.3** Configurar CoppeliaSim + ZeroMQ remote API (Python) — pendiente
+- [ ] **0.4** Descargar y preparar dataset FUSeg (1,210 imágenes, usar las 934 filtradas) — pendiente (usando synthetic por ahora)
+- [ ] **0.5** Verificar que el modelo URDF del UR5 + gantry funciona en CoppeliaSim — pendiente
+- [x] **0.6** Estructura de carpetas definida (models/, modules/, training/, data/, tests/, notebooks/, utils/)
 
 ---
 
@@ -59,136 +49,127 @@ Incluye: U-Net entrenada en FUSeg, pipeline G-Code funcional, simulación en Cop
 
 ---
 
-### FASE 2: Módulo 1 — CNN-Transformer con Polar Decoder (4-5 semanas)
+### FASE 2: Módulo 1 — CNN-Transformer con Polar Decoder — ✅ CÓDIGO COMPLETO
 
-**Objetivo:** El corazón computacional de la tesis. Implementar la arquitectura desde cero y correr el ablation study.
+**Estado:** Todo implementado y testeado. Falta correr `01_ablation_study_kaggle.ipynb` en GPU.
 
-**Prioridad:** CRÍTICA — es LA contribución principal.
+**Prioridad:** CRÍTICA — es LA contribución principal (2D ablation component).
 
-#### 2.1 Preparación de Datos
-- [ ] Convertir máscaras FUSeg a ground-truth polar: centroide + N radios equiangulares
-- [ ] Implementar generador de wounds sintéticas (2,000 imágenes): formas star-convex aleatorias sobre texturas de piel
-- [ ] Verificar que la conversión polar↔cartesiano es exacta (test unitario)
-- [ ] Split train/val/test (ej. 70/15/15 o similar)
+#### 2.1 Preparación de Datos ✅
+- [x] Implementar generador de wounds sintéticas (2,000 imágenes): `data/synthetic_generator.py`
+- [x] Conversión polar↔cartesiano: `data/polar_conversion.py` (test verified)
+- [x] Split train/val/test (70/15/15): `data/dataset.py`
 
-#### 2.2 Encoder (ResNet-50 + Transformer)
-- [ ] Implementar ResNet-50 backbone (pretrained ImageNet) → feature tensor 16x16x2048
-- [ ] 1x1 Conv projection → 16x16x256
-- [ ] Learned 2D positional encoding (256-dim)
-- [ ] Transformer encoder: 6 layers, 8 heads, d=256
-- [ ] Verificar shapes en cada paso con un forward pass de prueba
+#### 2.2 Encoder (ResNet-50 + Transformer) ✅
+- [x] ResNet-50 backbone (pretrained ImageNet) → `models/encoder.py`
+- [x] 1x1 Conv projection → 256-dim
+- [x] Learned 2D positional encoding
+- [x] Transformer encoder: 6 layers, 8 heads, d=256
+- [x] Forward pass verified: `tests/test_models.py`
 
-#### 2.3 Decoder v3 — Polar (propuesto)
-- [ ] Centroid head: global average pooling → FC → (x_c, y_c)
-- [ ] Radii head: global average pooling → FC → N radios
-- [ ] Conversión polar→cartesiano (Eq. 2 del capítulo)
-- [ ] Implementar loss combinada: L_centroid + L_radii + L_points (con λ_c=1, λ_r=1, λ_p=0.5)
+#### 2.3 Decoder v3 — Polar (propuesto) ✅
+- [x] Centroid head + Radii head: `models/polar_decoder.py`
+- [x] Loss combinada: L_centroid + L_radii + L_points
 
-#### 2.4 Decoder v1 — Parallel Cartesian (DETR-style)
-- [ ] N learned query vectors + cross-attention decoder
-- [ ] Hungarian matching loss
-- [ ] Mismo encoder que v3
+#### 2.4 Decoder v1 — DETR-style ✅
+- [x] N learned query vectors + cross-attention + Hungarian loss: `models/detr_decoder.py`
 
-#### 2.5 Decoder v2 — Autoregressive Cartesian
-- [ ] Transformer decoder autoregresivo (teacher forcing en entrenamiento)
-- [ ] Mismo encoder que v3
+#### 2.5 Decoder v2 — Autoregressive ✅
+- [x] Teacher forcing + autoregressive decoder: `models/autoregressive_decoder.py`
 
 #### 2.6 Entrenamiento y Ablation
-- [ ] Entrenar v1, v2, v3 con hiperparámetros idénticos (Adam, lr=1e-4, batch 8, max 100 epochs, early stopping patience=10)
+- [x] Training loop con early stopping: `training/train.py`
+- [x] Evaluation pipeline: `training/evaluate.py`
+- [x] Ablation runner: `training/ablation.py`
+- [x] Kaggle notebook listo: `notebooks/01_ablation_study_kaggle.ipynb`
+- [ ] **⏳ PENDIENTE: Correr notebook 01 en Kaggle GPU (~2-3 horas)**
 - [ ] **DATOS A EXTRAER (reemplazan los rojos del ablation en Ch.4):**
   - Para cada decoder: Chamfer dist, Hausdorff dist, IoU, closure error, ordering %
-  - Training/val loss curves (total + 3 componentes para v3)
+  - Training/val loss curves
   - Epoch de convergencia
-  - Grid cualitativo de predicciones (buenas + failure cases)
-  - Análisis del ~8% star-convex violations
+  - Grid cualitativo de predicciones
 
 ---
 
-### FASE 3: Módulo 2 — Reconstrucción 3D (2 semanas)
+### FASE 3: Módulo 2 — Reconstrucción Volumétrica CT-Style — ✅ CÓDIGO COMPLETO
 
-**Objetivo:** Reconstruir superficie 3D de herida desde múltiples vistas en simulación.
+**Estado:** Implementado como learned approach (no MVS clásico). Falta correr `02_volumetric_ablation_kaggle.ipynb` en GPU.
 
-**Prioridad:** ALTA — alimenta todo Module 3.
+**Prioridad:** ALTA — es la PRINCIPAL contribución novel de la tesis.
 
-- [ ] Configurar cámara virtual eye-in-hand en CoppeliaSim
-- [ ] Crear 20 modelos de wound sintéticos (meshes 3D con geometría variable)
-- [ ] Implementar adquisición multi-view: robot se posiciona en 5 viewpoints, captura RGB
-- [ ] Obtener poses de cámara vía FK del robot
-- [ ] Implementar pipeline MVS (o usar librería existente como OpenCV stereo / Open3D)
-- [ ] Aplicar boundary masking de Module 1 para filtrar background
+**Decisión de diseño:** En lugar de MVS clásico con CoppeliaSim, se implementó un encoder volumétrico CT-style que aprende directamente la reconstrucción 3D end-to-end. Esto es más novedoso academicamente y genera output estructurado (boundary + depth + layer-fill) listo para bioprinting.
+
+- [x] VolumetricWoundEncoder3D: 8× ResNet-18 + volumetric fusion + 3D Transformer → `models/volumetric_encoder.py`
+- [x] PolarDecoder3DLayered: predice boundary + depth + layer-fill → `models/volumetric_decoder.py`
+- [x] MultiViewWoundDataset: genera datos sintéticos multi-view → `data/multiview_dataset.py`
+- [x] VolumetricWoundLoss: boundary MSE + depth MAE + layer BCE → `models/volumetric_decoder.py`
+- [x] Bug fix: channel mismatch en ResNet18Backbone (corregido y testeado)
+- [x] Kaggle notebook listo: `notebooks/02_volumetric_ablation_kaggle.ipynb`
+- [ ] **⏳ PENDIENTE: Correr notebook 02 en Kaggle GPU (~1-2 horas)**
 - [ ] **DATOS A EXTRAER:**
-  - Mean/Max surface RMS error
-  - Mean depth MAE
-  - Reconstruction completeness %
-  - Error con y sin boundary masking
-  - Visualizaciones: GT mesh vs reconstructed vs error heatmap
+  - Boundary Chamfer distance (mm)
+  - Depth MAE (mm)
+  - Layer-fill accuracy / BCE loss
+  - Honeycomb feasibility (%)
+  - Inference time (ms)
+  - Comparison vs traditional MVS (speed + structured output)
 
 ---
 
-### FASE 4: Módulo 3 — Generación de Trayectoria 3D (3 semanas)
+### FASE 4: Módulo 3 — Generación de Trayectoria 3D — ✅ CÓDIGO COMPLETO
 
-**Objetivo:** Conformal honeycomb + TSP + toolpath completo.
+**Estado:** Todo implementado y testeado (`tests/test_trajectory_pipeline.py` pasa).
 
 **Prioridad:** ALTA — segunda contribución principal.
 
-#### 4.1 Conformal Mapping
-- [ ] Implementar Kasa circle fit para superficies cilíndricas (numpy/scipy)
-- [ ] Implementar conformal map: superficie 3D → rectángulo (u,v)
-- [ ] Implementar tangent-plane fallback para superficies planas
-- [ ] Verificar distorsión angular (target: <3° para cilindros, <8° en zonas de alta curvatura)
+#### 4.1 Conformal Mapping ✅
+- [x] Kasa circle fit para superficies cilíndricas: `modules/conformal_mapping.py`
+- [x] Conformal map: superficie 3D → rectángulo (u,v)
+- [x] UV → XYZ inverse mapping + normal computation
 
-#### 4.2 Honeycomb Lattice
-- [ ] Generar grid hexagonal en dominio (u,v) con los parámetros del capítulo
-- [ ] Filtrar celdas fuera del wound boundary
-- [ ] Calcular centroides de celdas
+#### 4.2 Honeycomb Lattice ✅
+- [x] Grid hexagonal: `modules/honeycomb.py`
+- [x] Centroides de celdas + perimeter generation
 
-#### 4.3 TSP/MILP Optimization
-- [ ] Formular MILP con MTZ constraints (Eq. del capítulo)
-- [ ] Implementar dummy depot node (open-path → closed-tour trick)
-- [ ] Cost matrix: Euclidean + rise penalty (h_rise=20mm)
-- [ ] Resolver con PuLP / scipy.milp (timeout 60s, fallback column-by-column)
-- [ ] **DATOS A EXTRAER:**
-  - Travel distance naive vs optimizado
-  - % reducción
-  - Mean solve time
-  - Optimality gap
-  - Fallback count
+#### 4.3 TSP/MILP Optimization ✅
+- [x] MILP con MTZ constraints + PuLP: `modules/tsp_solver.py`
+- [x] Dummy depot node (open-path → closed-tour)
+- [x] Cost matrix: Euclidean + rise penalty
+- [x] Test: ~7.5% travel reduction on test case
 
-#### 4.4 Per-Cell Toolpath + 3D Mapping
-- [ ] Implementar 5-phase sequence: approach → descend → perimeter trace (L layers) → center deposit → retract
-- [ ] Mapear (u,v,h) → 3D via inverse conformal map
-- [ ] Calcular normales y orientación de tool
-- [ ] Two-stage deposition support (scaffold walls + hydrogel fill)
-- [ ] **DATOS A EXTRAER:**
+#### 4.4 Per-Cell Toolpath + 3D Mapping ✅
+- [x] Full trajectory planner: `modules/trajectory_planner.py`
+- [x] Outline + fill + deposit trajectories
+- [x] UV → XYZ + nozzle orientations + workspace transform
+- [x] Test: 23,520 trajectory points generated correctly
+
+- [ ] **DATOS A EXTRAER (cuando se corra end-to-end con datos reales):**
   - Wound coverage %
   - Travel-to-deposition ratio
-  - Mean path curvature
+  - TSP travel reduction % (ya verificado ~7.5% en test)
   - Total waypoints per wound
-  - Visualizaciones 3D del toolpath completo
 
 ---
 
-### FASE 5: Módulo 4 — Motion Planning y Control (2 semanas)
+### FASE 5: Módulo 4 — Motion Planning y Control — ✅ CÓDIGO COMPLETO
 
-**Objetivo:** IK + manipulability + PID para el sistema 8-DOF.
+**Estado:** IK + APF + Super-Twisting implementados y testeados. CoppeliaSim integration pendiente.
 
 **Prioridad:** ALTA — cierra el loop de ejecución.
 
-- [ ] Modelo cinemático 8-DOF con roboticstoolbox-python o implementación propia (numpy): 2 prismatic + 6 revolute UR5
-- [ ] IK numérico con scipy.optimize (Levenberg-Marquardt) o roboticstoolbox-python
-- [ ] Optimización de manipulability: explotar redundancia para maximizar μ(q)
-- [ ] Collision avoidance geométrico (verificar distancias mínimas)
-- [ ] PID velocity controller por joint (clase Python pura con numpy)
-- [ ] Ejecutar trayectorias de las 20 wounds en CoppeliaSim (Python ZeroMQ API)
-- [ ] **DATOS A EXTRAER:**
+- [x] Modelo cinemático 8-DOF (2P + 6R UR5): `modules/robot_model.py`
+- [x] FK + Jacobian + Manipulability
+- [x] IK numérico multi-seed con DLS: `modules/inverse_kinematics.py`
+- [x] APF (Artificial Potential Fields) para limit avoidance
+- [x] Super-Twisting sliding-mode control refinement
+- [x] Test: 5/5 IK solutions found with <10mm error
+- [ ] PID velocity controller (pendiente para CoppeliaSim)
+- [ ] Ejecutar trayectorias en CoppeliaSim (Python ZeroMQ API)
+- [ ] **DATOS A EXTRAER (cuando se integre con CoppeliaSim):**
   - IK success rate (% waypoints resueltos)
-  - Manipulability: mean/min μ para 8-DOF vs 6-DOF
-  - % waypoints con μ < 0.005
-  - Tracking error: mean/RMS/max position, mean orientation
-  - Mean convergence time per waypoint
-  - Deposition uniformity (σ layer thickness)
-  - Plot de commanded vs achieved trajectory
-  - Plot de manipulability profile
+  - Manipulability: mean/min μ
+  - Tracking error: mean/RMS/max position
+  - Mean orientation error
 
 ---
 
@@ -288,21 +269,21 @@ Incluye: U-Net entrenada en FUSeg, pipeline G-Code funcional, simulación en Cop
 
 ---
 
-## Cronograma Sugerido
+## Cronograma Actualizado (Junio 2026)
 
-| Semana | Fase | Entregable |
-|--------|------|------------|
-| — | ~~F1: PoC Baseline~~ | **COMPLETADA (2025)** |
-| 1 | F0: Setup | Entorno listo, datos descargados |
-| 2-6 | F2: CNN-Transformer + Ablation | 3 decoders entrenados, ablation study completo |
-| 7-8 | F3: Reconstrucción 3D | MVS pipeline en 20 wounds |
-| 9-11 | F4: Trayectoria 3D | Honeycomb + TSP + toolpath completo |
-| 12-13 | F5: Motion Planning | IK + manipulability + tracking results |
-| 14-16 | F6-F7: Execution + E2E | Pipeline completo corriendo autónomamente |
-| 16.5-18.5 | F8 (tentativa) | Phantoms si hay tiempo/recursos |
-| 16-18.5 | F9: Cierre documento | Valores reales, figuras, compilación final |
+| Fase | Estado | Lo que falta |
+|------|--------|--------------|
+| F0: Setup | ✅ COMPLETADA | — |
+| F1: PoC Baseline | ✅ COMPLETADA (2025) | — |
+| F2: CNN-Transformer 2D | ✅ CÓDIGO COMPLETO | Correr notebook 01 en Kaggle (~3h) |
+| F3: Volumetric CT-style | ✅ CÓDIGO COMPLETO | Correr notebook 02 en Kaggle (~2h) |
+| F4: Trayectoria 3D | ✅ CÓDIGO COMPLETO | Métricas con datos reales |
+| F5: Motion Planning | ✅ CÓDIGO COMPLETO | CoppeliaSim integration |
+| F6-F7: Execution + E2E | ❌ Pendiente | Depende de CoppeliaSim |
+| F8: Phantoms | ❌ Pendiente (future work) | No bloqueante |
+| F9: Cierre documento | En progreso | Valores reales + figuras |
 
-**Total estimado: ~4.5 meses (~18 semanas)** (asumiendo dedicación de tiempo completo)
+**Próximo paso inmediato:** Correr notebooks 01 y 02 en Kaggle GPU para generar los números reales de la tesis.
 
 ---
 
