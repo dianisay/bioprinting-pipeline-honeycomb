@@ -1,4 +1,4 @@
-"""8-DOF Robot Model: XY Gantry (2 prismatic) + 6R Arm (myCobot).
+"""8-DOF Robot Model: XY Gantry (2 prismatic) + 6R Arm (UR5).
 
 Forward kinematics via DH parameters, Jacobian computation,
 and manipulability analysis. All from scratch using numpy.
@@ -11,28 +11,29 @@ import numpy as np
 from typing import Tuple, Optional
 
 
-# myCobot DH parameters (modified DH convention)
-# [alpha, a (mm), d (mm), theta_offset]
-MYCOBOT_DH = np.array([
-    [0.0,       0.0,   173.9,  0.0],       # J1
-    [np.pi/2,   0.0,   0.0,    np.pi/2],   # J2 (offset +pi/2)
-    [0.0,       135.0, 0.0,    0.0],        # J3
-    [0.0,       120.0, 88.78,  np.pi/2],    # J4 (offset +pi/2)
-    [np.pi/2,   0.0,   95.0,   0.0],        # J5
-    [-np.pi/2,  0.0,   65.5,   0.0],        # J6
+# UR5 DH parameters (modified DH / Craig convention)
+# [alpha_{i-1}, a_{i-1} (mm), d_i (mm), theta_offset]
+# Source: Universal Robots UR5 technical specification
+UR5_DH = np.array([
+    [0.0,        0.0,     89.159,  0.0],    # J1
+    [np.pi/2,    0.0,      0.0,    0.0],    # J2
+    [0.0,       -425.0,    0.0,    0.0],    # J3
+    [0.0,       -392.25, 109.15,   0.0],    # J4
+    [np.pi/2,    0.0,     94.65,   0.0],    # J5
+    [-np.pi/2,   0.0,     82.3,    0.0],    # J6
 ])
 
 # Joint limits (radians) for full 8-DOF system
 # [prism_x, prism_y, J1, J2, J3, J4, J5, J6]
 JOINT_LIMITS = np.array([
-    [-0.5, 0.5],     # prism_x (meters)
-    [-0.5, 0.5],     # prism_y (meters)
-    [-2.88, 2.88],   # J1 (~165 deg)
-    [-2.88, 2.88],   # J2
-    [-2.88, 2.88],   # J3
-    [-2.88, 2.88],   # J4
-    [-2.88, 2.88],   # J5
-    [-2.88, 2.88],   # J6
+    [-0.5, 0.5],          # prism_x (meters)
+    [-0.5, 0.5],          # prism_y (meters)
+    [-2*np.pi, 2*np.pi],  # J1 (±360°, UR5 spec)
+    [-2*np.pi, 2*np.pi],  # J2
+    [-2*np.pi, 2*np.pi],  # J3
+    [-2*np.pi, 2*np.pi],  # J4
+    [-2*np.pi, 2*np.pi],  # J5
+    [-2*np.pi, 2*np.pi],  # J6
 ])
 
 JOINT_NAMES = ['prism_x', 'prism_y', 'J1', 'J2', 'J3', 'J4', 'J5', 'J6']
@@ -64,7 +65,7 @@ def dh_matrix(alpha: float, a: float, d: float, theta: float) -> np.ndarray:
 
 
 def forward_kinematics_6r(q6: np.ndarray) -> np.ndarray:
-    """Compute FK for the 6R arm (myCobot) from joint angles.
+    """Compute FK for the 6R arm (UR5) from joint angles.
 
     Args:
         q6: (6,) joint angles in radians
@@ -74,7 +75,7 @@ def forward_kinematics_6r(q6: np.ndarray) -> np.ndarray:
     """
     T = np.eye(4)
     for i in range(6):
-        alpha, a, d, theta_off = MYCOBOT_DH[i]
+        alpha, a, d, theta_off = UR5_DH[i]
         theta = q6[i] + theta_off
         T = T @ dh_matrix(alpha, a, d, theta)
     return T

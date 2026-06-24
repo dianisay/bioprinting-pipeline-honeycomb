@@ -7,5 +7,6 @@
 - trajectory_planner: Full trajectory generation
 - robot_model: 8-DOF FK and Jacobian
 - inverse_kinematics: Numerical IK with APF + Super-Twisting
+- wound_to_trajectory: Bridge from decoder output to trajectory planner
 - visualization_3d: matplotlib-based 3D plotting
 """

@@ -180,11 +180,11 @@ def plan_full_trajectory(
     # UV → XYZ
     traj_xyz, normals = uv_to_xyz(traj_uv, cyl_radius, cyl_cy, cyl_cz, u_offset, v_offset)
 
-    # Nozzle orientations
-    R_targets = compute_nozzle_orientations(normals)
-
     # Workspace transform (mm→m, base rotation, Z offset)
     traj_m, normals_t = apply_workspace_transform(traj_xyz, normals, z_offset)
+
+    # Nozzle orientations from transformed normals (same frame as traj_m)
+    R_targets = compute_nozzle_orientations(normals_t)
 
     n_pts = traj_uv.shape[1]
     logger.info("Trajectory planned: %d points (UV -> XYZ -> workspace)", n_pts)

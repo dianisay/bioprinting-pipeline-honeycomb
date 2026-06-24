@@ -188,19 +188,29 @@ class MultiViewWoundDataset:
 
         # Create directories
         train_dir = self.output_dir / "train"
+        val_dir = self.output_dir / "val"
         test_dir = self.output_dir / "test"
         train_dir.mkdir(parents=True, exist_ok=True)
+        val_dir.mkdir(parents=True, exist_ok=True)
         test_dir.mkdir(parents=True, exist_ok=True)
 
-        # Split: 80% train, 20% test
-        num_train = int(0.8 * self.num_samples)
+        # Split: 70% train, 15% val, 15% test
+        num_train = int(0.70 * self.num_samples)
+        num_val = int(0.15 * self.num_samples)
 
         all_metadata = []
 
         for sample_idx in range(self.num_samples):
             # Determine split
-            is_train = sample_idx < num_train
-            split_dir = train_dir if is_train else test_dir
+            if sample_idx < num_train:
+                split_dir = train_dir
+                split_name = "train"
+            elif sample_idx < num_train + num_val:
+                split_dir = val_dir
+                split_name = "val"
+            else:
+                split_dir = test_dir
+                split_name = "test"
 
             # Create sample directory
             sample_name = f"sample_{sample_idx:04d}"
@@ -235,17 +245,19 @@ class MultiViewWoundDataset:
                 "centroid": wound.centroid.tolist(),
                 "mean_radius": float(wound.radii.mean()),
                 "mean_depth": float(wound.depth_profile.mean()),
-                "split": "train" if is_train else "test",
+                "split": split_name,
             })
 
             if (sample_idx + 1) % 10 == 0:
                 print(f"Generated {sample_idx + 1}/{self.num_samples} samples")
 
-        logger.info("Dataset generated: %d train, %d test, %d views/sample -> %s",
-                    num_train, self.num_samples - num_train, self.num_views, self.output_dir)
+        num_test = self.num_samples - num_train - num_val
+        logger.info("Dataset generated: %d train, %d val, %d test, %d views/sample -> %s",
+                    num_train, num_val, num_test, self.num_views, self.output_dir)
         print(f"\n✓ Dataset saved to {self.output_dir}")
         print(f"  Train: {num_train} samples")
-        print(f"  Test: {self.num_samples - num_train} samples")
+        print(f"  Val: {num_val} samples")
+        print(f"  Test: {num_test} samples")
         print(f"  Views per sample: {self.num_views}")
         print(f"  Image size: {self.image_size}×{self.image_size}")
 
