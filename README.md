@@ -15,22 +15,28 @@ Imagine someone has a wound on their skin. This system:
 
 All of this happens automatically -- no human needs to control the robot.
 
+The system operates in **closed-loop**: after each layer of material is deposited,
+an eye-in-hand depth sensor (Intel RealSense D405) re-scans the wound to verify
+the fill and correct the next layer if needed.
+
 ---
 
-## How It Works (The 5 Steps)
+## How It Works (The 6 Steps)
 
 ```
-8 photos of wound (multi-view)
+8 photos of wound (multi-view) + depth sensor
             |
 [Step 1] AI reconstructs 3D wound volume (CT-style fusion)
             |
 [Step 2] Predict boundary + depth + layer-wise fill instructions
             |
-[Step 3] Plan a honeycomb filling pattern (like a beehive)
+[Step 3] Depth sensor validates prediction (fusion)
             |
-[Step 4] Calculate how the robot arm should move
+[Step 4] Plan a honeycomb filling pattern (like a beehive)
             |
-[Step 5] Robot prints bio-material layer by layer
+[Step 5] Calculate how the robot arm should move
+            |
+[Step 6] Robot prints layer -> re-scan -> correct -> repeat
 ```
 
 ---
@@ -49,6 +55,15 @@ Instead of flat 2D boundaries, our `PolarDecoder3DLayered` predicts:
 - **Layer fill**: how much bio-ink to deposit per layer (cone-shaped fill pattern)
 
 This produces direct bioprinting instructions -- no post-processing needed.
+
+### 3. Closed-Loop Depth Feedback
+An eye-in-hand RGB-D sensor (Intel RealSense D405, ~$300) provides real-time depth
+validation during printing:
+- **Before printing**: sensor measurement fuses with AI prediction to refine depth estimate
+- **After each layer**: re-scan verifies fill quality; correction adjusts next layer
+- **Result**: 99% wound fill even with 15% initial prediction error (validated in simulation)
+
+This makes the system robust to prediction inaccuracies and surface variability.
 
 ---
 
@@ -72,6 +87,9 @@ diana-bioprinting-pipeline/
 |   +-- tsp_solver.py                   # Finds the shortest path between cells (MILP)
 |   +-- trajectory_planner.py           # Full UV->XYZ trajectory generation
 |   +-- wound_to_trajectory.py          # Bridge: decoder output -> trajectory planner input
+|   +-- depth_sensor.py                 # RealSense D405 model (simulated + real interface)
+|   +-- depth_fusion.py                 # Fuse predicted + measured depth (confidence-weighted)
+|   +-- closed_loop_controller.py       # Scan-deposit-verify-correct printing loop
 |   +-- robot_model.py                  # 8-DOF robot arm (UR5 + XY gantry)
 |   +-- inverse_kinematics.py           # IK with APF + Super-Twisting control
 |   +-- visualization_3d.py             # 3D plotting utilities

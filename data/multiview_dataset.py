@@ -239,6 +239,10 @@ class MultiViewWoundDataset:
             layer_amounts = wound.get_layer_fill_pattern(self.num_layers)
             np.save(sample_dir / "layer_amounts.npy", layer_amounts)
 
+            # Simulated depth sensor output (RealSense D405 noise model)
+            sensor_depth = self._simulate_depth_sensor(wound.depth_profile)
+            np.save(sample_dir / "sensor_depth.npy", sensor_depth)
+
             # Metadata
             all_metadata.append({
                 "sample_name": sample_name,
@@ -333,6 +337,41 @@ class MultiViewWoundDataset:
         image = np.clip(image.astype(np.int16) + noise, 0, 255).astype(np.uint8)
 
         return image
+
+    def _simulate_depth_sensor(self, true_depth_mm: np.ndarray) -> np.ndarray:
+        """Simulate RealSense D405 depth measurement of the wound profile.
+
+        Adds realistic noise, quantization, and random dropouts to the
+        ground truth depth to produce what a physical sensor would see.
+
+        Args:
+            true_depth_mm: (num_radii,) true wound depth in mm
+
+        Returns:
+            (num_radii,) simulated sensor measurement in mm (0 = invalid pixel)
+        """
+        depth = true_depth_mm.copy().astype(np.float32)
+
+        # Working distance ~150mm (nozzle-to-wound typical distance)
+        working_distance = 150.0
+
+        # Distance-dependent Gaussian noise (D405 model: 0.3mm at 100mm)
+        effective_distance = working_distance + depth
+        noise_sigma = 0.3 * (effective_distance / 100.0) ** 2
+        noise = np.random.normal(0, noise_sigma).astype(np.float32)
+        depth += noise
+
+        # Quantization to 0.1mm
+        depth = np.round(depth / 0.1) * 0.1
+
+        # Specular dropout (~5% of samples become invalid)
+        dropout_mask = np.random.random(depth.shape) < 0.05
+        depth[dropout_mask] = 0.0
+
+        # Clamp negatives
+        depth = np.maximum(depth, 0.0)
+
+        return depth
 
     def _generate_skin_background(self, size: int) -> np.ndarray:
         """Generate realistic skin-tone background."""
@@ -434,12 +473,22 @@ class MultiViewWoundLoader:
         depth = torch.tensor(np.load(sample_dir / "depth.npy"), dtype=torch.float32)
         layer_amounts = torch.tensor(np.load(sample_dir / "layer_amounts.npy"), dtype=torch.float32)
 
+        # Load sensor depth if available (for depth fusion training)
+        sensor_depth_path = sample_dir / "sensor_depth.npy"
+        if sensor_depth_path.exists():
+            sensor_depth = torch.tensor(
+                np.load(sensor_depth_path), dtype=torch.float32
+            )
+        else:
+            sensor_depth = torch.zeros_like(depth)
+
         return {
             "views": views,
             "centroid": centroid,
             "radii": radii,
             "depth": depth,
             "layer_amounts": layer_amounts,
+            "sensor_depth": sensor_depth,
         }
 
 

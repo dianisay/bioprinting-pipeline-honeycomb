@@ -212,3 +212,44 @@ def bridge_decoder_to_planner(
         "boundary_x_mm": geometry["boundary_x_mm"],
         "boundary_y_mm": geometry["boundary_y_mm"],
     }
+
+
+def apply_depth_correction(
+    bridge_result: Dict,
+    corrected_depth_mm: np.ndarray,
+    corrected_layer_amounts: Optional[np.ndarray] = None,
+) -> Dict:
+    """Update bridge result with corrected depth from sensor fusion.
+
+    Called during closed-loop operation when the depth sensor provides
+    a refined measurement that disagrees with the initial prediction.
+    Recomputes void_bounds with the new depth values.
+
+    Args:
+        bridge_result: original output from bridge_decoder_to_planner()
+        corrected_depth_mm: (num_radii,) fused depth from depth_fusion module
+        corrected_layer_amounts: (num_radii, num_layers) optional updated fill plan
+
+    Returns:
+        Updated bridge_result dict with corrected void_bounds
+    """
+    updated = bridge_result.copy()
+
+    # Update shell thickness (mean of corrected depth)
+    new_shell_thickness = float(corrected_depth_mm.mean())
+    old_shell_thickness = bridge_result["void_bounds"]["shell_thickness"]
+
+    updated["depth_profile_mm"] = corrected_depth_mm
+    updated["void_bounds"] = bridge_result["void_bounds"].copy()
+    updated["void_bounds"]["shell_thickness"] = new_shell_thickness
+
+    if corrected_layer_amounts is not None:
+        updated["layer_amounts"] = corrected_layer_amounts
+
+    logger.info(
+        "Depth correction applied: shell %.1fmm -> %.1fmm (delta=%.2fmm)",
+        old_shell_thickness, new_shell_thickness,
+        new_shell_thickness - old_shell_thickness,
+    )
+
+    return updated

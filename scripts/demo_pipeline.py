@@ -172,6 +172,46 @@ def main():
     print(f"  Mean position error: {position_errors.mean()*1000:.2f} mm")
     print(f"  IK time ({len(subset_positions)} pts): {t_ik*1000:.0f}ms")
 
+    # --- Stage 7: Closed-Loop Printing (Simulated) ---
+    print("\n" + "-" * 50)
+    print("STAGE 7: Closed-Loop Printing (Depth Sensor Feedback)")
+    print("-" * 50)
+
+    from modules.depth_sensor import DepthSensorModel
+    from modules.closed_loop_controller import PrintingLoopController
+
+    sensor = DepthSensorModel(
+        resolution=(64, 1),
+        working_distance_mm=150.0,
+        noise_sigma_base_mm=0.3,
+        specular_dropout_rate=0.05,
+        seed=42,
+    )
+
+    controller = PrintingLoopController(
+        sensor=sensor,
+        layer_height_mm=0.4,
+        num_layers=4,
+        correction_gain=0.7,
+    )
+
+    # Simulate wound depth (use bridge result's depth profile, clamped for demo)
+    sim_depth = np.clip(bridge_result["depth_profile_mm"], 0.5, 6.0)
+
+    t0 = time.time()
+    cl_result = controller.run_full_cycle(
+        true_depth_mm=sim_depth,
+        predicted_depth_mm=sim_depth * 0.85,  # simulate 15% prediction error
+    )
+    t_cl = time.time() - t0
+
+    print(f"  Layers deposited: {cl_result['layers_deposited']}")
+    print(f"  Initial depth: {cl_result['initial_depth_mean_mm']:.2f} mm")
+    print(f"  Final depth:   {cl_result['final_depth_mean_mm']:.2f} mm")
+    print(f"  Fill achieved: {cl_result['fill_percentage']:.1f}%")
+    print(f"  Per-layer errors: {['%.2f' % e for e in cl_result['layer_errors_mm']]}")
+    print(f"  Closed-loop time: {t_cl*1000:.0f}ms")
+
     # --- Summary ---
     print("\n" + "=" * 70)
     print("  PIPELINE SUMMARY")
@@ -184,8 +224,10 @@ def main():
     print(f"  Trajectory:     {traj_result['n_points']} points on cylinder")
     print(f"  IK success:     {n_solved}/{len(subset_positions)} "
           f"({100*n_solved/len(subset_positions):.0f}%)")
-    print(f"  Total time:     {(t_enc+t_dec+t_traj+t_ik)*1000:.0f}ms")
-    print(f"\n  Status: END-TO-END PIPELINE FUNCTIONAL")
+    print(f"  Closed-loop:    {cl_result['fill_percentage']:.0f}% fill in "
+          f"{cl_result['layers_deposited']} layers")
+    print(f"  Total time:     {(t_enc+t_dec+t_traj+t_ik+t_cl)*1000:.0f}ms")
+    print(f"\n  Status: END-TO-END PIPELINE WITH CLOSED-LOOP FEEDBACK FUNCTIONAL")
     print("=" * 70)
 
 
