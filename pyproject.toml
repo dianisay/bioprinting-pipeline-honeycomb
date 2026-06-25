@@ -43,8 +43,9 @@ hardware = [
 ]
 
 [project.urls]
-Repository = "https://github.com/dianisay/diana-bioprinting-pipeline"
-Thesis = "https://github.com/dianisay/livemesh"
+Repository = "https://github.com/dianisay/bioprinting-pipeline-honeycomb"
+"Phase 2 (MIT)" = "https://github.com/dianisay/bioprinting-pipeline-livemesh"
+"Unified" = "https://github.com/dianisay/bioprinting-pipeline-multi-strategy-toolpath"
 
 [tool.setuptools.packages.find]
 include = ["models*", "modules*", "training*", "data*", "utils*"]

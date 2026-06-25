@@ -8,7 +8,9 @@
 
 > **Phase 1** of the doctoral thesis *"CNN-Based ML for 3D Motion Planning and Control in In-Situ Robotic Bioprinters"* ? developed at [Tecnologico de Monterrey](https://tec.mx).
 >
-> For the MIT collaboration extension (geodesic toolpaths, DeepCurrents surface reconstruction), see [LiveMesh](https://github.com/dianisay/livemesh).
+> For the MIT collaboration extension (geodesic toolpaths, DeepCurrents surface reconstruction), see [bioprinting-pipeline-livemesh](https://github.com/dianisay/bioprinting-pipeline-livemesh).
+>
+> For the unified multi-strategy system (honeycomb + geodesic per layer), see [bioprinting-pipeline-multi-strategy-toolpath](https://github.com/dianisay/bioprinting-pipeline-multi-strategy-toolpath).
 
 ---
 
@@ -126,8 +128,8 @@ diana-bioprinting-pipeline/
 ## Installation
 
 ```bash
-git clone https://github.com/dianisay/diana-bioprinting-pipeline.git
-cd diana-bioprinting-pipeline
+git clone https://github.com/dianisay/bioprinting-pipeline-honeycomb.git
+cd bioprinting-pipeline-honeycomb
 pip install -e .
 ```
 
@@ -209,7 +211,9 @@ This repository represents the **core bioprinting pipeline** developed at Tecnol
 - **DeepCurrents** surface reconstruction (mesh-free)
 - **Optimal-transport coverage metrics**
 
-That extension lives at [github.com/dianisay/livemesh](https://github.com/dianisay/livemesh).
+That extension lives at [bioprinting-pipeline-livemesh](https://github.com/dianisay/bioprinting-pipeline-livemesh).
+
+The unified system combining both approaches (AI-driven layer decomposition) is at [bioprinting-pipeline-multi-strategy-toolpath](https://github.com/dianisay/bioprinting-pipeline-multi-strategy-toolpath).
 
 ---
 
