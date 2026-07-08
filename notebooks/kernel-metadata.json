@@ -1,0 +1,13 @@
+{
+  "id": "dianisay/honeycomb-02-volumetric-ablation",
+  "title": "Honeycomb 02: Volumetric Ablation Study",
+  "code_file": "02_volumetric_ablation_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": ["dianisay/bioprinting-pipeline-honeycomb"],
+  "competition_sources": [],
+  "kernel_sources": []
+}
