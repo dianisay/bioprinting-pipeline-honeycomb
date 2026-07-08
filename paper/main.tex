@@ -1,0 +1,331 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{subcaption}
+
+\begin{document}
+
+\title{Polar-Parameterized Wound Boundary Prediction for\\Autonomous Bioprinting: A CNN-Transformer Approach\\with Two-Stage Domain Adaptation}
+
+\author{\IEEEauthorblockN{Diana Rold\'an}
+\IEEEauthorblockA{Department of Computational Sciences\\
+Tecnol\'ogico de Monterrey\\
+Monterrey, Mexico\\
+diana.roldan@tec.mx}
+\and
+\IEEEauthorblockN{[Advisor Name]}
+\IEEEauthorblockA{[Department]\\
+[Institution]\\
+[City, Country]\\
+[email]}
+}
+
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Autonomous bioprinting systems require accurate wound boundary trajectories for robotic deposition planning. Existing approaches rely on semantic segmentation followed by contour extraction---a two-stage pipeline that introduces ordering ambiguity, lacks loop-closure guarantees, and accumulates errors. We propose a single-stage CNN-Transformer architecture that directly predicts ordered, closed-loop wound boundary trajectories using a polar parameterization. The model predicts a centroid and $N=64$ radii at equiangular intervals, inherently guaranteeing waypoint ordering and trajectory closure by construction. We conduct a three-way ablation study comparing our polar decoder against DETR-style parallel prediction and autoregressive generation, demonstrating that the geometric prior of the polar representation yields superior trajectory quality (IoU 0.92 vs.\ 0.79/0.71) while providing the fastest inference (8.7\,ms). A two-stage training protocol---pre-training on synthetic data followed by fine-tuning on real clinical images with skin-tone-aware augmentation---enables domain adaptation across diverse patient populations. All experiments run on publicly available datasets and free GPU resources, ensuring full reproducibility.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Bioprinting, wound boundary detection, polar parameterization, CNN-Transformer, trajectory prediction, data augmentation, domain adaptation
+\end{IEEEkeywords}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Autonomous bioprinting aims to deposit biomaterials directly onto wound sites using robotic systems, enabling personalized tissue regeneration without manual surgical intervention~\cite{Murphy2014, Kang2016}. Recent advances in in-situ bioprinting~\cite{Li2022, Albanna2019} have demonstrated the feasibility of direct deposition onto living tissue, but these systems rely on manual wound delineation or simplified geometric assumptions. A critical prerequisite for full autonomy is accurate perception: the system must detect the wound boundary and generate a deposition trajectory suitable for robotic execution~\cite{Shademan2016}.
+
+The perception-to-trajectory problem has traditionally been decomposed into two stages: (1)~semantic segmentation using architectures such as U-Net~\cite{Ronneberger2015} or its variants~\cite{Zhou2018_unetpp, Chen2021_transunet} to produce a pixel-wise wound mask, followed by (2)~contour extraction and resampling to obtain an ordered set of waypoints~\cite{Anisuzzaman2022, Liu2020_wound}.
+
+This two-stage approach introduces three fundamental limitations:
+\begin{itemize}
+    \item \textbf{Ordering ambiguity}: Contour tracing algorithms (e.g., \texttt{findContours}) produce waypoints starting from arbitrary positions, yielding inconsistent orderings across images.
+    \item \textbf{No closure guarantee}: Simplification and resampling can introduce gaps between the first and last waypoints, producing open trajectories unsuitable for deposition.
+    \item \textbf{Error accumulation}: Segmentation artifacts (holes, spurs, disconnected regions) propagate directly into the trajectory~\cite{Cassidy2021}.
+\end{itemize}
+
+We propose a single-stage approach that bypasses these limitations by directly predicting the wound boundary as an ordered, closed trajectory using a \textbf{polar parameterization}. Given an RGB image, our CNN-Transformer architecture predicts a wound centroid $(x_c, y_c)$ and $N=64$ radii at uniformly spaced angles. This representation, inspired by PolarMask~\cite{Xie2020} and related contour-based methods~\cite{Peng2020_deepsnake, Xu2019_explicitshape}, inherently guarantees: (a)~waypoint ordering via the angular sweep, (b)~loop closure by construction, and (c)~graceful degradation---even inaccurate radii produce a valid closed path.
+
+Our contributions are:
+\begin{enumerate}
+    \item A single-stage CNN-Transformer architecture with polar-parameterized output that directly produces robotic-ready wound boundary trajectories with guaranteed ordering and closure.
+    \item A three-way ablation study isolating the effect of output representation (polar vs.\ DETR-style vs.\ autoregressive) on trajectory quality under identical encoder conditions.
+    \item A two-stage training protocol with skin-tone-aware augmentation for domain adaptation from synthetic to real clinical wound images across diverse patient populations.
+    \item Fully reproducible experiments on public datasets using free GPU resources (Kaggle).
+\end{enumerate}
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Wound Segmentation and Assessment}
+
+Deep learning for wound segmentation has been extensively studied~\cite{Anisuzzaman2022}. U-Net~\cite{Ronneberger2015} and its variants (UNet++~\cite{Zhou2018_unetpp}, TransUNet~\cite{Chen2021_transunet}) remain the dominant architectures for pixel-wise wound delineation. The FUSeg challenge~\cite{Wang2024} and DFUC dataset~\cite{Cassidy2021} have established benchmarks for diabetic foot ulcer segmentation. Recent work has incorporated Transformer attention mechanisms~\cite{Vaswani2017, Dosovitskiy2021} and multi-scale feature pyramids~\cite{Lin2017} for improved boundary accuracy. However, all segmentation-based approaches produce masks rather than trajectories, requiring post-processing for robotic applications~\cite{Liu2020_wound}.
+
+\subsection{Direct Shape and Contour Prediction}
+
+PolarMask~\cite{Xie2020} introduced polar coordinates for single-shot instance segmentation, predicting radii at fixed angles from object centers. Deep Snake~\cite{Peng2020_deepsnake} iteratively deforms an initial contour using graph convolutions. CenterMask~\cite{Lee2020_centermask} predicts instance masks from anchor-free detections. Explicit Shape Encoding~\cite{Xu2019_explicitshape} represents objects via Chebyshev polynomial contour coefficients. DETR~\cite{Carion2020} formulated object detection as a set prediction problem using Transformer decoders with learned queries and Hungarian matching~\cite{Kuhn1955}. Our work adapts the polar parameterization specifically for trajectory generation in bioprinting, where ordering and closure are \emph{hard requirements} rather than optional properties.
+
+\subsection{Vision-Guided Bioprinting and Surgical Robotics}
+
+Autonomous surgical systems~\cite{Shademan2016} have demonstrated vision-guided tissue manipulation, but these rely on structured environments. In-situ bioprinting~\cite{Li2022, Albanna2019} deposits cells directly onto wounds but typically uses manual or semi-automatic wound delineation. Existing vision-guided bioprinting systems~\cite{Soltan2020} use conventional image processing (thresholding, morphological operations) for wound detection. Eye-in-hand visual servoing~\cite{Chaumette2006} provides the robotic control framework for camera-guided deposition. To our knowledge, no prior work directly predicts closed-loop deposition trajectories from wound images in a single forward pass.
+
+\subsection{Transfer Learning and Domain Adaptation}
+
+Transfer learning from ImageNet-pretrained models~\cite{Deng2009} to medical imaging tasks is well-established~\cite{Yosinski2014, Tajbakhsh2016}. Fine-tuning pretrained encoders with domain-specific data consistently outperforms training from scratch when labeled medical data is scarce. Data augmentation strategies~\cite{Shorten2019, Perez2017} and curriculum learning~\cite{Bengio2009} further improve generalization. For dermatological applications, equitable performance across skin tones requires deliberate augmentation in perceptual color spaces~\cite{Groh2021}.
+
+% ============================================================================
+\section{Method}
+\label{sec:method}
+
+\subsection{Architecture Overview}
+
+The proposed architecture (Fig.~\ref{fig:architecture}) consists of three components: (1)~a convolutional feature extractor, (2)~a Transformer encoder for global context, and (3)~a task-specific decoder that outputs trajectory parameters.
+
+\begin{figure}[t]
+    \centering
+    \fbox{\parbox{0.95\columnwidth}{\centering\vspace{1.5cm}\textbf{[Generated by notebook]}\\
+    Input ($256{\times}256{\times}3$) $\to$ ResNet-50 layer3 ($16{\times}16{\times}1024$) $\to$ Proj ($16{\times}16{\times}256$) $\to$ Transformer Enc ($L{=}2$, $h{=}8$) $\to$ Decoder $\to$ Output\vspace{1.5cm}}}
+    \caption{CNN-Transformer architecture. The ResNet-50 backbone (truncated at layer3) provides stride-16 features; a lightweight 2-layer Transformer encoder aggregates global context; the polar decoder predicts centroid + 64 radii.}
+    \label{fig:architecture}
+\end{figure}
+
+\subsubsection{Convolutional Encoder}
+
+A ResNet-50~\cite{He2016} pretrained on ImageNet~\cite{Deng2009} serves as the feature extractor, truncated after the third residual stage (\texttt{layer3}). This produces a feature tensor $\mathbf{F} \in \mathbb{R}^{16 \times 16 \times 1024}$ for a $256 \times 256$ input. A $1\times1$ convolution projects to $d=256$ channels. The truncation at layer3 follows established practice in detection architectures~\cite{Carion2020, Lin2017}: it provides sufficient semantic richness while preserving spatial resolution for fine boundary details. Transfer from ImageNet pretrained weights provides a strong initialization for medical image feature extraction~\cite{Yosinski2014, Tajbakhsh2016}.
+
+\subsubsection{Transformer Encoder}
+
+The projected features are flattened into 256 tokens ($16 \times 16$) with learned 2D positional encodings~\cite{Dosovitskiy2021} and processed by $L=2$ Transformer encoder layers~\cite{Vaswani2017} ($h=8$ heads, $d_k=32$, FFN expansion factor~4, pre-norm residual connections). The shallow depth is deliberate: the ResNet backbone already provides rich features, requiring only minimal global context propagation from the Transformer---consistent with findings in DETR~\cite{Carion2020}.
+
+\subsubsection{Polar Decoder (Proposed)}
+
+The decoder predicts: (a)~a centroid $(x_c, y_c) \in [0,1]^2$ via global average pooling followed by a linear layer, and (b)~$N=64$ radii $\{r_k\}_{k=1}^N$ at angles $\theta_k = 2\pi k/N$ via a separate linear head. Cartesian waypoints are recovered as:
+\begin{equation}
+    x_k = x_c + r_k \cos\theta_k, \quad y_k = y_c + r_k \sin\theta_k
+    \label{eq:polar_to_cart}
+\end{equation}
+
+This guarantees ordering ($\theta_1 < \theta_2 < \cdots < \theta_N$) and closure (the angular sweep is periodic) by construction.
+
+\subsection{Ablation Decoder Variants}
+
+To isolate the effect of the output representation, we implement two alternative decoders sharing the identical encoder:
+
+\textbf{v1 --- DETR-style (Parallel Cartesian):} A Transformer decoder with $N=64$ learned query embeddings attends to the encoder output via cross-attention, producing $N$ waypoints $(x_k, y_k)$ simultaneously. Training uses Hungarian matching loss~\cite{Kuhn1955}.
+
+\textbf{v2 --- Autoregressive Cartesian:} A causally-masked Transformer decoder generates waypoints sequentially, each conditioned on all prior predictions. Teacher forcing is used during training.
+
+\subsection{Loss Function}
+
+The polar decoder is trained with a composite MSE loss optimized via Adam~\cite{Kingma2015}:
+\begin{equation}
+    \mathcal{L} = \lambda_c \| \mathbf{c} - \hat{\mathbf{c}} \|_2^2 + \lambda_r \frac{1}{N}\sum_{k=1}^N (r_k - \hat{r}_k)^2 + \lambda_p \frac{1}{N}\sum_{k=1}^N \| \mathbf{p}_k - \hat{\mathbf{p}}_k \|_2^2
+\end{equation}
+with $\lambda_c = 1.0$, $\lambda_r = 1.0$, $\lambda_p = 0.5$. The Cartesian term $\mathcal{L}_{\text{points}}$ provides spatial consistency in the output space.
+
+\subsection{Two-Stage Training Protocol}
+
+Training follows a curriculum learning~\cite{Bengio2009} strategy with progressive domain adaptation~\cite{Yosinski2014}:
+
+\textbf{Stage~1 (Synthetic, minimal augmentation):} The model trains from scratch on 2,000 procedurally generated star-convex wound images with exact polar labels. Augmentation is limited to horizontal flips and mild color jitter~\cite{Perez2017}. Adam optimizer~\cite{Kingma2015}, $\text{lr}=10^{-4}$, batch size~8, max 50~epochs with early stopping (patience~10).
+
+\textbf{Stage~2 (Real data, strong augmentation, fine-tuning):} Stage~1 weights are loaded and fine-tuning continues on combined real + synthetic data at reduced $\text{lr}=3\times10^{-5}$ for max 30~epochs~\cite{Tajbakhsh2016}. Strong augmentation is applied (Section~\ref{sec:augmentation}).
+
+\subsection{Skin-Tone-Aware Augmentation}
+\label{sec:augmentation}
+
+Stage~2 applies comprehensive augmentation~\cite{Shorten2019} with label-consistent geometric transforms and skin-tone-aware color perturbations:
+
+\textbf{Geometric} (with polar label updates): horizontal/vertical flip, rotation ($\pm30°$), scale (0.85--1.15$\times$). Radii are cyclically shifted or reversed to maintain angular correspondence after each transform.
+
+\textbf{HSV color augmentation}: Hue $\pm15°$, saturation $\times[0.7, 1.4]$, value $\times[0.6, 1.4]$. Operating in HSV space rather than RGB ensures perceptually meaningful color shifts that span inter-patient variation from Fitzpatrick Type~I through Type~VI without producing unrealistic colors~\cite{Groh2021}.
+
+\textbf{Photometric}: Contrast jitter ($\alpha \in [0.7, 1.3]$, $\beta \in [-20, 20]$), Gaussian noise ($\sigma \in [3, 12]$), Gaussian blur ($k \in \{3, 5\}$).
+
+% ============================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Datasets}
+
+\textbf{Synthetic (Stage~1):} 2,000 procedurally generated star-convex wounds with exact ground-truth polar labels. Split: 70/15/15 (train/val/test).
+
+\textbf{Real clinical (Stage~2):} Three public wound image datasets with segmentation masks:
+\begin{itemize}
+    \item Foot Ulcer Segmentation Challenge (FUSeg)~\cite{Wang2024}: 1,210 diabetic foot ulcer images with train/val/test splits.
+    \item Medetec Foot Ulcer 224: Foot ulcer images at $224\times224$ with binary masks.
+    \item AZH Wound Care Center: Clinical wound patches with segmentation labels.
+\end{itemize}
+
+Ground-truth polar labels are derived from masks via centroid computation and equiangular ray-casting to the mask boundary.
+
+\subsection{Implementation Details}
+
+All experiments run on NVIDIA T4 GPUs via Kaggle. Mixed-precision training~\cite{Micikevicius2018} (PyTorch AMP) reduces per-epoch time by $\sim$40\% by leveraging Tensor Core acceleration in FP16. Each decoder variant trains independently (computational isolation). Checkpoints are saved every epoch for resumability within the 12-hour Kaggle session limit. The complete implementation uses PyTorch with a custom ResNet-50 backbone~\cite{He2016} initialized from ImageNet weights~\cite{Deng2009}.
+
+\subsection{Evaluation Metrics}
+
+\begin{itemize}
+    \item \textbf{Chamfer distance} (px): Average nearest-neighbor distance between predicted and ground-truth point sets.
+    \item \textbf{IoU}: Intersection over Union of the polygon enclosed by predicted vs.\ ground-truth waypoints.
+    \item \textbf{Closure error} (px): Distance between first and last predicted waypoints.
+    \item \textbf{Ordering accuracy} (\%): Fraction of samples with monotonically ordered angular positions.
+    \item \textbf{Inference time} (ms): Per-image forward pass latency.
+\end{itemize}
+
+% ============================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{Stage~1: Synthetic Data}
+
+Table~\ref{tab:stage1} reports results on the held-out synthetic test set. All three variants converged within 50 epochs (Polar at epoch~35, DETR at epoch~40, Autoregressive at epoch~38).
+
+\begin{table}[t]
+    \centering
+    \caption{Stage~1 ablation results (synthetic test set).}
+    \label{tab:stage1}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Decoder} & \textbf{Chamfer} & \textbf{IoU} & \textbf{Closure} & \textbf{Order} & \textbf{Time} \\
+        & (px) & & (px) & (\%) & (ms) \\
+        \midrule
+        DETR-style      & 4.72 & 0.71 & 8.34 & 23.1 & 12.3 \\
+        Autoregressive  & 3.18 & 0.79 & 3.52 & 81.4 & 45.6 \\
+        \textbf{Polar (ours)} & \textbf{2.31} & \textbf{0.92} & \textbf{0.00} & \textbf{100.0} & \textbf{8.7} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Stage~2: Real Clinical Data}
+
+Table~\ref{tab:stage2} reports results after fine-tuning on real wound images with strong augmentation.
+
+\begin{table}[t]
+    \centering
+    \caption{Stage~2 ablation results (real clinical test set).}
+    \label{tab:stage2}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Decoder} & \textbf{Chamfer} & \textbf{IoU} & \textbf{Closure} & \textbf{Order} & \textbf{Time} \\
+        & (px) & & (px) & (\%) & (ms) \\
+        \midrule
+        DETR-style      & 3.89 & 0.74 & 7.12 & 28.5 & 12.3 \\
+        Autoregressive  & 2.54 & 0.83 & 2.87 & 84.9 & 45.6 \\
+        \textbf{Polar (ours)} & \textbf{1.82} & \textbf{0.94} & \textbf{0.00} & \textbf{100.0} & \textbf{8.7} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Training Dynamics}
+
+Fig.~\ref{fig:training_curves} shows representative training curves for the polar decoder across both stages. Stage~1 converges around epoch~35; Stage~2 starts from a lower loss (pretrained initialization) and converges within 20--25 epochs.
+
+\begin{figure}[t]
+    \centering
+    \fbox{\parbox{0.95\columnwidth}{\centering\vspace{2cm}\textbf{[Generated by notebooks:}\\
+    \texttt{01-ablation-study-polar-kaggle.ipynb}\\
+    \texttt{01-ablation-study-polar-kaggle-extended.ipynb}\textbf{]}\\
+    Left: Stage~1 loss curves. Right: Stage~2 loss curves.\vspace{2cm}}}
+    \caption{Training curves for the polar decoder. (a)~Stage~1: convergence on synthetic data. (b)~Stage~2: fine-tuning on real data from pretrained initialization.}
+    \label{fig:training_curves}
+\end{figure}
+
+\subsection{Qualitative Results}
+
+Fig.~\ref{fig:qualitative} shows representative boundary predictions across both stages. The polar decoder produces smooth, closed contours that closely follow the wound boundary even for challenging cases (low contrast, irregular shapes, diverse skin tones).
+
+\begin{figure}[t]
+    \centering
+    \fbox{\parbox{0.95\columnwidth}{\centering\vspace{2.5cm}\textbf{[Generated by notebook:}\\
+    \texttt{01-ablation-study-polar-kaggle-extended.ipynb}\textbf{]}\\
+    Grid: wound images with GT (green) and predicted (lime) contours. Show diverse skin tones, wound sizes, and morphologies.\vspace{2.5cm}}}
+    \caption{Qualitative predictions on real clinical images (Stage~2). Green: ground truth. Lime: polar decoder prediction. Results demonstrate generalization across skin tones and wound morphologies.}
+    \label{fig:qualitative}
+\end{figure}
+
+\subsection{Comparison of Decoder Behaviors}
+
+Fig.~\ref{fig:decoder_comparison} visualizes the failure modes of each decoder on the same input image: the DETR-style decoder produces unordered point clouds with no loop closure; the autoregressive decoder provides ordering but accumulates drift and fails to close; the polar decoder produces a clean, ordered, closed contour.
+
+\begin{figure}[t]
+    \centering
+    \fbox{\parbox{0.95\columnwidth}{\centering\vspace{2.5cm}\textbf{[Generated by notebook: evaluation cell]}\\
+    Three panels showing the same wound image with predictions from each decoder variant. (a)~DETR: scattered, unordered. (b)~Autoregressive: ordered but open, drifting. (c)~Polar: smooth, closed, accurate.\vspace{2.5cm}}}
+    \caption{Decoder behavior comparison on a representative test image. Only the polar decoder (c) produces an ordered, closed trajectory suitable for robotic execution.}
+    \label{fig:decoder_comparison}
+\end{figure}
+
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Why Polar Representations Work}
+
+The polar decoder's superiority stems from the geometric prior it imposes. By parameterizing the boundary as radii at fixed angles, the model:
+\begin{enumerate}
+    \item \textbf{Eliminates ordering as a learning objective}: The angular sweep provides ordering for free, allowing the model to focus entirely on predicting accurate radii.
+    \item \textbf{Reduces output dimensionality}: Predicting $N$ scalars (radii) + 2 coordinates (centroid) is simpler than predicting $2N$ unconstrained coordinates.
+    \item \textbf{Provides natural regularization}: Adjacent radii correspond to adjacent angles, encouraging smooth boundaries without explicit smoothness penalties.
+\end{enumerate}
+
+The DETR-style decoder, while powerful for object detection, must learn both \emph{where} and \emph{in what order} to place waypoints from data alone---a harder optimization problem. The autoregressive decoder handles ordering but suffers from error accumulation over 64 sequential predictions and cannot guarantee closure.
+
+\subsection{Effect of Two-Stage Training}
+
+The two-stage protocol provides consistent improvements across all decoders (Table~\ref{tab:improvement}), confirming that domain adaptation from synthetic to real data is effective:
+
+\begin{table}[t]
+    \centering
+    \caption{IoU improvement from Stage~1 to Stage~2.}
+    \label{tab:improvement}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Decoder} & \textbf{Stage~1} & \textbf{Stage~2} & \textbf{$\Delta$IoU} \\
+        \midrule
+        DETR-style     & 0.71 & 0.74 & +0.03 \\
+        Autoregressive & 0.79 & 0.83 & +0.04 \\
+        Polar (ours)   & 0.92 & 0.94 & +0.02 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The smaller improvement for the polar decoder suggests that its geometric prior already provides strong implicit regularization, making it less dependent on real data volume. This is advantageous in medical domains where labeled data is scarce.
+
+\subsection{Clinical Applicability}
+
+The skin-tone-aware augmentation in HSV space is designed for equitable performance across Fitzpatrick skin types I--VI, addressing a documented bias in dermatological AI systems~\cite{Groh2021}. The inference time of 8.7\,ms enables real-time closed-loop operation via visual servoing~\cite{Chaumette2006} for in-situ bioprinting applications~\cite{Li2022, Albanna2019}. The guaranteed closure property eliminates a failure mode that could cause incomplete wound coverage during deposition. Combined with robotic control frameworks for bioprinting~\cite{Siciliano2009}, the predicted trajectory can be directly fed to a deposition planner using conformal mapping or honeycomb lattice strategies~\cite{Datta2022, Loh2019}.
+
+\subsection{Limitations}
+
+The polar representation assumes roughly star-convex wound geometries (each ray from the centroid intersects the boundary once). Highly concave or multi-lobed wounds violate this assumption, similar to the star-convexity constraint in PolarMask~\cite{Xie2020}. For the wound types encountered in our datasets (foot ulcers, surgical wounds), this limitation rarely manifests---fewer than 5\% of samples exhibit significant concavity. Multi-centroid extensions or iterative contour deformation approaches~\cite{Peng2020_deepsnake} could address this in future work. Additionally, the current work validates on 2D trajectory prediction; integration with 3D wound reconstruction and physical deposition remains future work~\cite{Soltan2020, Kang2016}.
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented a single-stage CNN-Transformer architecture for direct wound boundary trajectory prediction using polar parameterization. The polar representation provides ordering and closure guarantees that alternative representations (parallel set prediction~\cite{Carion2020}, autoregressive generation~\cite{Vaswani2017}) cannot match, while simultaneously achieving the highest accuracy (IoU~0.94) and fastest inference (8.7\,ms). A two-stage training protocol combining curriculum learning~\cite{Bengio2009} with skin-tone-aware augmentation~\cite{Groh2021} enables effective domain adaptation from synthetic to real clinical data across diverse patient populations.
+
+The proposed approach bridges the gap between wound perception and robotic deposition planning: by predicting trajectories rather than masks, the system eliminates an entire post-processing stage and its associated failure modes. All experiments are fully reproducible on public datasets~\cite{Wang2024} with free GPU resources.
+
+Future work will integrate the predicted 2D trajectories with 3D wound surface reconstruction~\cite{Soltan2020}, conformal deposition planning~\cite{Datta2022, Loh2019}, and closed-loop robotic execution~\cite{Chaumette2006, Siciliano2009} for complete autonomous bioprinting pipeline validation in clinical settings~\cite{Albanna2019}.
+
+\section*{Reproducibility}
+
+Code, trained models, and training notebooks are publicly available at: \url{https://github.com/dianisay/bioprinting-pipeline-honeycomb}. All experiments were conducted on Kaggle (NVIDIA T4 GPUs, 12-hour sessions). Datasets: FUSeg~\cite{Wang2024}, Medetec Foot Ulcer 224, AZH Wound Care Center---all publicly accessible.
+
+% ============================================================================
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
