@@ -1,0 +1,13 @@
+{
+  "input_image": "data/rgb_wound/syn_audit/Syn3DWound/subject_1/Syn3DWound_slough-pressure-ulcer-008_sacrum_weak_lighting_phi/images/image_000.png",
+  "input_image_sha256": "9355d1cc45c097b29244d98a59e2ae33088086f5c9a40042a412a462cd5765ad",
+  "reviewed_mask_source": "results/rgb_wound/sensor_generalization/blinded_masks/sacrum_phi/image_000.png",
+  "reviewed_mask_sha256": "330ab4fbb4682e0edb086f6d4df7bf528a415c058b9f09d5c4b1e0a07ec0e964",
+  "recovered_mesh_source": "results/rgb_wound/sensor_generalization/runs/sacrum_phi/HIGH_RES_RGB_PLUS_DEPTH_A/wound_surface_DATASET_UNITS.ply",
+  "recovered_mesh_sha256": "fc8aabfa2ff3619fdc214bf7ba4eef7a095e7c50d5ee2b52c35d84b46042190c",
+  "reference_mesh_source": "results/rgb_wound/sensor_generalization/runs/sacrum_phi/HIGH_RES_RGB_PLUS_DEPTH_A/complete_local_surface_DATASET_UNITS.ply",
+  "reference_mesh_sha256": "f5b8b4c6b2643db752977989c32f0829195eefeb76824eb77c92cb483449d616",
+  "error_map_source": "results/rgb_wound/sensor_generalization/runs/sacrum_phi/HIGH_RES_RGB_PLUS_DEPTH_A/error_depth_boundary.png",
+  "error_map_sha256": "55c62163015113d292c5967c709898dd5b4a41b391fc8e1d77e9fe0de642bb6a",
+  "exported_mesh_data": "paper/data/figure03_surface_data.npz"
+}

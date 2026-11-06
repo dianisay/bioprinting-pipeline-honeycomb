@@ -1,0 +1,169 @@
+{
+  "schema": "publication-notebook-output-removal-v1",
+  "notebook": "notebooks/04_rgb_wound_3d_reconstruction.ipynb",
+  "source_notebook_sha256_before_cleanup": "b99d99cb6887fb71b5ecfb918620157f7cc978dd3ebede08bbdb8df948952f50",
+  "clean_notebook_sha256": "200bcc2dbc4bdcfc84f94b484c864361557823292057ef351f093053e83a8c98",
+  "source_bytes": 24538171,
+  "clean_bytes": 3130662,
+  "removed_serialized_output_bytes": 20429969,
+  "output_cell_count": 26,
+  "output_receipts": [
+    {
+      "cell_index": 2,
+      "output_count": 1,
+      "serialized_bytes": 232,
+      "sha256": "90b71105a6b575c06a674051f95793be175fc5287e6a207951741aae88cf03be"
+    },
+    {
+      "cell_index": 6,
+      "output_count": 15,
+      "serialized_bytes": 1005270,
+      "sha256": "67f45a215fb34a6e4af668a3f2427eda1759650c70132e3e5d9802ac9e21f296"
+    },
+    {
+      "cell_index": 8,
+      "output_count": 4,
+      "serialized_bytes": 2410,
+      "sha256": "ddabb2dda55c26fa461165e9b36ba4873f90b98d2afc7394fb1b78d1f9e0058e"
+    },
+    {
+      "cell_index": 10,
+      "output_count": 2,
+      "serialized_bytes": 8222,
+      "sha256": "147092a48da90db89aa0347e455783c5b09339e2b74e68a67307a792fd15cf86"
+    },
+    {
+      "cell_index": 12,
+      "output_count": 6,
+      "serialized_bytes": 2775,
+      "sha256": "10dec67b87f58e5256b50c9660b51d67709d442efecc8a3bb7a98657c2765ccb"
+    },
+    {
+      "cell_index": 14,
+      "output_count": 2,
+      "serialized_bytes": 2289,
+      "sha256": "14fd440471fc64c4f5acd2d6b91649db10442210985f1d7980b75b854fe44e96"
+    },
+    {
+      "cell_index": 27,
+      "output_count": 14,
+      "serialized_bytes": 4752787,
+      "sha256": "5e962ee132471bec92f078f588bb4ef51f5f1a6ffefa427424b2f8cbb6d6f9ce"
+    },
+    {
+      "cell_index": 30,
+      "output_count": 17,
+      "serialized_bytes": 8708899,
+      "sha256": "b3d9454ec4659096db84a9324fcee872e38eda736c491300e75b9d7fdb0af352"
+    },
+    {
+      "cell_index": 34,
+      "output_count": 2,
+      "serialized_bytes": 341,
+      "sha256": "09329b8ab832cc287a20c159c91ae292cca25fac4a1e0e425952e5271daa3abe"
+    },
+    {
+      "cell_index": 36,
+      "output_count": 1,
+      "serialized_bytes": 300,
+      "sha256": "e01152f0a284fd21a3c53ceb468109cf9aac6cbb4174b1dbcffb83df001458e0"
+    },
+    {
+      "cell_index": 40,
+      "output_count": 2,
+      "serialized_bytes": 323446,
+      "sha256": "ea1b6153f362dbae23567b74d1194dca72b8599756bacafc486784835ab9db43"
+    },
+    {
+      "cell_index": 42,
+      "output_count": 41,
+      "serialized_bytes": 302655,
+      "sha256": "4c1ed5d1de48f1e6888d6d165a230738749eef6d611f46072f54d1d4aaeb5ee4"
+    },
+    {
+      "cell_index": 44,
+      "output_count": 2,
+      "serialized_bytes": 28214,
+      "sha256": "888c1ba3642247e161347645e243f94d8816001177454e09612c7bb4fa90ad54"
+    },
+    {
+      "cell_index": 46,
+      "output_count": 3,
+      "serialized_bytes": 1928384,
+      "sha256": "a674e22163cd670b001c2f51c948c58aa414d10e63e586feb6d0207450a83f2a"
+    },
+    {
+      "cell_index": 48,
+      "output_count": 1,
+      "serialized_bytes": 166,
+      "sha256": "1e5c347643cb3255aa8aad3e49dbbac1fbcfc31a8a63d3d25f9c2486f36881fb"
+    },
+    {
+      "cell_index": 54,
+      "output_count": 2,
+      "serialized_bytes": 10332,
+      "sha256": "e83c48ec2b50fac5f46c78345802967d42a0f0a864995b779caa424d8b3854ba"
+    },
+    {
+      "cell_index": 56,
+      "output_count": 2,
+      "serialized_bytes": 18023,
+      "sha256": "9fdeccd6ffe9d576067b57ec320a4cef922d412489fd0da230b0e69327271aa8"
+    },
+    {
+      "cell_index": 58,
+      "output_count": 3,
+      "serialized_bytes": 308800,
+      "sha256": "f1bc74796645566ed286cfb6cd8ffe357f1155ad20af5e7eef768611209383af"
+    },
+    {
+      "cell_index": 60,
+      "output_count": 2,
+      "serialized_bytes": 1803539,
+      "sha256": "eea2dfb7482a838bd7a565bba6573d352fb3ae25cd5600da7f0b86035af0486e"
+    },
+    {
+      "cell_index": 62,
+      "output_count": 5,
+      "serialized_bytes": 947509,
+      "sha256": "d6e48706fbfd6cd88e19a65b967475d605ac5060af7726f20c079896c934925a"
+    },
+    {
+      "cell_index": 64,
+      "output_count": 2,
+      "serialized_bytes": 10999,
+      "sha256": "9761101df8ee3786679561a380c583a68dfb0d3ad5948742600d067768acb725"
+    },
+    {
+      "cell_index": 68,
+      "output_count": 5,
+      "serialized_bytes": 11796,
+      "sha256": "2e2c234ca03d743e12004e612b246d0f17593f336695dd5789daaf75bea20f90"
+    },
+    {
+      "cell_index": 73,
+      "output_count": 4,
+      "serialized_bytes": 6021,
+      "sha256": "606426cb6bdd98aa86b28ad9892df9f11bc98b898d80211514f1570418fa78ec"
+    },
+    {
+      "cell_index": 78,
+      "output_count": 1,
+      "serialized_bytes": 236367,
+      "sha256": "4593cf03874373ddd13b4ce9eb81857b01895a4a72f5ce85d621122a53c69e58"
+    },
+    {
+      "cell_index": 81,
+      "output_count": 1,
+      "serialized_bytes": 1330,
+      "sha256": "4f600350e58349c192a4b6c3fbd97f7c023455089edc8bce05611903a8b4c2cd"
+    },
+    {
+      "cell_index": 84,
+      "output_count": 1,
+      "serialized_bytes": 8863,
+      "sha256": "1ac6dee84eac62a3fe1d9512762eb7bb4ce6e0206ca3d129a55f34243c28f734"
+    }
+  ],
+  "replay_data_and_embedded_manifests_retained_in_code_cells": true
+}

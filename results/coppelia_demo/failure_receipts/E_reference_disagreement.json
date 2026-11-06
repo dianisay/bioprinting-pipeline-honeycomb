@@ -1,0 +1,18 @@
+{
+  "case_id": "E_reference_disagreement",
+  "input_manifest": "case_manifests/E_reference_disagreement.json",
+  "failed_metric": {
+    "boundary_width_px": 144,
+    "depth_coverage": 1.0,
+    "depth_noise_over_diameter": 0.0,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "reference_disagreement_m": 0.025,
+    "target_available": false
+  },
+  "rejection_decision": "EXTERNAL_TARGET_REQUIRED",
+  "planning_decision": "REFUSE_TO_PLAN",
+  "reason": "Plausible synthetic target policies disagree and no external target was supplied.",
+  "recommended_action": "REFUSE_TO_PLAN",
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

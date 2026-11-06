@@ -1,0 +1,73 @@
+{
+  "case_id": "A_supported_rgbd",
+  "route": {
+    "mode": "RGBD",
+    "route": "RGBD",
+    "capabilities": {
+      "has_rgb": true,
+      "has_depth": true,
+      "calibration_valid": true,
+      "depth_aligned_to_rgb": true,
+      "camera_poses_available": true,
+      "metric_scale_valid": false
+    },
+    "quality": {
+      "boundary_width_px": 144,
+      "depth_coverage": 1.0,
+      "depth_noise_over_diameter": 0.0,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.0,
+      "target_available": true
+    },
+    "decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+    "recommended_action": "SIMULATE_ONLY",
+    "reason": "Synthetic geometry and sensor-quality gates permit offline simulation only.",
+    "print_authorized": false
+  },
+  "metrics": {
+    "case_id": "A_supported_rgbd",
+    "mode": "RGBD",
+    "expected_decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+    "router_decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+    "recommended_action": "SIMULATE_ONLY",
+    "depth_coverage": 1.0,
+    "boundary_width_px": 144,
+    "noise_over_diameter": 0.0,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "route_expected_match": true,
+    "print_authorized": false,
+    "planning_decision": "SIMULATION_PLAN_COMPLETE",
+    "supported_surface_percentage": 100.0,
+    "boundary_valid": true,
+    "uncertainty_median_scene_m": 0.001,
+    "stage_count": 3,
+    "plan_hashes": [
+      "5393350c3a2d3364a1545b2597a84506024fbe487a371961b07c2863be50cdc5",
+      "6a0ba413887248e35da26ec0be523278f565b8b15e6231fbdd8cb77f94523e67",
+      "0e50a9a02e118ce7988ad717c5f96e25bf99172633ebe855efd5195dca50702d"
+    ],
+    "second_plan_changed": true,
+    "boundary_violations": 0,
+    "exclusion_zone_violations": 0,
+    "exclusion_zones": [
+      {
+        "center_relative_to_phantom_m": [
+          0.07,
+          0.0
+        ],
+        "radius_m": 0.005,
+        "label": "synthetic-no-go-zone"
+      }
+    ],
+    "unsupported_deposition_fraction": 0.0,
+    "maximum_target_height_violation_scene_m": 0.0,
+    "remaining_supported_depth_scene_m": 0.0,
+    "unresolved_supported_area_fraction": 0.0,
+    "trajectory_completion": true,
+    "tool_position_error_scene_m": null,
+    "tool_orientation_error_rad": null,
+    "collision_count": null,
+    "robot_execution_status": "CARTESIAN_PREVIEW_ONLY_NOT_EXECUTED",
+    "self_intersections": 0
+  }
+}

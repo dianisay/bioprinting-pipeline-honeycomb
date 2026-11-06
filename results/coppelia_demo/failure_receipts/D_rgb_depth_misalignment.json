@@ -1,0 +1,18 @@
+{
+  "case_id": "D_rgb_depth_misalignment",
+  "input_manifest": "case_manifests/D_rgb_depth_misalignment.json",
+  "failed_metric": {
+    "boundary_width_px": 144,
+    "depth_coverage": 0.7228618927405948,
+    "depth_noise_over_diameter": 0.07526987791061401,
+    "rgb_depth_boundary_disagreement": 0.38459925564816266,
+    "reference_disagreement_m": 0.0,
+    "target_available": false
+  },
+  "rejection_decision": "RGB_DEPTH_CALIBRATION_FAILED",
+  "planning_decision": "REFUSE_TO_PLAN",
+  "reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate.",
+  "recommended_action": "REQUEST_DEPTH_RESCAN",
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

@@ -1,0 +1,50 @@
+{
+  "case_id": "C_incomplete_depth",
+  "route": {
+    "mode": "DEGRADED_RGBD",
+    "route": "DEGRADED_RGBD",
+    "capabilities": {
+      "has_rgb": true,
+      "has_depth": true,
+      "calibration_valid": true,
+      "depth_aligned_to_rgb": true,
+      "camera_poses_available": true,
+      "metric_scale_valid": false
+    },
+    "quality": {
+      "boundary_width_px": 144,
+      "depth_coverage": 0.3550889723539191,
+      "depth_noise_over_diameter": 0.0117393240688978,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.0,
+      "target_available": false
+    },
+    "decision": "SURFACE_INCOMPLETE",
+    "recommended_action": "REQUEST_DEPTH_RESCAN",
+    "reason": "Depth coverage or normalized depth noise fails the frozen quality gate.",
+    "print_authorized": false
+  },
+  "metrics": {
+    "case_id": "C_incomplete_depth",
+    "mode": "DEGRADED_RGBD",
+    "expected_decision": "SURFACE_INCOMPLETE",
+    "router_decision": "SURFACE_INCOMPLETE",
+    "recommended_action": "REQUEST_DEPTH_RESCAN",
+    "depth_coverage": 0.3550889723539191,
+    "boundary_width_px": 144,
+    "noise_over_diameter": 0.0117393240688978,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "route_expected_match": true,
+    "print_authorized": false,
+    "planning_decision": "NO_SAFE_DEPOSITION_REGION",
+    "failure_reason": "Depth coverage or normalized depth noise fails the frozen quality gate.",
+    "failed_quality_metric": {
+      "boundary_width_px": 144,
+      "depth_coverage": 0.3550889723539191,
+      "depth_noise_over_diameter": 0.0117393240688978,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.0,
+      "target_available": false
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_layers": [
+    [
+      "PUBLIC SYNTHETIC GEOMETRY",
+      "Syn3DWound",
+      "RGB + cropped meshes + COLMAP; mesh-rendered depth; no certified scale",
+      "#3478A8"
+    ],
+    [
+      "PHANTOM SHAPE BENCHMARK",
+      "SALVE",
+      "50-frame PIS4 Accuracy split; published reconstructions; GT similarity alignment",
+      "#36A89A"
+    ],
+    [
+      "FROZEN SAFETY EVIDENCE",
+      "Calibration + hidden discs",
+      "Synthetic target holdouts; one held-out body model; descriptive, correlated records",
+      "#D99B2B"
+    ],
+    [
+      "OFFLINE SOFTWARE DEMO",
+      "Procedural synthetic cases",
+      "Five routing cases + three plan/update stages; command authority disabled",
+      "#D76A5B"
+    ]
+  ]
+}

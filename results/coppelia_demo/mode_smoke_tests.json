@@ -1,0 +1,113 @@
+{
+  "RGB_ONLY": {
+    "route": {
+      "mode": "RGB_ONLY",
+      "route": "RGB_ONLY_REPLAY",
+      "capabilities": {
+        "has_rgb": true,
+        "has_depth": false,
+        "calibration_valid": true,
+        "depth_aligned_to_rgb": true,
+        "camera_poses_available": true,
+        "metric_scale_valid": false
+      },
+      "quality": {
+        "boundary_width_px": 144,
+        "depth_coverage": null,
+        "depth_noise_over_diameter": null,
+        "rgb_depth_boundary_disagreement": 0.0,
+        "reference_disagreement_m": 0.0,
+        "target_available": true
+      },
+      "decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+      "recommended_action": "SIMULATE_ONLY",
+      "reason": "Synthetic geometry and sensor-quality gates permit offline simulation only.",
+      "print_authorized": false
+    },
+    "depth_stream_present": false,
+    "geometry_source": "Synthetic phantom mesh provided to the simulation; RGB reconstruction not executed.",
+    "physical_robot_commands_enabled": false,
+    "print_authorized": false
+  },
+  "RGBD": {
+    "route": {
+      "mode": "RGBD",
+      "route": "RGBD",
+      "capabilities": {
+        "has_rgb": true,
+        "has_depth": true,
+        "calibration_valid": true,
+        "depth_aligned_to_rgb": true,
+        "camera_poses_available": true,
+        "metric_scale_valid": false
+      },
+      "quality": {
+        "boundary_width_px": 144,
+        "depth_coverage": 1.0,
+        "depth_noise_over_diameter": 0.0,
+        "rgb_depth_boundary_disagreement": 0.0,
+        "reference_disagreement_m": 0.0,
+        "target_available": true
+      },
+      "decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+      "recommended_action": "SIMULATE_ONLY",
+      "reason": "Synthetic geometry and sensor-quality gates permit offline simulation only.",
+      "print_authorized": false
+    },
+    "depth_stream_present": true,
+    "geometry_source": "Synthetic phantom mesh defined by construction."
+  },
+  "DEGRADED_RGBD": {
+    "routes": [
+      {
+        "mode": "DEGRADED_RGBD",
+        "route": "DEGRADED_RGBD",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": true,
+          "calibration_valid": true,
+          "depth_aligned_to_rgb": true,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 144,
+          "depth_coverage": 0.3550889723539191,
+          "depth_noise_over_diameter": 0.0117393240688978,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        },
+        "decision": "SURFACE_INCOMPLETE",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "reason": "Depth coverage or normalized depth noise fails the frozen quality gate.",
+        "print_authorized": false
+      },
+      {
+        "mode": "DEGRADED_RGBD",
+        "route": "DEGRADED_RGBD",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": true,
+          "calibration_valid": false,
+          "depth_aligned_to_rgb": false,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 144,
+          "depth_coverage": 0.7228618927405948,
+          "depth_noise_over_diameter": 0.07526987791061401,
+          "rgb_depth_boundary_disagreement": 0.38459925564816266,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        },
+        "decision": "RGB_DEPTH_CALIBRATION_FAILED",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate.",
+        "print_authorized": false
+      }
+    ],
+    "geometry_source": "Synthetic phantom with sealed corruption profiles."
+  }
+}

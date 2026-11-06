@@ -1,0 +1,18 @@
+{
+  "figure": "figure_06",
+  "caption": "Synthetic calibration-safety evidence. Strict-holdout recall is shown for total and matched-clean incremental volume consequences; clean false alarms are 2/48. In the separate target ablation, stepped-target fault rejection exceeds planar-target rejection, with zero false alarms in 24 clean controls for each. The engineering gate remains failed.",
+  "png_dpi": 300,
+  "vector_export": "SVG",
+  "data_origin": "Sealed result summaries and identified local public-data inputs.",
+  "source_paths": [
+    "paper/data/publication_evidence.json"
+  ],
+  "source_hashes": {
+    "paper/data/publication_evidence.json": "3e4d36495c81023f76815971858e508e8be5fa08c7d9075bfb24040e28e10e0f"
+  },
+  "limitations": [
+    "Descriptive evidence only; correlated views/subsets are not independent subjects.",
+    "Synthetic mesh-rendered depth is not a physical sensor measurement.",
+    "No physical printing is authorized."
+  ]
+}

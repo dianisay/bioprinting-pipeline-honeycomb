@@ -1,0 +1,51 @@
+{
+  "stage_history": [
+    {
+      "stage": 1,
+      "eligible_vertex_count": 1345,
+      "deposition_point_count": 1345,
+      "plan_changed_from_previous": true,
+      "unsupported_deposition_fraction": 0.0,
+      "boundary_violation_count": 0,
+      "exclusion_zone_violation_count": 0,
+      "remaining_supported_depth_m": 0.030000000000000027,
+      "remaining_supported_depth_after_update_m": 0.020000000000000018
+    },
+    {
+      "stage": 2,
+      "eligible_vertex_count": 1217,
+      "deposition_point_count": 1217,
+      "plan_changed_from_previous": true,
+      "unsupported_deposition_fraction": 0.0,
+      "boundary_violation_count": 0,
+      "exclusion_zone_violation_count": 0,
+      "remaining_supported_depth_m": 0.020000000000000018,
+      "remaining_supported_depth_after_update_m": 0.010000000000000009
+    },
+    {
+      "stage": 3,
+      "eligible_vertex_count": 833,
+      "deposition_point_count": 833,
+      "plan_changed_from_previous": true,
+      "unsupported_deposition_fraction": 0.0,
+      "boundary_violation_count": 0,
+      "exclusion_zone_violation_count": 0,
+      "remaining_supported_depth_m": 0.010000000000000009,
+      "remaining_supported_depth_after_update_m": 0.0
+    }
+  ],
+  "stopping_decision": {
+    "stage_count": 3,
+    "second_plan_changed": true,
+    "stop_decision": "SIMULATION_PLAN_COMPLETE",
+    "boundary_violations": 0,
+    "exclusion_zone_violations": 0,
+    "unsupported_deposition_fraction": 0.0,
+    "maximum_target_height_violation_scene_m": 0.0
+  },
+  "target_surface": "SYNTHETIC_EXTERNAL_TEST_PLANE",
+  "target_is_anatomical_truth": false,
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false,
+  "surface_display": "Linear interpolation between recorded initial mesh and explicitly defined synthetic target for visualization."
+}

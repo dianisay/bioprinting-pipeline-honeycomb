@@ -16,10 +16,12 @@ data/fuseg/*.jpg
 data/fuseg/*.json
 data/synthetic/images/
 data/synthetic/masks/
+data/rgb_wound/
 
 results/*.csv
 results/*.json
 results/runs/
+results/rgb_wound/
 
 .ipynb_checkpoints/
 *.ipynb_checkpoints

@@ -1,0 +1,22 @@
+{
+  "figure": "figure_03",
+  "caption": "Representative Syn3DWound reconstruction evidence: public rendered RGB, frozen reviewed mask, recovered wound-bed mesh, source-mesh reference geometry, and the saved error heatmap. Coordinates are dataset units. The source mesh is a synthetic reference, not an anatomical pre-wound surface.",
+  "png_dpi": 300,
+  "vector_export": "SVG",
+  "data_origin": "Sealed result summaries and identified local public-data inputs.",
+  "source_paths": [
+    "paper/data/figure03_provenance.json",
+    "paper/data/figure03_surface_data.npz",
+    "sensor_generalization/analysis/summary.json",
+    "sensor_generalization/runs/sacrum_phi/HIGH_RES_RGB_PLUS_DEPTH_A/result.json"
+  ],
+  "source_hashes": {
+    "paper/data/publication_evidence.json": "3e4d36495c81023f76815971858e508e8be5fa08c7d9075bfb24040e28e10e0f",
+    "data/rgb_wound/syn_audit/Syn3DWound/subject_1/Syn3DWound_slough-pressure-ulcer-008_sacrum_weak_lighting_phi/images/image_000.png": "9355d1cc45c097b29244d98a59e2ae33088086f5c9a40042a412a462cd5765ad"
+  },
+  "limitations": [
+    "Descriptive evidence only; correlated views/subsets are not independent subjects.",
+    "Synthetic mesh-rendered depth is not a physical sensor measurement.",
+    "No physical printing is authorized."
+  ]
+}

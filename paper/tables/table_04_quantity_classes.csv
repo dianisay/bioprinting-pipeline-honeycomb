@@ -1,0 +1,5 @@
+category,examples,basis
+DIRECTLY OBSERVABLE,"Visible wound-bed surface, visible 3D boundary, local normals, visible area, support/confidence.","RGB/depth or mesh observations, with their declared support and uncertainty."
+REFERENCE-DEPENDENT,"Depth relative to a declared reference, fill height, layer count, reference-defined volume.",Requires an explicitly named and versioned reference surface or target policy.
+EXTERNALLY SPECIFIED,"Operator-selected target surface, declared layer thickness, safety margin, material spacing.",User or external input; record its source and parameters.
+NOT IDENTIFIABLE,"True pre-wound healthy surface, true missing-tissue volume, anatomical restoration volume.",No such ground truth is present in the current observations or datasets.

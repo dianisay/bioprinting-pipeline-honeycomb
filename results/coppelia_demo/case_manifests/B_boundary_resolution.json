@@ -1,0 +1,28 @@
+{
+  "case_id": "B_boundary_resolution",
+  "mode": "RGB_ONLY",
+  "wound_diameter_px": 64,
+  "profile": null,
+  "target_available": false,
+  "target_source": null,
+  "reference_disagreement_m": 0.0,
+  "seed_offset": 2,
+  "geometry_provenance": "Synthetic radial heightfield defined by construction.",
+  "units": "synthetic scene meters; not physical validation",
+  "depth_profile": null,
+  "observation_metrics": {
+    "depth_coverage": 0.0,
+    "noise_over_diameter": 0.0,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "boundary_width_px": 64
+  },
+  "inputs": {
+    "rgb_png": "inputs/B_boundary_resolution/rgb.png",
+    "rgb_sha256": "90490acd0c306adcb1f545fb7e31401f2ae50e06148fce6867713f29f3decdf9",
+    "sensor_npz": "inputs/B_boundary_resolution/sensor_observation.npz",
+    "sensor_npz_sha256": "3bd2da3fdfeb32d66dda2f1b96ca076db189694bab93d2cd3320c8645cca1546"
+  },
+  "physical_scale_certified": false,
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

@@ -1,0 +1,101 @@
+{
+  "audit_scope": "Final computational integration; no existing module modified.",
+  "existing_interfaces": {
+    "observable_wound_geometry": {
+      "source": "results/rgb_wound/observable_geometry/experiment_runtime/observable_geometry.py",
+      "representation": "Observed mesh vertices/faces, boundary edges, normals, support, confidence and uncertainty proxy."
+    },
+    "sensor_router": {
+      "source": "results/rgb_wound/sensor_generalization/sealed_11_route_replay.ipynb",
+      "inputs": "Sensor capabilities and measured geometry/depth quality.",
+      "outputs": "Route, accept/fallback/rescan/refusal decision, reasons and research-only flags.",
+      "reused_profiles": [
+        "ORACLE_DEPTH",
+        "LOW_COVERAGE",
+        "MISALIGNED_DEPTH"
+      ]
+    },
+    "boundary_representation": {
+      "source": "Observed triangular mesh boundary edges.",
+      "current_demo": "Single closed loop on a synthetic disk-shaped wound bed."
+    },
+    "uncertainty": {
+      "source": "Observable geometry replay exports a subset-disagreement proxy, not a calibrated probability.",
+      "current_demo": "Fixed declared synthetic uncertainty; no learned or clinical confidence claim."
+    },
+    "target_surface_policies": {
+      "source": "results/rgb_wound/observable_geometry/experiment_runtime/observable_geometry.py",
+      "policies": [
+        "UNIFORM_OFFSET",
+        "BOUNDARY_INTERPOLATED_CAP",
+        "OPERATOR_DEFINED_TARGET_SURFACE",
+        "STAGED_PARTIAL_FILL",
+        "MAXIMUM_SAFE_HEIGHT"
+      ],
+      "selected_architecture": "Conservative staged filling with an explicit external final target."
+    },
+    "existing_planner": {
+      "source": "modules/trajectory_planner.py",
+      "limitations": [
+        "Requires a scalar void shell thickness.",
+        "Uses one cylindrical surface mapping.",
+        "Has no arbitrary target mesh, safety-margin mask, or exclusion-zone input."
+      ],
+      "used_by_demo": false
+    },
+    "existing_robot_model": {
+      "source": "modules/robot_model.py",
+      "model": "UR5 six-revolute arm plus two-axis gantry, eight degrees of freedom.",
+      "inverse_kinematics": "modules/inverse_kinematics.py:InverseKinematicsSolver.solve(T_target)",
+      "used_for_execution": false
+    },
+    "existing_robot_adapters": {
+      "source": "robot/mc_bridge.py",
+      "type": "MyCobot hardware bridge; explicitly not imported or called."
+    },
+    "visualization": {
+      "source": "modules/visualization_3d.py and the RGB/depth notebook render helpers.",
+      "current_demo": "OpenCV-generated offline preview clips; not CoppeliaSim camera footage."
+    },
+    "coppeliasim_assets": {
+      "present": false,
+      "scene_file": false,
+      "coppeliasim_runtime": false,
+      "remote_api_client": false
+    }
+  },
+  "minimum_adapter_contract": {
+    "input": [
+      "supported wound-bed mesh in declared scene coordinates",
+      "boundary loops",
+      "registered explicit target XYZ surface",
+      "per-vertex deposition-height map",
+      "layer thickness",
+      "boundary safety margin",
+      "exclusion zones",
+      "support/confidence/uncertainty and provenance"
+    ],
+    "output": [
+      "ordered Cartesian tool waypoints",
+      "tool normal/orientation",
+      "layer ID",
+      "deposition enabled/disabled",
+      "boundary and exclusion compliance",
+      "offline-only authority flags"
+    ],
+    "scalar_wound_volume_required": false,
+    "implemented_by": "robot/simulation/observable_demo.py",
+    "physical_commands_enabled": false,
+    "print_authorized": false
+  },
+  "integration_path": [
+    "Keep sealed geometry and sensor-router artifacts immutable.",
+    "Replay declared synthetic mesh and sensor mode into the quality router.",
+    "Reject failed cases before planner invocation.",
+    "For the supported case, pass mesh, target surface, uncertainty, layer and constraints to the minimal adapter.",
+    "Update the synthetic surface after each stage and rescan/replan.",
+    "Bind the resulting adapter to UR5/CoppeliaSim only after the runtime and scene are available.",
+    "Run IK, collision, camera, and trajectory-completion metrics in CoppeliaSim before calling the integration demonstrated."
+  ],
+  "physical_printing_authorized": false
+}
