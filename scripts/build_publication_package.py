@@ -271,7 +271,15 @@ def _draw_reconstruction(evidence: dict[str, Any]) -> tuple[plt.Figure, dict[str
     rgb_path = ROOT / provenance["input_image"]
     if not rgb_path.is_file():
         raise FileNotFoundError(
-            f"Figure 3 RGB input is missing: {rgb_path}. Download Syn3DWound as documented."
+            f"Figure 3 RGB input is missing: {rgb_path}. "
+            "Run `python scripts/fetch_figure3_example.py`."
+        )
+    actual_sha256 = hashlib.sha256(rgb_path.read_bytes()).hexdigest()
+    expected_sha256 = provenance["input_image_sha256"]
+    if actual_sha256 != expected_sha256:
+        raise ValueError(
+            f"Figure 3 RGB input has an unexpected SHA-256: {rgb_path} "
+            f"(expected {expected_sha256}, got {actual_sha256})."
         )
     with Image.open(rgb_path) as im:
         rgb = im.convert("RGB")

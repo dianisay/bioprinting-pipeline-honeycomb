@@ -18,10 +18,25 @@ python scripts/build_publication_package.py --replay
 `--replay` regenerates the nine figures, their figure data and provenance,
 the five CSV/Markdown/LaTeX tables, the metric audit, the artifact inventory,
 and the selected-results HTML. It reads committed evidence rather than
-recomputing experimental metrics. Figure 3 also reads the public RGB example
-named and hash-identified in `paper/data/figure03_provenance.json`; place that
-file in its declared Syn3DWound location first. The exported surface, mask,
-error-map and route data needed by Figure 3 are in `paper/data/`.
+recomputing experimental metrics. Figure 3 needs one public RGB file from
+Syn3DWound (DOI [10.25919/5rwz-ts17](https://doi.org/10.25919/5rwz-ts17)).
+The CSIRO record declares CC BY-NC-SA 4.0 and requires the attribution
+recorded in `paper/data/figure03_provenance.json`. Because the license is
+noncommercial, confirm compatibility or obtain permission before using the
+image in a commercial publication. A public file-specific
+endpoint makes selective download possible; the script requests only that
+image, verifies its byte count and SHA-256, and does not download the dataset.
+The source image is excluded from Git.
+
+From the repository root, run these exact commands:
+
+```powershell
+python scripts/fetch_figure3_example.py
+python scripts/build_publication_package.py --replay
+```
+
+The exported surface arrays, reviewed mask, error map and route data needed
+by Figure 3 are already in `paper/data/`.
 
 To re-export the compact evidence bundle, the original sealed local results
 must be present at their manifest paths:
