@@ -1,0 +1,44 @@
+{
+  "seed": 20261105,
+  "config": "robot/simulation/demo_config.json",
+  "config_sha256": "fe5dff12a51a50e3bdf6e337293151ce1810479d2f61fec55de3b8bc76e37283",
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "numpy": "2.2.6",
+  "opencv": "5.0.0",
+  "scene_runtime": "CoppeliaSim unavailable; this run is offline computation only.",
+  "sensor_profile_source": "results/rgb_wound/sensor_generalization/sealed_11_route_replay.ipynb",
+  "case_manifests": {
+    "A_supported_rgbd": {
+      "rgb_png": "inputs/A_supported_rgbd/rgb.png",
+      "rgb_sha256": "62c8590dfc0cd206900cf41e6b46548443472bf1cb116c84a2617037761d2ce5",
+      "sensor_npz": "inputs/A_supported_rgbd/sensor_observation.npz",
+      "sensor_npz_sha256": "70bb9931def2d78ec5d9772c74456856ff45dddf6c580552fc39d0eb99efee76"
+    },
+    "B_boundary_resolution": {
+      "rgb_png": "inputs/B_boundary_resolution/rgb.png",
+      "rgb_sha256": "90490acd0c306adcb1f545fb7e31401f2ae50e06148fce6867713f29f3decdf9",
+      "sensor_npz": "inputs/B_boundary_resolution/sensor_observation.npz",
+      "sensor_npz_sha256": "3bd2da3fdfeb32d66dda2f1b96ca076db189694bab93d2cd3320c8645cca1546"
+    },
+    "C_incomplete_depth": {
+      "rgb_png": "inputs/C_incomplete_depth/rgb.png",
+      "rgb_sha256": "62c8590dfc0cd206900cf41e6b46548443472bf1cb116c84a2617037761d2ce5",
+      "sensor_npz": "inputs/C_incomplete_depth/sensor_observation.npz",
+      "sensor_npz_sha256": "74cedea46d52923a60eceed702bc36ff43939ade61ad8943f3712d6e5b4ce14e"
+    },
+    "D_rgb_depth_misalignment": {
+      "rgb_png": "inputs/D_rgb_depth_misalignment/rgb.png",
+      "rgb_sha256": "62c8590dfc0cd206900cf41e6b46548443472bf1cb116c84a2617037761d2ce5",
+      "sensor_npz": "inputs/D_rgb_depth_misalignment/sensor_observation.npz",
+      "sensor_npz_sha256": "c8ff017be7719c2ecd74b36f92bc435b72689f6ea172b3d9aadf5b5430f3864e"
+    },
+    "E_reference_disagreement": {
+      "rgb_png": "inputs/E_reference_disagreement/rgb.png",
+      "rgb_sha256": "62c8590dfc0cd206900cf41e6b46548443472bf1cb116c84a2617037761d2ce5",
+      "sensor_npz": "inputs/E_reference_disagreement/sensor_observation.npz",
+      "sensor_npz_sha256": "70bb9931def2d78ec5d9772c74456856ff45dddf6c580552fc39d0eb99efee76"
+    }
+  },
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

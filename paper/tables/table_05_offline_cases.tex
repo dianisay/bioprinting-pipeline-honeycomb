@@ -1,0 +1,11 @@
+\begin{tabularx}{\linewidth}{l r r r r r r r r}
+\toprule
+Case & Expected & Actual & Stages & Boundary & Exclusion & Unsupported fraction & Planning status & Match \\
+\midrule
+A\_supported\_rgbd & RECONSTRUCTION\_ACCEPTED\_FOR\_SIMULATION & RECONSTRUCTION\_ACCEPTED\_FOR\_SIMULATION & 3 & 0 & 0 & 0.0 & SIMULATION\_PLAN\_COMPLETE & True \\
+B\_boundary\_resolution & BOUNDARY\_RESOLUTION\_INSUFFICIENT & BOUNDARY\_RESOLUTION\_INSUFFICIENT & 0 & 0 & 0 & 0.0 & REFUSE\_TO\_PLAN & True \\
+C\_incomplete\_depth & SURFACE\_INCOMPLETE & SURFACE\_INCOMPLETE & 0 & 0 & 0 & 0.0 & NO\_SAFE\_DEPOSITION\_REGION & True \\
+D\_rgb\_depth\_misalignment & RGB\_DEPTH\_CALIBRATION\_FAILED & RGB\_DEPTH\_CALIBRATION\_FAILED & 0 & 0 & 0 & 0.0 & REFUSE\_TO\_PLAN & True \\
+E\_reference\_disagreement & EXTERNAL\_TARGET\_REQUIRED & EXTERNAL\_TARGET\_REQUIRED & 0 & 0 & 0 & 0.0 & REFUSE\_TO\_PLAN & True \\
+\bottomrule
+\end{tabularx}

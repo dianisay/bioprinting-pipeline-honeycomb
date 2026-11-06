@@ -1,0 +1,60 @@
+{
+  "points": [
+    {
+      "route": "GENERIC_ALIGNED_RGBD",
+      "repeatability_percent_wound_width": 0.3173135952176384,
+      "mean_reference_volume_error_percent": 4.546055614462306,
+      "worst_reference_volume_error_percent": 12.956486497280542,
+      "sequences": 4,
+      "subsets": 8
+    },
+    {
+      "route": "MISALIGNED_DEPTH",
+      "repeatability_percent_wound_width": 0.6476065948590601,
+      "mean_reference_volume_error_percent": 44.11222961352545,
+      "worst_reference_volume_error_percent": 80.54735948422103,
+      "sequences": 4,
+      "subsets": 8
+    },
+    {
+      "route": "OFFSET_0px",
+      "repeatability_percent_wound_width": 0.31979744140950134,
+      "mean_reference_volume_error_percent": 5.424731200864089,
+      "worst_reference_volume_error_percent": 12.025488075250996,
+      "sequences": 4,
+      "subsets": 8
+    },
+    {
+      "route": "OFFSET_1px",
+      "repeatability_percent_wound_width": 0.33734958255060543,
+      "mean_reference_volume_error_percent": 7.397176421540849,
+      "worst_reference_volume_error_percent": 13.31951640103106,
+      "sequences": 4,
+      "subsets": 8
+    },
+    {
+      "route": "OFFSET_2px",
+      "repeatability_percent_wound_width": 0.3574893734336176,
+      "mean_reference_volume_error_percent": 9.420938574214308,
+      "worst_reference_volume_error_percent": 16.061374710201246,
+      "sequences": 4,
+      "subsets": 8
+    },
+    {
+      "route": "OFFSET_4px",
+      "repeatability_percent_wound_width": 0.39503644120289716,
+      "mean_reference_volume_error_percent": 14.823816879097423,
+      "worst_reference_volume_error_percent": 22.336236861806597,
+      "sequences": 4,
+      "subsets": 8
+    },
+    {
+      "route": "OFFSET_8px",
+      "repeatability_percent_wound_width": 0.4629600681897886,
+      "mean_reference_volume_error_percent": 24.792834481636902,
+      "worst_reference_volume_error_percent": 45.95586833504722,
+      "sequences": 4,
+      "subsets": 8
+    }
+  ]
+}

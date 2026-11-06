@@ -1,0 +1,18 @@
+{
+  "case_id": "B_boundary_resolution",
+  "input_manifest": "case_manifests/B_boundary_resolution.json",
+  "failed_metric": {
+    "boundary_width_px": 64,
+    "depth_coverage": null,
+    "depth_noise_over_diameter": null,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "reference_disagreement_m": 0.0,
+    "target_available": false
+  },
+  "rejection_decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+  "planning_decision": "REFUSE_TO_PLAN",
+  "reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold.",
+  "recommended_action": "REQUEST_MORE_RGB_VIEWS",
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

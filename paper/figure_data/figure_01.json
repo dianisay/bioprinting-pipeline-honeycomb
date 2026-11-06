@@ -1,0 +1,150 @@
+{
+  "nodes": [
+    [
+      0.25,
+      4.9,
+      2.15,
+      1.15,
+      "Inputs",
+      "RGB • reviewed boundary\nmesh-rendered depth"
+    ],
+    [
+      3.0,
+      4.9,
+      2.2,
+      1.15,
+      "Observable geometry",
+      "supported bed • boundary\nnormals • confidence"
+    ],
+    [
+      5.85,
+      4.9,
+      2.15,
+      1.15,
+      "Quality gates",
+      "resolution • coverage\nalignment • uncertainty"
+    ],
+    [
+      8.75,
+      4.9,
+      2.55,
+      1.15,
+      "Explicit target policy",
+      "operator / reference\npartial fill • safety envelope"
+    ],
+    [
+      8.75,
+      2.55,
+      2.55,
+      1.15,
+      "Offline layer plan",
+      "surface-conformal geometry\nno scalar-volume prerequisite"
+    ],
+    [
+      5.85,
+      2.55,
+      2.15,
+      1.15,
+      "Rescan / update",
+      "synthetic geometry update\nobservable stopping rule"
+    ],
+    [
+      0.9,
+      0.75,
+      2.7,
+      1.05,
+      "Refuse / request input",
+      "unsupported geometry\nambiguous target / scale"
+    ],
+    [
+      8.75,
+      0.75,
+      2.55,
+      1.05,
+      "Physical boundary",
+      "no robot execution\nprinting disabled"
+    ]
+  ],
+  "edges": [
+    [
+      [
+        2.4,
+        5.48
+      ],
+      [
+        3.0,
+        5.48
+      ]
+    ],
+    [
+      [
+        5.2,
+        5.48
+      ],
+      [
+        5.85,
+        5.48
+      ]
+    ],
+    [
+      [
+        8.0,
+        5.48
+      ],
+      [
+        8.75,
+        5.48
+      ]
+    ],
+    [
+      [
+        10.02,
+        4.9
+      ],
+      [
+        10.02,
+        3.7
+      ]
+    ],
+    [
+      [
+        8.75,
+        3.12
+      ],
+      [
+        8.0,
+        3.12
+      ]
+    ],
+    [
+      [
+        5.85,
+        3.12
+      ],
+      [
+        4.0,
+        1.8
+      ]
+    ],
+    [
+      [
+        6.9,
+        4.9
+      ],
+      [
+        2.8,
+        1.8
+      ]
+    ],
+    [
+      [
+        10.02,
+        2.55
+      ],
+      [
+        10.02,
+        1.8
+      ]
+    ]
+  ]
+}

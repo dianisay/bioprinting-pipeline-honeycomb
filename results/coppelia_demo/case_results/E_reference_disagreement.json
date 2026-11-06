@@ -1,0 +1,50 @@
+{
+  "case_id": "E_reference_disagreement",
+  "route": {
+    "mode": "RGBD",
+    "route": "RGBD",
+    "capabilities": {
+      "has_rgb": true,
+      "has_depth": true,
+      "calibration_valid": true,
+      "depth_aligned_to_rgb": true,
+      "camera_poses_available": true,
+      "metric_scale_valid": false
+    },
+    "quality": {
+      "boundary_width_px": 144,
+      "depth_coverage": 1.0,
+      "depth_noise_over_diameter": 0.0,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.025,
+      "target_available": false
+    },
+    "decision": "EXTERNAL_TARGET_REQUIRED",
+    "recommended_action": "REFUSE_TO_PLAN",
+    "reason": "Plausible synthetic target policies disagree and no external target was supplied.",
+    "print_authorized": false
+  },
+  "metrics": {
+    "case_id": "E_reference_disagreement",
+    "mode": "RGBD",
+    "expected_decision": "EXTERNAL_TARGET_REQUIRED",
+    "router_decision": "EXTERNAL_TARGET_REQUIRED",
+    "recommended_action": "REFUSE_TO_PLAN",
+    "depth_coverage": 1.0,
+    "boundary_width_px": 144,
+    "noise_over_diameter": 0.0,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "route_expected_match": true,
+    "print_authorized": false,
+    "planning_decision": "REFUSE_TO_PLAN",
+    "failure_reason": "Plausible synthetic target policies disagree and no external target was supplied.",
+    "failed_quality_metric": {
+      "boundary_width_px": 144,
+      "depth_coverage": 1.0,
+      "depth_noise_over_diameter": 0.0,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.025,
+      "target_available": false
+    }
+  }
+}

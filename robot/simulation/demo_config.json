@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "seed": 20261105,
+  "units": "synthetic scene meters; not physical validation",
+  "simulation": {
+    "radial_segments": 24,
+    "angular_segments": 64,
+    "image_size": [320, 240],
+    "camera_range_m": 0.4,
+    "layer_thickness_m": 0.01,
+    "tool_to_surface_offset_m": 0.02,
+    "safety_margin_fraction": 0.1,
+    "minimum_boundary_width_px": 100,
+    "minimum_depth_coverage": 0.7,
+    "maximum_depth_noise_over_diameter": 0.02,
+    "maximum_rgb_depth_boundary_disagreement": 0.1,
+    "maximum_uncertainty_fraction_of_layer": 0.5,
+    "exclusion_zones": [
+      {
+        "center_relative_to_phantom_m": [0.07, 0.0],
+        "radius_m": 0.005,
+        "label": "synthetic-no-go-zone"
+      }
+    ]
+  },
+  "sensor_profiles": {
+    "ORACLE_DEPTH": {
+      "downsample": 1,
+      "noise_over_width": 0.0,
+      "missing_fraction": 0.0,
+      "provenance": "results/rgb_wound/sensor_generalization/sealed_11_route_replay.ipynb"
+    },
+    "LOW_COVERAGE": {
+      "downsample": 4,
+      "noise_over_width": 0.005,
+      "missing_fraction": 0.6,
+      "provenance": "results/rgb_wound/sensor_generalization/sealed_11_route_replay.ipynb"
+    },
+    "MISALIGNED_DEPTH": {
+      "downsample": 4,
+      "noise_over_width": 0.005,
+      "missing_fraction": 0.1,
+      "shift_px": 20,
+      "provenance": "results/rgb_wound/sensor_generalization/sealed_11_route_replay.ipynb"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "A_supported_rgbd",
+      "mode": "RGBD",
+      "wound_diameter_px": 144,
+      "profile": "ORACLE_DEPTH",
+      "target_available": true,
+      "target_source": "SYNTHETIC_EXTERNAL_TEST_PLANE",
+      "reference_disagreement_m": 0.0,
+      "seed_offset": 1
+    },
+    {
+      "case_id": "B_boundary_resolution",
+      "mode": "RGB_ONLY",
+      "wound_diameter_px": 64,
+      "profile": null,
+      "target_available": false,
+      "target_source": null,
+      "reference_disagreement_m": 0.0,
+      "seed_offset": 2
+    },
+    {
+      "case_id": "C_incomplete_depth",
+      "mode": "DEGRADED_RGBD",
+      "wound_diameter_px": 144,
+      "profile": "LOW_COVERAGE",
+      "target_available": false,
+      "target_source": null,
+      "reference_disagreement_m": 0.0,
+      "seed_offset": 3
+    },
+    {
+      "case_id": "D_rgb_depth_misalignment",
+      "mode": "DEGRADED_RGBD",
+      "wound_diameter_px": 144,
+      "profile": "MISALIGNED_DEPTH",
+      "target_available": false,
+      "target_source": null,
+      "reference_disagreement_m": 0.0,
+      "seed_offset": 4
+    },
+    {
+      "case_id": "E_reference_disagreement",
+      "mode": "RGBD",
+      "wound_diameter_px": 144,
+      "profile": "ORACLE_DEPTH",
+      "target_available": false,
+      "target_source": null,
+      "reference_disagreement_m": 0.025,
+      "seed_offset": 5
+    }
+  ],
+  "authority": {
+    "offline_only": true,
+    "physical_robot_commands_enabled": false,
+    "print_authorized": false
+  }
+}

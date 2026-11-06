@@ -1,0 +1,12 @@
+{
+  "source": "paper/data/publication_evidence.json",
+  "format_generation": "scripts/build_publication_package.py",
+  "tables": {
+    "table_01_datasets": 4,
+    "table_02_sensor_routes": 6,
+    "table_03_calibration": 9,
+    "table_04_quantity_classes": 4,
+    "table_05_offline_cases": 5
+  },
+  "statistical_note": "Small numbers of independent wounds/body models and correlated views, subsets, patches, and fault variants do not justify population-level intervals."
+}

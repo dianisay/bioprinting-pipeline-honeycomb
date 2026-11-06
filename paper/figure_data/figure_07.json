@@ -1,0 +1,78 @@
+{
+  "models": [
+    {
+      "method": "bspline",
+      "ring_width_fraction": 0.2,
+      "healthy_samples": 10330,
+      "blocked_holdout_rmse_dataset_units": 0.0031385671411170916,
+      "reference_defined_volume_dataset_units3": 1.0021809307103083e-06,
+      "extrapolation_z_range_dataset_units": 0.4143268659843652,
+      "boundary_reference_range_dataset_units": 0.41915895312973683,
+      "boundary_continuity_rmse_dataset_units": 0.0006805412675161512,
+      "healthy_ring_only": true,
+      "wound_bed_used_for_fit": false
+    },
+    {
+      "method": "local_rbf",
+      "ring_width_fraction": 0.2,
+      "healthy_samples": 10330,
+      "blocked_holdout_rmse_dataset_units": 0.007662880157905203,
+      "reference_defined_volume_dataset_units3": 1.0978184100759255e-06,
+      "extrapolation_z_range_dataset_units": 0.41340606790929224,
+      "boundary_reference_range_dataset_units": 0.4183035832725037,
+      "boundary_continuity_rmse_dataset_units": 0.0006902097692122549,
+      "healthy_ring_only": true,
+      "wound_bed_used_for_fit": false
+    },
+    {
+      "method": "plane",
+      "ring_width_fraction": 0.2,
+      "healthy_samples": 10330,
+      "blocked_holdout_rmse_dataset_units": 0.14069557051953854,
+      "reference_defined_volume_dataset_units3": 2.1071514235388e-06,
+      "extrapolation_z_range_dataset_units": 0.4066457415623017,
+      "boundary_reference_range_dataset_units": 0.4165741855079843,
+      "boundary_continuity_rmse_dataset_units": 0.0027663909969431223,
+      "healthy_ring_only": true,
+      "wound_bed_used_for_fit": false
+    },
+    {
+      "method": "quadratic",
+      "ring_width_fraction": 0.2,
+      "healthy_samples": 10330,
+      "blocked_holdout_rmse_dataset_units": 0.01033740998664334,
+      "reference_defined_volume_dataset_units3": 1.5266712874009183e-06,
+      "extrapolation_z_range_dataset_units": 0.4146990194620832,
+      "boundary_reference_range_dataset_units": 0.41902418507234407,
+      "boundary_continuity_rmse_dataset_units": 0.0010629243763732533,
+      "healthy_ring_only": true,
+      "wound_bed_used_for_fit": false
+    },
+    {
+      "method": "ransac_plane",
+      "ring_width_fraction": 0.2,
+      "healthy_samples": 10330,
+      "blocked_holdout_rmse_dataset_units": 0.12933434627406948,
+      "reference_defined_volume_dataset_units3": 1.9716528292456575e-09,
+      "extrapolation_z_range_dataset_units": 0.20050227817967328,
+      "boundary_reference_range_dataset_units": 0.20335347149841265,
+      "boundary_continuity_rmse_dataset_units": 0.010885425422756405,
+      "healthy_ring_only": true,
+      "wound_bed_used_for_fit": false
+    },
+    {
+      "method": "thin_plate_spline",
+      "ring_width_fraction": 0.2,
+      "healthy_samples": 10330,
+      "blocked_holdout_rmse_dataset_units": 0.004860638023960799,
+      "reference_defined_volume_dataset_units3": 1.0874540837014455e-06,
+      "extrapolation_z_range_dataset_units": 0.4140349087899011,
+      "boundary_reference_range_dataset_units": 0.41889296153597333,
+      "boundary_continuity_rmse_dataset_units": 0.000702564622489554,
+      "healthy_ring_only": true,
+      "wound_bed_used_for_fit": false
+    }
+  ],
+  "volume_normalization": "Each model's reference-defined volume divided by the six-model median.",
+  "interpretation": "No official pre-wound healthy-surface truth is available."
+}

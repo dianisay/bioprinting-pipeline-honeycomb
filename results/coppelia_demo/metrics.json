@@ -1,0 +1,318 @@
+{
+  "status": "OFFLINE_COMPUTATIONAL_DEMO_COMPLETE_COPPELIASIM_NOT_RUN",
+  "case_count": 5,
+  "case_results": [
+    {
+      "case_id": "A_supported_rgbd",
+      "route": {
+        "mode": "RGBD",
+        "route": "RGBD",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": true,
+          "calibration_valid": true,
+          "depth_aligned_to_rgb": true,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 144,
+          "depth_coverage": 1.0,
+          "depth_noise_over_diameter": 0.0,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.0,
+          "target_available": true
+        },
+        "decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+        "recommended_action": "SIMULATE_ONLY",
+        "reason": "Synthetic geometry and sensor-quality gates permit offline simulation only.",
+        "print_authorized": false
+      },
+      "metrics": {
+        "case_id": "A_supported_rgbd",
+        "mode": "RGBD",
+        "expected_decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+        "router_decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+        "recommended_action": "SIMULATE_ONLY",
+        "depth_coverage": 1.0,
+        "boundary_width_px": 144,
+        "noise_over_diameter": 0.0,
+        "rgb_depth_boundary_disagreement": 0.0,
+        "route_expected_match": true,
+        "print_authorized": false,
+        "planning_decision": "SIMULATION_PLAN_COMPLETE",
+        "supported_surface_percentage": 100.0,
+        "boundary_valid": true,
+        "uncertainty_median_scene_m": 0.001,
+        "stage_count": 3,
+        "plan_hashes": [
+          "5393350c3a2d3364a1545b2597a84506024fbe487a371961b07c2863be50cdc5",
+          "6a0ba413887248e35da26ec0be523278f565b8b15e6231fbdd8cb77f94523e67",
+          "0e50a9a02e118ce7988ad717c5f96e25bf99172633ebe855efd5195dca50702d"
+        ],
+        "second_plan_changed": true,
+        "boundary_violations": 0,
+        "exclusion_zone_violations": 0,
+        "exclusion_zones": [
+          {
+            "center_relative_to_phantom_m": [
+              0.07,
+              0.0
+            ],
+            "radius_m": 0.005,
+            "label": "synthetic-no-go-zone"
+          }
+        ],
+        "unsupported_deposition_fraction": 0.0,
+        "maximum_target_height_violation_scene_m": 0.0,
+        "remaining_supported_depth_scene_m": 0.0,
+        "unresolved_supported_area_fraction": 0.0,
+        "trajectory_completion": true,
+        "tool_position_error_scene_m": null,
+        "tool_orientation_error_rad": null,
+        "collision_count": null,
+        "robot_execution_status": "CARTESIAN_PREVIEW_ONLY_NOT_EXECUTED",
+        "self_intersections": 0
+      }
+    },
+    {
+      "case_id": "B_boundary_resolution",
+      "route": {
+        "mode": "RGB_ONLY",
+        "route": "RGB_ONLY_REPLAY",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": false,
+          "calibration_valid": true,
+          "depth_aligned_to_rgb": true,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 64,
+          "depth_coverage": null,
+          "depth_noise_over_diameter": null,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        },
+        "decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+        "recommended_action": "REQUEST_MORE_RGB_VIEWS",
+        "reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold.",
+        "print_authorized": false
+      },
+      "metrics": {
+        "case_id": "B_boundary_resolution",
+        "mode": "RGB_ONLY",
+        "expected_decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+        "router_decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+        "recommended_action": "REQUEST_MORE_RGB_VIEWS",
+        "depth_coverage": 0.0,
+        "boundary_width_px": 64,
+        "noise_over_diameter": 0.0,
+        "rgb_depth_boundary_disagreement": 0.0,
+        "route_expected_match": true,
+        "print_authorized": false,
+        "planning_decision": "REFUSE_TO_PLAN",
+        "failure_reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold.",
+        "failed_quality_metric": {
+          "boundary_width_px": 64,
+          "depth_coverage": null,
+          "depth_noise_over_diameter": null,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        }
+      }
+    },
+    {
+      "case_id": "C_incomplete_depth",
+      "route": {
+        "mode": "DEGRADED_RGBD",
+        "route": "DEGRADED_RGBD",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": true,
+          "calibration_valid": true,
+          "depth_aligned_to_rgb": true,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 144,
+          "depth_coverage": 0.3550889723539191,
+          "depth_noise_over_diameter": 0.0117393240688978,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        },
+        "decision": "SURFACE_INCOMPLETE",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "reason": "Depth coverage or normalized depth noise fails the frozen quality gate.",
+        "print_authorized": false
+      },
+      "metrics": {
+        "case_id": "C_incomplete_depth",
+        "mode": "DEGRADED_RGBD",
+        "expected_decision": "SURFACE_INCOMPLETE",
+        "router_decision": "SURFACE_INCOMPLETE",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "depth_coverage": 0.3550889723539191,
+        "boundary_width_px": 144,
+        "noise_over_diameter": 0.0117393240688978,
+        "rgb_depth_boundary_disagreement": 0.0,
+        "route_expected_match": true,
+        "print_authorized": false,
+        "planning_decision": "NO_SAFE_DEPOSITION_REGION",
+        "failure_reason": "Depth coverage or normalized depth noise fails the frozen quality gate.",
+        "failed_quality_metric": {
+          "boundary_width_px": 144,
+          "depth_coverage": 0.3550889723539191,
+          "depth_noise_over_diameter": 0.0117393240688978,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        }
+      }
+    },
+    {
+      "case_id": "D_rgb_depth_misalignment",
+      "route": {
+        "mode": "DEGRADED_RGBD",
+        "route": "DEGRADED_RGBD",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": true,
+          "calibration_valid": false,
+          "depth_aligned_to_rgb": false,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 144,
+          "depth_coverage": 0.7228618927405948,
+          "depth_noise_over_diameter": 0.07526987791061401,
+          "rgb_depth_boundary_disagreement": 0.38459925564816266,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        },
+        "decision": "RGB_DEPTH_CALIBRATION_FAILED",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate.",
+        "print_authorized": false
+      },
+      "metrics": {
+        "case_id": "D_rgb_depth_misalignment",
+        "mode": "DEGRADED_RGBD",
+        "expected_decision": "RGB_DEPTH_CALIBRATION_FAILED",
+        "router_decision": "RGB_DEPTH_CALIBRATION_FAILED",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "depth_coverage": 0.7228618927405948,
+        "boundary_width_px": 144,
+        "noise_over_diameter": 0.07526987791061401,
+        "rgb_depth_boundary_disagreement": 0.38459925564816266,
+        "route_expected_match": true,
+        "print_authorized": false,
+        "planning_decision": "REFUSE_TO_PLAN",
+        "failure_reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate.",
+        "failed_quality_metric": {
+          "boundary_width_px": 144,
+          "depth_coverage": 0.7228618927405948,
+          "depth_noise_over_diameter": 0.07526987791061401,
+          "rgb_depth_boundary_disagreement": 0.38459925564816266,
+          "reference_disagreement_m": 0.0,
+          "target_available": false
+        }
+      }
+    },
+    {
+      "case_id": "E_reference_disagreement",
+      "route": {
+        "mode": "RGBD",
+        "route": "RGBD",
+        "capabilities": {
+          "has_rgb": true,
+          "has_depth": true,
+          "calibration_valid": true,
+          "depth_aligned_to_rgb": true,
+          "camera_poses_available": true,
+          "metric_scale_valid": false
+        },
+        "quality": {
+          "boundary_width_px": 144,
+          "depth_coverage": 1.0,
+          "depth_noise_over_diameter": 0.0,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.025,
+          "target_available": false
+        },
+        "decision": "EXTERNAL_TARGET_REQUIRED",
+        "recommended_action": "REFUSE_TO_PLAN",
+        "reason": "Plausible synthetic target policies disagree and no external target was supplied.",
+        "print_authorized": false
+      },
+      "metrics": {
+        "case_id": "E_reference_disagreement",
+        "mode": "RGBD",
+        "expected_decision": "EXTERNAL_TARGET_REQUIRED",
+        "router_decision": "EXTERNAL_TARGET_REQUIRED",
+        "recommended_action": "REFUSE_TO_PLAN",
+        "depth_coverage": 1.0,
+        "boundary_width_px": 144,
+        "noise_over_diameter": 0.0,
+        "rgb_depth_boundary_disagreement": 0.0,
+        "route_expected_match": true,
+        "print_authorized": false,
+        "planning_decision": "REFUSE_TO_PLAN",
+        "failure_reason": "Plausible synthetic target policies disagree and no external target was supplied.",
+        "failed_quality_metric": {
+          "boundary_width_px": 144,
+          "depth_coverage": 1.0,
+          "depth_noise_over_diameter": 0.0,
+          "rgb_depth_boundary_disagreement": 0.0,
+          "reference_disagreement_m": 0.025,
+          "target_available": false
+        }
+      }
+    }
+  ],
+  "closed_loop": {
+    "stage_count": 3,
+    "second_plan_changed": true,
+    "stop_decision": "SIMULATION_PLAN_COMPLETE",
+    "boundary_violations": 0,
+    "exclusion_zone_violations": 0,
+    "unsupported_deposition_fraction": 0.0,
+    "maximum_target_height_violation_scene_m": 0.0
+  },
+  "required_decisions_seen": [
+    "BOUNDARY_RESOLUTION_INSUFFICIENT",
+    "EXTERNAL_TARGET_REQUIRED",
+    "NO_SAFE_DEPOSITION_REGION",
+    "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+    "REFUSE_TO_PLAN",
+    "REQUEST_DEPTH_RESCAN",
+    "REQUEST_MORE_RGB_VIEWS",
+    "RGB_DEPTH_CALIBRATION_FAILED",
+    "SIMULATE_ONLY",
+    "SIMULATION_PLAN_COMPLETE",
+    "SURFACE_INCOMPLETE"
+  ],
+  "coppeliasim": {
+    "installed": false,
+    "scene_file_created": false,
+    "scene_execution_validated": false,
+    "reason": "No CoppeliaSim executable or installed runtime was present in the workspace."
+  },
+  "robot_kinematics": {
+    "repository_supported_model": "UR5 + XY gantry (8 DOF), modules/robot_model.py",
+    "joint_space_execution": "NOT_RUN",
+    "collision_check": "NOT_RUN",
+    "offline_video_note": "Cartesian path/geometry preview only; not CoppeliaSim footage or robot execution."
+  },
+  "sensor_profile_provenance": "Previously sealed sensor_generalization/sealed_11_route_replay.ipynb",
+  "thresholds_are": "Computational engineering criteria, not clinical or physical safety thresholds.",
+  "units": "synthetic scene meters; not physical validation",
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

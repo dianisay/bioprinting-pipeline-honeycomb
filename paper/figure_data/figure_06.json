@@ -1,0 +1,99 @@
+{
+  "strict_holdout": {
+    "status": "FAILED_OR_PARTIAL",
+    "clean_configurations": 48,
+    "faulty_configurations": 168,
+    "target_design_stress_configurations": 24,
+    "diagnostic_wound_subsets": 480,
+    "clean_false_alarm_count": 2,
+    "clean_false_alarm_denominator": 48,
+    "threshold_recall": [
+      {
+        "evaluation": "Strict holdout, total error",
+        "threshold": "5%",
+        "numerator": 73,
+        "denominator": 112,
+        "rate": 0.6517857142857143,
+        "unit": "fraction of dangerous configurations detected",
+        "aggregation": "configuration-level; worst of two disjoint 20-view subsets",
+        "unavailable_subsets": 5
+      },
+      {
+        "evaluation": "Strict holdout, total error",
+        "threshold": "10%",
+        "numerator": 53,
+        "denominator": 86,
+        "rate": 0.6162790697674418,
+        "unit": "fraction of dangerous configurations detected",
+        "aggregation": "configuration-level; worst of two disjoint 20-view subsets",
+        "unavailable_subsets": 5
+      },
+      {
+        "evaluation": "Strict holdout, total error",
+        "threshold": "20%",
+        "numerator": 24,
+        "denominator": 29,
+        "rate": 0.8275862068965517,
+        "unit": "fraction of dangerous configurations detected",
+        "aggregation": "configuration-level; worst of two disjoint 20-view subsets",
+        "unavailable_subsets": 5
+      },
+      {
+        "evaluation": "Strict holdout, incremental error",
+        "threshold": "5%",
+        "numerator": 41,
+        "denominator": 42,
+        "rate": 0.9761904761904762,
+        "unit": "fraction of dangerous configurations detected",
+        "aggregation": "configuration-level; worst of two disjoint 20-view subsets",
+        "unavailable_subsets": 5
+      },
+      {
+        "evaluation": "Strict holdout, incremental error",
+        "threshold": "10%",
+        "numerator": 28,
+        "denominator": 29,
+        "rate": 0.9655172413793104,
+        "unit": "fraction of dangerous configurations detected",
+        "aggregation": "configuration-level; worst of two disjoint 20-view subsets",
+        "unavailable_subsets": 5
+      },
+      {
+        "evaluation": "Strict holdout, incremental error",
+        "threshold": "20%",
+        "numerator": 16,
+        "denominator": 16,
+        "rate": 1.0,
+        "unit": "fraction of dangerous configurations detected",
+        "aggregation": "configuration-level; worst of two disjoint 20-view subsets",
+        "unavailable_subsets": 5
+      }
+    ],
+    "all_research_measurement_gate_clean_controls_failed": 32,
+    "print_authorized": false
+  },
+  "target_ablation": {
+    "synthetic_v2_configurations": 96,
+    "stepped_vs_planar": [
+      {
+        "target": "stepped",
+        "fault_rejections": 65,
+        "fault_configurations": 72,
+        "fault_rejection_rate": 0.9027777777777778,
+        "clean_false_alarms": 0,
+        "clean_controls": 24,
+        "clean_false_alarm_rate": 0.0
+      },
+      {
+        "target": "planar",
+        "fault_rejections": 41,
+        "fault_configurations": 72,
+        "fault_rejection_rate": 0.5694444444444444,
+        "clean_false_alarms": 0,
+        "clean_controls": 24,
+        "clean_false_alarm_rate": 0.0
+      }
+    ],
+    "target_design_stress_is_not_physical_validation": true
+  }
+}

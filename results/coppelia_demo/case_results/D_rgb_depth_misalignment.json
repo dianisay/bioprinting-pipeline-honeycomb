@@ -1,0 +1,50 @@
+{
+  "case_id": "D_rgb_depth_misalignment",
+  "route": {
+    "mode": "DEGRADED_RGBD",
+    "route": "DEGRADED_RGBD",
+    "capabilities": {
+      "has_rgb": true,
+      "has_depth": true,
+      "calibration_valid": false,
+      "depth_aligned_to_rgb": false,
+      "camera_poses_available": true,
+      "metric_scale_valid": false
+    },
+    "quality": {
+      "boundary_width_px": 144,
+      "depth_coverage": 0.7228618927405948,
+      "depth_noise_over_diameter": 0.07526987791061401,
+      "rgb_depth_boundary_disagreement": 0.38459925564816266,
+      "reference_disagreement_m": 0.0,
+      "target_available": false
+    },
+    "decision": "RGB_DEPTH_CALIBRATION_FAILED",
+    "recommended_action": "REQUEST_DEPTH_RESCAN",
+    "reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate.",
+    "print_authorized": false
+  },
+  "metrics": {
+    "case_id": "D_rgb_depth_misalignment",
+    "mode": "DEGRADED_RGBD",
+    "expected_decision": "RGB_DEPTH_CALIBRATION_FAILED",
+    "router_decision": "RGB_DEPTH_CALIBRATION_FAILED",
+    "recommended_action": "REQUEST_DEPTH_RESCAN",
+    "depth_coverage": 0.7228618927405948,
+    "boundary_width_px": 144,
+    "noise_over_diameter": 0.07526987791061401,
+    "rgb_depth_boundary_disagreement": 0.38459925564816266,
+    "route_expected_match": true,
+    "print_authorized": false,
+    "planning_decision": "REFUSE_TO_PLAN",
+    "failure_reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate.",
+    "failed_quality_metric": {
+      "boundary_width_px": 144,
+      "depth_coverage": 0.7228618927405948,
+      "depth_noise_over_diameter": 0.07526987791061401,
+      "rgb_depth_boundary_disagreement": 0.38459925564816266,
+      "reference_disagreement_m": 0.0,
+      "target_available": false
+    }
+  }
+}

@@ -1,235 +1,70 @@
-# WoundBioprinter
+# Bioprinting Pipeline — Evidence-Bounded Computational Framework
 
-**Autonomous 3D wound reconstruction and honeycomb bioprinting via CNN-Transformer vision.**
+> **Project scope:** An uncertainty-aware multimodal computational framework for visible 3D wound reconstruction, sensor routing, failure detection and conservative surface-conformal deposition planning.
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
-[![PyTorch 2.0+](https://img.shields.io/badge/pytorch-2.0+-orange.svg)](https://pytorch.org)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+The repository contains historical learned models and planner components, plus a completed, evidence-bounded computational study. The reported work evaluates visible geometry, synthetic sensor routes, failure rejection, and offline planning decisions. It does **not** establish clinical wound measurement or autonomous printing.
 
-> **Phase 1** of the doctoral thesis *"CNN-Based ML for 3D Motion Planning and Control in In-Situ Robotic Bioprinters"* ? developed at [Tecnologico de Monterrey](https://tec.mx).
->
-> For the MIT collaboration extension (geodesic toolpaths, DeepCurrents surface reconstruction), see [bioprinting-pipeline-livemesh](https://github.com/dianisay/bioprinting-pipeline-livemesh).
->
-> For the unified multi-strategy system (honeycomb + geodesic per layer), see [bioprinting-pipeline-multi-strategy-toolpath](https://github.com/dianisay/bioprinting-pipeline-multi-strategy-toolpath).
+![Evidence-bounded architecture](paper/figures/figure_01.png)
 
----
+## What the evidence supports
 
-## Overview
+- **Visible-surface shape evaluation:** selected Syn3DWound and SALVE comparisons. SALVE comparisons use ground-truth (GT) similarity alignment and therefore evaluate shape only; independent metric-scale recovery is **not proven**.
+- **Synthetic sensor routing:** depth is rendered from source meshes in dataset units. There is no real D405 wound dataset or physical depth-sensor validation.
+- **Failure detection and rejection:** calibration safety was evaluated on synthetic configurations. The strict engineering gate failed; this is not a validated safety system.
+- **Reference-surface limits:** the pre-wound healthy surface is not identifiable from current observations. Healthy-disc extrapolation is a lower-bound test only.
+- **Conservative architecture decision:** `STAGED_FILL_WITH_OPERATOR_FINAL_TARGET`. The final target remains externally specified; no robot or planner integration was performed.
+- **Offline demonstration:** five deterministic software cases, including a three-stage scan/plan/update trace. CoppeliaSim was not run and no physical printing took place.
 
-A camera-to-deposition pipeline for in-situ wound bioprinting:
+### Selected sealed results
 
-```
-8 RGB views (eye-in-hand)
-        |
-   PERCEIVE -------- CT-style volumetric encoder (8x ResNet-18 + 3D Transformer)
-        |              PolarDecoder3DLayered -> boundary + depth + layer fill
-        v
-   SENSE ----------- Intel RealSense D405 depth validation
-        |              Confidence-weighted fusion (predicted + measured)
-        v
-   PLAN ------------ Honeycomb lattice generation on wound void
-        |              TSP optimization (MILP) for minimal nozzle travel
-        |              Conformal mapping (UV -> curved surface XYZ)
-        v
-   EXECUTE --------- 8-DOF inverse kinematics (UR5 + XY gantry)
-        |              PID + Super-Twisting control
-        v
-   FEEDBACK -------- Re-scan -> verify fill -> correct next layer
-        |
-        '---- closed loop ----'
-```
+| Evaluation | Result | Interpretation |
+|---|---:|---|
+| Syn3DWound surface shape | Mean 3.90% and P95 5.85% of wound width; 92.64% completeness at a 5%-width tolerance | Shape comparison after evaluation-only similarity alignment; not metric-scale recovery |
+| SALVE, iPhone / Neuralangelo | 0.0956 mm mean point-to-surface; 99.57% completeness at 1 mm | GT-similarity-aligned shape evaluation only |
+| SALVE, Logitech / NeuS-facto | 0.1372 mm mean point-to-surface; 99.15% completeness at 1 mm | GT-similarity-aligned shape evaluation only |
+| Clean measurement validity | 0/24 variants accepted | Unknown healthy-skin closure prevents true pre-wound volume identification |
+| Healthy-disc hidden-surface TEST | 55 held-out patches from one body model; TPS MAE 0.042% of hole diameter; ensemble coverage 88.32% vs. a 90% target | Lower-bound difficulty estimate, not pre-wound anatomy recovery |
+| Final synthetic architecture decision | 18 carved cases; direct-reference gate failed | Select staged partial filling with operator-defined final target |
+| Strict calibration holdout | 48 clean, 168 fault configurations; 2/48 clean false alarms | Engineering gate failed; correlated configurations are not independent subjects |
 
----
+Percentages of wound width, hole diameter, or computed reference volume are not physical measurements. SALVE millimeter values above follow GT-derived similarity alignment and must not be interpreted as independent scale recovery. No inferential confidence intervals are reported because the effective independent sample counts and clustered design do not justify them.
 
-## Key Contributions
+## Reproduction
 
-### 1. Volumetric Wound Reconstruction (CT-style)
+See [reproduction instructions](docs/reproduction.md), [claims and limitations](docs/claims_and_limitations.md), [dataset provenance](docs/dataset_provenance.md), and the [statistical audit](docs/statistical_audit.md). The [artifact inventory](docs/artifact_inventory.csv) identifies final versus diagnostic materials and commit safety. The metric-level audit is generated at `paper/tables/metric_audit.csv`.
 
-Instead of a single photo, we capture **8 orthogonal views** and fuse them into a 3D voxel grid ? analogous to CT reconstruction from 2D projections. A 3D Transformer then contextualizes depth from boundary geometry.
+### Final notebook
 
-### 2. Layer-Aware Polar Decoder
+Open [04_rgb_wound_3d_reconstruction.ipynb](notebooks/04_rgb_wound_3d_reconstruction.ipynb) in Kaggle or Jupyter. Its default `ACTION="REPLAY"` displays sealed results; live actions require the exact dataset and result inputs described in the notebook. The clean notebook retains code and hash-bound records; [04_replay_manifest.json](notebooks/04_replay_manifest.json) records the hashes and sizes of removed embedded outputs.
 
-`PolarDecoder3DLayered` predicts wound geometry as:
-- **Boundary**: 64 radii in polar coordinates (guaranteed closed, ordered)
-- **Depth profile**: per-angle wound depth in mm
-- **Layer fill**: bioink amount per layer (cone-shaped deposition)
+### Commands (PowerShell)
 
-Direct bioprinting instructions ? no post-processing.
-
-### 3. Closed-Loop Depth Feedback
-
-An eye-in-hand RealSense D405 provides real-time depth validation:
-- Before printing: fuse AI prediction with sensor measurement
-- After each layer: re-scan, compute residual, correct next pass
-- Result: **99% fill accuracy** with 15% initial prediction error (simulation)
-
-### 4. Honeycomb Infill Strategy
-
-Conformal honeycomb lattice + TSP-optimized nozzle path provides:
-- Uniform structural support
-- Minimal travel distance
-- Feasibility validation (boundary-fit check)
-
----
-
-## Project Structure
-
-```
-diana-bioprinting-pipeline/
-|
-+-- models/                        # Neural network architectures
-|   +-- encoder.py                    ResNet-50 + 6-layer Transformer (single-view)
-|   +-- volumetric_encoder.py         8x ResNet-18 + volumetric fusion + 3D Transformer
-|   +-- volumetric_decoder.py         PolarDecoder3DLayered (boundary + depth + layers)
-|   +-- polar_decoder.py              2D PolarDecoder (ablation baseline)
-|   +-- detr_decoder.py               DETR-style decoder (ablation)
-|   +-- autoregressive_decoder.py     Autoregressive decoder (ablation)
-|
-+-- modules/                       # Robotics + control
-|   +-- honeycomb.py                  Conformal honeycomb lattice generation
-|   +-- conformal_mapping.py          UV -> curved surface XYZ mapping
-|   +-- tsp_solver.py                 TSP via MILP (PuLP)
-|   +-- trajectory_planner.py         Full trajectory: hex grid -> waypoints
-|   +-- wound_to_trajectory.py        Bridge: decoder output -> planner input
-|   +-- depth_sensor.py               RealSense D405 model (sim + hardware)
-|   +-- depth_fusion.py               Confidence-weighted depth blending
-|   +-- closed_loop_controller.py     Scan-deposit-verify-correct loop
-|   +-- robot_model.py                8-DOF UR5 + XY gantry kinematics
-|   +-- inverse_kinematics.py         IK solver (L-BFGS-B + APF + STW)
-|   +-- stl_analysis.py               Scaffold geometry extraction
-|   +-- visualization_3d.py           3D plotting
-|
-+-- training/                      # Training & evaluation
-|   +-- train.py                      Trainer with early stopping
-|   +-- evaluate.py                   Test-set metrics
-|   +-- ablation.py                   3-decoder comparison script
-|
-+-- data/                          # Data loading
-|   +-- dataset.py                    Single-view wound dataset
-|   +-- multiview_dataset.py          Multi-view synthetic generator + loader
-|   +-- polar_conversion.py           Mask <-> polar coordinates
-|   +-- synthetic_generator.py        Star-convex wound shapes
-|
-+-- notebooks/                     # Kaggle experiments
-|   +-- 01-ablation-study-kaggle.ipynb     2D ablation (Polar vs DETR vs AR)
-|   +-- 02_volumetric_ablation_kaggle.ipynb  4-variant volumetric ablation
-|
-+-- scripts/
-|   +-- demo_pipeline.py              End-to-end demo (image -> robot)
-|
-+-- tests/                         # Automated tests
-+-- configs/                       # Hyperparameters
-+-- requirements.txt
-+-- pyproject.toml
+```powershell
+python -m pip install -e ".[dev]"
+python -m pytest -q
+python scripts/build_publication_package.py --replay
+python -m robot.simulation.observable_demo
 ```
 
----
+Figure generation uses the compact evidence bundle in `paper/data/`. Regenerating Figure 3 also requires the identified public Syn3DWound RGB example at the path recorded in `paper/data/figure03_provenance.json`. Exporting a fresh evidence bundle requires the sealed local experiment outputs; do not rerun or retune sealed experiments to regenerate the committed package.
 
-## Installation
+To re-export selected evidence when those sealed outputs are available:
 
-```bash
-git clone https://github.com/dianisay/bioprinting-pipeline-honeycomb.git
-cd bioprinting-pipeline-honeycomb
-pip install -e .
+```powershell
+python scripts/export_publication_evidence.py
+python scripts/build_publication_package.py
 ```
 
-Or without editable install:
-```bash
-pip install -r requirements.txt
-```
+## Data and citations
 
----
+Raw external datasets, large intermediate results, model checkpoints, and caches are not committed. Follow [dataset provenance and download notes](docs/dataset_provenance.md). The legacy `FUSeg` material and model components are historical code, not evidence for the completed reconstruction and safety results.
 
-## Quick Start
+The bibliography file is [references.bib](paper/references.bib). A source-by-source literature audit and manuscript-level citation integration remain writing tasks; no unverified citation is presented here as evidence.
 
-```python
-from models.volumetric_encoder import VolumetricWoundEncoder3D
-from models.volumetric_decoder import PolarDecoder3DLayered
-import torch
+## Explicit non-claims
 
-# 8-view wound images (B, 8, 3, 256, 256)
-views = torch.randn(1, 8, 3, 256, 256)
-
-encoder = VolumetricWoundEncoder3D(d_model=256, num_views=8, grid_size=8)
-decoder = PolarDecoder3DLayered(d_model=256, num_radii=64, num_layers=4, max_depth_mm=5.0)
-
-enc_out = encoder(views, return_voxel_grid=True)
-pred = decoder(enc_out['features'])
-
-print(f"Boundary: {pred['radii'].shape}")        # (1, 64) radii
-print(f"Depth: {pred['depth'].shape}")            # (1, 64) mm
-print(f"Layer fill: {pred['layer_amounts'].shape}")  # (1, 64, 4)
-print(f"Voxel grid: {enc_out['voxel_grid'].shape}")  # (1, 256, 8, 8, 8)
-```
-
----
-
-## Kaggle Training
-
-Both notebooks are Kaggle-ready. Upload this repo as a dataset, then:
-
-### Notebook 02: 4-Variant Volumetric Ablation (main result)
-
-Trains and compares:
-1. **Baseline** ? single-view + 2D polar (no depth)
-2. **WoundBioprinter** ? single-view + 3D polar (depth + layers)
-3. **WoundBioprinter3D** ? RGB-D input + 3D polar
-4. **Volumetric** ? 8-view CT-style + 3D polar (our contribution)
-
-Metrics: Chamfer distance (mm), Depth MAE (mm), Layer MAE, Honeycomb Feasibility (%), inference time (ms).
-
-Runtime: ~2-3 hours on P100.
-
-### Notebook 01: 2D Decoder Ablation
-
-Compares Polar vs DETR vs Autoregressive decoders (single-view, boundary-only).
-
----
-
-## Closed-Loop Printing Architecture
-
-```
-          +---> DEPOSIT layer k
-          |          |
-     PLAN layer     SENSE (RealSense D405)
-          ^          |
-          |     VERIFY fill quality
-          |          |
-          +----<-- CORRECT (adjust layer k+1)
-```
-
-The `closed_loop_controller.py` orchestrates this cycle, achieving robust
-deposition even with untrained models or noisy depth predictions.
-
----
-
-## Relation to LiveMesh
-
-This repository represents the **core bioprinting pipeline** developed at Tecnologico de Monterrey. The subsequent MIT CSAIL collaboration extended this work with:
-
-- **Geodesic toolpaths** (boundary-parallel, curvature-adaptive)
-- **DeepCurrents** surface reconstruction (mesh-free)
-- **Optimal-transport coverage metrics**
-
-That extension lives at [bioprinting-pipeline-livemesh](https://github.com/dianisay/bioprinting-pipeline-livemesh).
-
-The unified system combining both approaches (AI-driven layer decomposition) is at [bioprinting-pipeline-multi-strategy-toolpath](https://github.com/dianisay/bioprinting-pipeline-multi-strategy-toolpath).
-
----
-
-## Citation
-
-```bibtex
-@phdthesis{roldan2026bioprinting,
-    title  = {CNN-Transformer-Based Machine Learning for 3D Motion Planning
-              and Control in In-Situ Robotic Bioprinters for Superficial
-              Tissue Regeneration},
-    author = {Ayala Rold\'an, Diana Paola},
-    school = {Tecnol\'ogico de Monterrey},
-    year   = {2026},
-}
-```
-
-## License
-
-MIT
+- No CT-style reconstruction or claim of exactly eight orthogonal measurements.
+- No certified millimeter wound depth, clinical volume, or true anatomical restoration.
+- No validated direct printing instructions, 99% fill accuracy, autonomous healing, or clinically meaningful measurement claim.
+- No real D405 wound dataset, physical sensor validation, CoppeliaSim robot execution, or physical printing.
+- Printing remains disabled; no printing is authorized.

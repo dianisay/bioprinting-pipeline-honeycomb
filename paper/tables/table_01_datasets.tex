@@ -1,0 +1,10 @@
+\begin{tabularx}{\linewidth}{l X X X X}
+\toprule
+Dataset & Modalities & Role & Evaluated scope & Limitations \\
+\midrule
+Syn3DWound & Rendered RGB, shaded masks/labels, cropped meshes, COLMAP cameras/poses. & Primary source for RGB shape evaluation, mesh-rendered depth, sensor routing, calibration, hidden-disc and geometry studies. & 52 sequences inventoried; only explicitly listed subsets were evaluated. Sensor generalization used 4 sequence contexts and 252 correlated route/subset results. & No native depth maps or certified physical scale; local meshes are crops; synthetic renderer labels are not clinical truth. \\
+SALVE & RGB video, camera transforms/intrinsics, scanner point cloud/GT, published aligned meshes. & Evaluation-only comparison of selected author-published reconstructions on the PIS4 Accuracy split. & 50 common frames from one phantom wound; 2,250 RGB/calibration/scanner-GT inputs and 102 published aligned outputs were acquired and inventoried. & GT similarity alignment is used; results evaluate shape only. Independent metric-scale recovery is not proven. The requested Seymour II acquisition is not available from the authors. \\
+FUSeg (legacy) & RGB photographs and segmentation masks. & Not used as evidence in the completed reconstruction, sensor-routing, or safety results reported here. & No current-milestone evaluation count is claimed. & Legacy model components and notebook drafts do not establish clinical validation or generalization. \\
+Procedural offline simulation & Generated RGB, mesh-rendered depth, target surfaces, geometry and plan traces. & Five-case offline sensor-routing and staged-plan/update demonstration; separate 18-case final architecture decision. & 5 computational integration cases; 18 synthetic decision cases. & No physical camera, robot, CoppeliaSim, clinical data, or printing. Scene units are illustrative only. \\
+\bottomrule
+\end{tabularx}

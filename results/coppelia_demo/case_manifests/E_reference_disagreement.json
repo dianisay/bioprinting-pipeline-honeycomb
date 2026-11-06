@@ -1,0 +1,33 @@
+{
+  "case_id": "E_reference_disagreement",
+  "mode": "RGBD",
+  "wound_diameter_px": 144,
+  "profile": "ORACLE_DEPTH",
+  "target_available": false,
+  "target_source": null,
+  "reference_disagreement_m": 0.025,
+  "seed_offset": 5,
+  "geometry_provenance": "Synthetic radial heightfield defined by construction.",
+  "units": "synthetic scene meters; not physical validation",
+  "depth_profile": {
+    "downsample": 1,
+    "noise_over_width": 0.0,
+    "missing_fraction": 0.0,
+    "provenance": "results/rgb_wound/sensor_generalization/sealed_11_route_replay.ipynb"
+  },
+  "observation_metrics": {
+    "depth_coverage": 1.0,
+    "noise_over_diameter": 0.0,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "boundary_width_px": 144
+  },
+  "inputs": {
+    "rgb_png": "inputs/E_reference_disagreement/rgb.png",
+    "rgb_sha256": "62c8590dfc0cd206900cf41e6b46548443472bf1cb116c84a2617037761d2ce5",
+    "sensor_npz": "inputs/E_reference_disagreement/sensor_observation.npz",
+    "sensor_npz_sha256": "70bb9931def2d78ec5d9772c74456856ff45dddf6c580552fc39d0eb99efee76"
+  },
+  "physical_scale_certified": false,
+  "physical_robot_commands_enabled": false,
+  "print_authorized": false
+}

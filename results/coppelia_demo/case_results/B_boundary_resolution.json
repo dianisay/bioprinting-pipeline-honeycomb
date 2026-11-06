@@ -1,0 +1,50 @@
+{
+  "case_id": "B_boundary_resolution",
+  "route": {
+    "mode": "RGB_ONLY",
+    "route": "RGB_ONLY_REPLAY",
+    "capabilities": {
+      "has_rgb": true,
+      "has_depth": false,
+      "calibration_valid": true,
+      "depth_aligned_to_rgb": true,
+      "camera_poses_available": true,
+      "metric_scale_valid": false
+    },
+    "quality": {
+      "boundary_width_px": 64,
+      "depth_coverage": null,
+      "depth_noise_over_diameter": null,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.0,
+      "target_available": false
+    },
+    "decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+    "recommended_action": "REQUEST_MORE_RGB_VIEWS",
+    "reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold.",
+    "print_authorized": false
+  },
+  "metrics": {
+    "case_id": "B_boundary_resolution",
+    "mode": "RGB_ONLY",
+    "expected_decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+    "router_decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+    "recommended_action": "REQUEST_MORE_RGB_VIEWS",
+    "depth_coverage": 0.0,
+    "boundary_width_px": 64,
+    "noise_over_diameter": 0.0,
+    "rgb_depth_boundary_disagreement": 0.0,
+    "route_expected_match": true,
+    "print_authorized": false,
+    "planning_decision": "REFUSE_TO_PLAN",
+    "failure_reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold.",
+    "failed_quality_metric": {
+      "boundary_width_px": 64,
+      "depth_coverage": null,
+      "depth_noise_over_diameter": null,
+      "rgb_depth_boundary_disagreement": 0.0,
+      "reference_disagreement_m": 0.0,
+      "target_available": false
+    }
+  }
+}
