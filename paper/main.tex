@@ -30,7 +30,12 @@ thin-plate-spline method had 0.042\% macro MAE of hole diameter, while
 uncertainty coverage was 88.32\%, below its 90\% target. The frozen
 18-case carved-wound comparison failed the predefined direct-reference gate.
 The resulting computational architecture is staged partial filling with an
-operator-defined final target. No clinical validation, physical printing,
+operator-defined final target. The safety layer behaved as designed: the
+observable router rejected every misaligned, noisy, and low-coverage depth
+route context (4/4 each), the strict holdout detected 41/42 configurations
+with at least 5\% incremental volume error at 2/48 clean false alarms, and
+all five offline integration cases reached their expected decision with no
+boundary violations. No clinical validation, physical printing,
 real D405 wound acquisition, or CoppeliaSim robot execution is claimed.
 \end{abstract}
 
@@ -54,6 +59,18 @@ models and planner components remain in the repository, but are not evidence
 for the results below. The evaluation does not claim CT-style reconstruction,
 exactly eight orthogonal physical measurements, clinical wound-volume
 validity, or a recovered pre-injury anatomy.
+
+The contribution is therefore an evidence-bounded decision framework rather
+than a claim of accurate autonomous filling. Its value lies in identifying
+when the observations are insufficient and refusing, in a traceable way, to
+proceed: (i) an observable sensor router that rejects geometrically
+unsupported or miscalibrated routes without ground-truth access; (ii) a
+calibration-safety evaluation showing that consequence-relevant faults are
+detected far more reliably than total-error faults; (iii) frozen negative
+results, including the clean-measurement and direct-reference gates, that
+show the pre-wound surface is not identifiable from current observations; and
+(iv) a planning adapter that converts these findings into staged, bounded,
+operator-targeted simulation plans.
 
 \section{Data and Evaluation}
 
