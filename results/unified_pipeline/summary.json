@@ -1,0 +1,284 @@
+{
+  "description": "Unified offline pipeline over the five frozen synthetic cases.",
+  "stages": [
+    "OBSERVE",
+    "IDENTIFY",
+    "SURFACE",
+    "ROUTE",
+    "TARGET",
+    "HONEYCOMB",
+    "STAGED_FILL"
+  ],
+  "print_authorized": false,
+  "physical_robot_commands_enabled": false,
+  "cases": [
+    {
+      "case_id": "A_supported_rgbd",
+      "units": "synthetic scene metres at a declared renderer scale; metric scale not independently recovered",
+      "pixel_size_m_declared": 0.0006944444444444445,
+      "print_authorized": false,
+      "physical_robot_commands_enabled": false,
+      "stage_trace": [
+        {
+          "stage": "OBSERVE",
+          "status": "PASS",
+          "mode": "RGBD",
+          "profile": "ORACLE_DEPTH"
+        },
+        {
+          "stage": "IDENTIFY",
+          "status": "PASS",
+          "boundary_width_px": 147,
+          "mask_iou_vs_renderer_mask_evaluation_only": 0.9573239021514883
+        },
+        {
+          "stage": "SURFACE",
+          "status": "PASS",
+          "depth_coverage_of_identified_mask": 0.9573239021514883
+        },
+        {
+          "stage": "ROUTE",
+          "status": "PASS",
+          "decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION"
+        },
+        {
+          "stage": "TARGET",
+          "status": "PASS",
+          "target_source": "SYNTHETIC_EXTERNAL_TEST_PLANE",
+          "target_height_m": 0.0,
+          "target_is_anatomical_truth": false
+        },
+        {
+          "stage": "HONEYCOMB",
+          "status": "PASS",
+          "hex_side_m": 0.008506944444444444,
+          "cells": 23
+        },
+        {
+          "stage": "STAGED_FILL",
+          "status": "PASS",
+          "stage_count": 3,
+          "stop_reason": "NO_SAFE_SUPPORTED_REGION"
+        }
+      ],
+      "route": {
+        "route": "RGBD",
+        "decision": "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION",
+        "recommended_action": "SIMULATE_ONLY",
+        "reason": "Synthetic geometry and sensor-quality gates permit offline simulation only."
+      },
+      "final_stage": "STAGED_FILL",
+      "final_decision": "PLAN_READY_FOR_OPERATOR_REVIEW_PRINT_DISABLED",
+      "plan_summary": {
+        "hex_side_m": 0.008506944444444444,
+        "lattice_cells_inside_supported_region": 23,
+        "stage_count": 3,
+        "stop_reason": "NO_SAFE_SUPPORTED_REGION",
+        "boundary_violations": 0,
+        "unsupported_cells": 0,
+        "max_overfill_m_evaluation_only": 0.0,
+        "max_remaining_underfill_m_evaluation_only": 0.019091433286666848,
+        "unresolved_area_fraction_of_wound": 0.13034911643371713,
+        "lattice_area_fraction_of_wound": 0.5519980296779755
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "active_cells": 23,
+          "toolpath_points": 644,
+          "deposition_points": 598,
+          "plan_hash": "cd15629997f1405bb37d21b254f40c258ecca0bfd8f5a0d7592e9d6813e863ae",
+          "max_supported_remaining_before_m": 0.02900000715255735,
+          "deposited_volume_m3": 4.294344236441876e-05,
+          "boundary_violations": 0,
+          "unsupported_cells": 0,
+          "max_overfill_vs_target_m_evaluation_only": 0.0
+        },
+        {
+          "stage": 2,
+          "active_cells": 23,
+          "toolpath_points": 644,
+          "deposition_points": 598,
+          "plan_hash": "22d29fff91909c3ffb6b8f0d73969916456d1e9835d7d2b1fd7ec4545c642ebb",
+          "max_supported_remaining_before_m": 0.019000007152557348,
+          "deposited_volume_m3": 3.449954952964164e-05,
+          "boundary_violations": 0,
+          "unsupported_cells": 0,
+          "max_overfill_vs_target_m_evaluation_only": 0.0
+        },
+        {
+          "stage": 3,
+          "active_cells": 19,
+          "toolpath_points": 532,
+          "deposition_points": 494,
+          "plan_hash": "600953a9ab8590e0f1a06636b188df049035ca628b164d1bb893df64d8949081",
+          "max_supported_remaining_before_m": 0.018091433286666847,
+          "deposited_volume_m3": 1.0602994830474017e-05,
+          "boundary_violations": 0,
+          "unsupported_cells": 0,
+          "max_overfill_vs_target_m_evaluation_only": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "B_boundary_resolution",
+      "units": "synthetic scene metres at a declared renderer scale; metric scale not independently recovered",
+      "pixel_size_m_declared": 0.0015625,
+      "print_authorized": false,
+      "physical_robot_commands_enabled": false,
+      "stage_trace": [
+        {
+          "stage": "OBSERVE",
+          "status": "PASS",
+          "mode": "RGB_ONLY",
+          "profile": null
+        },
+        {
+          "stage": "IDENTIFY",
+          "status": "PASS",
+          "boundary_width_px": 67,
+          "mask_iou_vs_renderer_mask_evaluation_only": 0.9062411748093759
+        },
+        {
+          "stage": "SURFACE",
+          "status": "NO_DEPTH",
+          "depth_coverage_of_identified_mask": 0.0
+        },
+        {
+          "stage": "ROUTE",
+          "status": "STOP",
+          "decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+          "reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold."
+        }
+      ],
+      "route": {
+        "route": "RGB_ONLY_REPLAY",
+        "decision": "BOUNDARY_RESOLUTION_INSUFFICIENT",
+        "recommended_action": "REQUEST_MORE_RGB_VIEWS",
+        "reason": "Visible wound boundary is below the frozen 100-pixel engineering threshold."
+      },
+      "final_stage": "ROUTE",
+      "final_decision": "BOUNDARY_RESOLUTION_INSUFFICIENT"
+    },
+    {
+      "case_id": "C_incomplete_depth",
+      "units": "synthetic scene metres at a declared renderer scale; metric scale not independently recovered",
+      "pixel_size_m_declared": 0.0006944444444444445,
+      "print_authorized": false,
+      "physical_robot_commands_enabled": false,
+      "stage_trace": [
+        {
+          "stage": "OBSERVE",
+          "status": "PASS",
+          "mode": "DEGRADED_RGBD",
+          "profile": "LOW_COVERAGE"
+        },
+        {
+          "stage": "IDENTIFY",
+          "status": "PASS",
+          "boundary_width_px": 147,
+          "mask_iou_vs_renderer_mask_evaluation_only": 0.9573239021514883
+        },
+        {
+          "stage": "SURFACE",
+          "status": "PASS",
+          "depth_coverage_of_identified_mask": 0.34412024756852344
+        },
+        {
+          "stage": "ROUTE",
+          "status": "STOP",
+          "decision": "SURFACE_INCOMPLETE",
+          "reason": "Depth coverage or normalized depth noise fails the frozen quality gate."
+        }
+      ],
+      "route": {
+        "route": "DEGRADED_RGBD",
+        "decision": "SURFACE_INCOMPLETE",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "reason": "Depth coverage or normalized depth noise fails the frozen quality gate."
+      },
+      "final_stage": "ROUTE",
+      "final_decision": "SURFACE_INCOMPLETE"
+    },
+    {
+      "case_id": "D_rgb_depth_misalignment",
+      "units": "synthetic scene metres at a declared renderer scale; metric scale not independently recovered",
+      "pixel_size_m_declared": 0.0006944444444444445,
+      "print_authorized": false,
+      "physical_robot_commands_enabled": false,
+      "stage_trace": [
+        {
+          "stage": "OBSERVE",
+          "status": "PASS",
+          "mode": "DEGRADED_RGBD",
+          "profile": "MISALIGNED_DEPTH"
+        },
+        {
+          "stage": "IDENTIFY",
+          "status": "PASS",
+          "boundary_width_px": 147,
+          "mask_iou_vs_renderer_mask_evaluation_only": 0.9573239021514883
+        },
+        {
+          "stage": "SURFACE",
+          "status": "PASS",
+          "depth_coverage_of_identified_mask": 0.7078101974653699
+        },
+        {
+          "stage": "ROUTE",
+          "status": "STOP",
+          "decision": "RGB_DEPTH_CALIBRATION_FAILED",
+          "reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate."
+        }
+      ],
+      "route": {
+        "route": "DEGRADED_RGBD",
+        "decision": "RGB_DEPTH_CALIBRATION_FAILED",
+        "recommended_action": "REQUEST_DEPTH_RESCAN",
+        "reason": "RGB/depth boundary disagreement exceeds the frozen engineering gate."
+      },
+      "final_stage": "ROUTE",
+      "final_decision": "RGB_DEPTH_CALIBRATION_FAILED"
+    },
+    {
+      "case_id": "E_reference_disagreement",
+      "units": "synthetic scene metres at a declared renderer scale; metric scale not independently recovered",
+      "pixel_size_m_declared": 0.0006944444444444445,
+      "print_authorized": false,
+      "physical_robot_commands_enabled": false,
+      "stage_trace": [
+        {
+          "stage": "OBSERVE",
+          "status": "PASS",
+          "mode": "RGBD",
+          "profile": "ORACLE_DEPTH"
+        },
+        {
+          "stage": "IDENTIFY",
+          "status": "PASS",
+          "boundary_width_px": 147,
+          "mask_iou_vs_renderer_mask_evaluation_only": 0.9573239021514883
+        },
+        {
+          "stage": "SURFACE",
+          "status": "PASS",
+          "depth_coverage_of_identified_mask": 0.9573239021514883
+        },
+        {
+          "stage": "ROUTE",
+          "status": "STOP",
+          "decision": "EXTERNAL_TARGET_REQUIRED",
+          "reason": "Plausible synthetic target policies disagree and no external target was supplied."
+        }
+      ],
+      "route": {
+        "route": "RGBD",
+        "decision": "EXTERNAL_TARGET_REQUIRED",
+        "recommended_action": "REFUSE_TO_PLAN",
+        "reason": "Plausible synthetic target policies disagree and no external target was supplied."
+      },
+      "final_stage": "ROUTE",
+      "final_decision": "EXTERNAL_TARGET_REQUIRED"
+    }
+  ]
+}

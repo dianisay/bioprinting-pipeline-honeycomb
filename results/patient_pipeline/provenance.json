@@ -1,0 +1,218 @@
+{
+  "dataset": "Syn3DWound - A synthetic dataset for 3D wound bed analysis",
+  "dataset_doi": "10.25919/5rwz-ts17",
+  "collection_url": "https://data.csiro.au/collection/csiro:73258",
+  "license": "Creative Commons Attribution Noncommercial-Share Alike 4.0 (CC BY-NC-SA 4.0)",
+  "license_url": "https://data.csiro.au/licence/1202",
+  "required_attribution": "Chierchia, Remi; Lebrat, Leo; Santa Cruz, Rodrigo; Arzhaeva, Yulia; Armin, Ali; Joshua, Goldsmith; Oorloff, Jeremy; Reddy, Prithvi; Nguyen, Chuong; Petersson, Lars; Barakat-Johnson, Michelle; Luscombe, Georgina; Fookes, Clinton; Salvado, Olivier; & Ahmedt Aristizabal, David (2024): Syn3DWound - A synthetic dataset for 3D wound bed analysis. v1. CSIRO. Data Collection. https://doi.org/10.25919/5rwz-ts17",
+  "source_identifier": "Syn3DWound/subject_1/Syn3DWound_0415_leg_strong_lighting_phi",
+  "inputs": {
+    "mesh": {
+      "path": "data/rgb_wound/syn3dwound_leg/cropped_mesh.obj",
+      "sha256": "a37c8635657b0cbbe85e96e6dbb332b0dd03ceebeaaf8fafb70ac72d878875a4"
+    },
+    "colmap_images_txt": {
+      "path": "data/rgb_wound/syn3dwound_leg/jamal_0415_leg_strong_lighting_phi_colmap/images.txt",
+      "sha256": "c72937f76ece51622b3eb3e49a16fcc8b46173f720ae560208f3b3f8e60a003f"
+    },
+    "colmap_cameras_txt": {
+      "path": "data/rgb_wound/syn3dwound_leg/jamal_0415_leg_strong_lighting_phi_colmap/cameras.txt",
+      "sha256": "d8119d3420fa1cd9c5611ffebedba05937584e6e5bfd782d7812609aeb83385d"
+    },
+    "display_rgb": {
+      "path": "data/rgb_wound/syn3dwound_leg/images/image_000.png",
+      "sha256": "a82ecc24cda196c0e075f54b54ac928f4c0a323d9b141eeecab6a3360735019c"
+    },
+    "masks": [
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_000.png",
+        "sha256": "daa1757173d6b50e5946cba88203b2e35525662e9d5fe42a57fc730782fe036f"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_002.png",
+        "sha256": "eb8bd5023a70dadc74b771ca17e2822e4179d8fe557ec67aef4da8641508d4ed"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_003.png",
+        "sha256": "d2fbd1fa46ef6220581c5f64154d5392f85652fccf096366b059fd19c83ff498"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_005.png",
+        "sha256": "fde24eef09d86974b2653a123326cb59ccfc7b3e9aace2af8899b6700fc71709"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_006.png",
+        "sha256": "89117f54cd11f1a7259442e552586844c315dc9db3ab717222cb45a932dc825a"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_008.png",
+        "sha256": "ebaf7cdac053166eb5485b6176fca825c57bf5eda276dd9399481c0344c7ed4f"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_009.png",
+        "sha256": "cf412a1f0097a5e3cc03b56cef6239b72d2f1d5b7c117e894da6c066eeb5a068"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_011.png",
+        "sha256": "017afa2bbfa251883c239de21116f1bde44b37cc281fe6b728415a529a8a9621"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_012.png",
+        "sha256": "057b7c02a8dedbf63ecfa61d2101a275b8d577901e79ebb384aa94a2913c926d"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_014.png",
+        "sha256": "22120a2f4358929fa38dba3a7aee09b1ffde6fe0e5461ff3927e3531188e1a95"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_015.png",
+        "sha256": "888c2a513d67e7602b408d43c3ee0ab253ae0b41e732ee8012cc9b18d31608c4"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_017.png",
+        "sha256": "f6477130b08d86bfeaaac129a1a739f79cc229749085e3550ec85454c87518ae"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_018.png",
+        "sha256": "715e2045b661799e586b5a0d22d4846f8ca3788ac7f42f03769bb799519b154f"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_020.png",
+        "sha256": "f2c8cac7fc306b6e68e5a1317e5db0de79047964b092dd174493d15d2047fca0"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_021.png",
+        "sha256": "8af4adc481cc53160bfcf201d0ef8ca431d195e5b382673f57a63ba56b6c65f9"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_023.png",
+        "sha256": "a5797b0df07c89466116334e2088d82b70ccbdd7c5a20785e0e62aa460747c4d"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_024.png",
+        "sha256": "04e13a1558571a857cf0b780097c2ef836de30519791a090db0a32c2ddcac603"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_026.png",
+        "sha256": "dc2b3d5fcafe4bb661b05672459d532de0638f3cbdf0d2dd93754eccd0e960c7"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_027.png",
+        "sha256": "08f16156258f03647cd976c75cbef0d65d333d82cbb4fcb94150094bdbc24458"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_029.png",
+        "sha256": "9eda95df9603742639886c26e5cf378562bcc54d810a5cd0105aa32545e5c953"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_030.png",
+        "sha256": "d9c1d87a7d62376f074d5d97fab6508132c12c32ee3f3144bc769bb4846b9f78"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_032.png",
+        "sha256": "5d5bec5213eda837f97365d0402deb210db60061365a57d8bb14fa8690ea7482"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_033.png",
+        "sha256": "bb1fc029f9405524392c06812b7b87b2b62110f56df99997d3f1589e197215a0"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_035.png",
+        "sha256": "3507731849babf26a29f28b57bda5f5a02612bdd1b16c81688a4a81bc7a9c815"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_036.png",
+        "sha256": "86213d661adccae78410d1b56bca265c7aa512d1c4f4d2bab62069f6e661522f"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_038.png",
+        "sha256": "99b70dc6060df43d878e9d98c7b25a2bbcdcddbcfa916ea1db14810c80a84a98"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_039.png",
+        "sha256": "45af35ab5809d8b92452beff8d0710b89aac0b2a1017e46b47a0df2d38906030"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_041.png",
+        "sha256": "304997d9bbb72fa55e836525eb513db513d1ae5461a5227423d781839e1455f3"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_042.png",
+        "sha256": "2fb5cb0c7041790bac5491a26e06d83d0aa1dab3e881ed619feda48d7c709468"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_044.png",
+        "sha256": "24dc3f360dd809afee5431a6a1e0c6d87a27559e4d11f9052d01a5d55d76bd05"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_045.png",
+        "sha256": "fdf82a76f1b4f8b9fd47f795f9bf718348dce47b8bce30940e72cba18cddd138"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_047.png",
+        "sha256": "fcf88684e1dc9c46bb8f79b845c9f98250e9133ba906c677308ba86e4da2ced2"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_048.png",
+        "sha256": "3a1b91e88bbba1751429f97c10253397233a536fa91eafcb4a7a9d48ea706cee"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_050.png",
+        "sha256": "e693be920f5129539f4f25cec03018e7f5fd1aa9c4a118b1f0e87f5c1eba1038"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_051.png",
+        "sha256": "1287d0ef6f64d8501f8d9db30a18c67eafb20741cf0c05eb8062634aa64e1706"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_053.png",
+        "sha256": "d452b1c72e807bccefb9405c791dc5a40c60ac20a27c9ee1390ffee9f5c8a161"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_054.png",
+        "sha256": "b3f952d01efbdd8fde156f83f9f950724da80a84767356f4d05ed14c8d34f1ba"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_056.png",
+        "sha256": "baea1ce193ff376b6772d1d2ec292f2d2da872d93aeef74936799a18048ad613"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_057.png",
+        "sha256": "996ce0b45665cd1d1fefaa1f30c1513b4768efa4505171b8376fec1788ac4e67"
+      },
+      {
+        "path": "data/rgb_wound/syn3dwound_leg/mask/mask_059.png",
+        "sha256": "d23daa1d3f2430281bec3764f6e83e5f59f1b6b0002a851c51d18b99ae89e0de"
+      }
+    ]
+  },
+  "transformation_steps": [
+    "Read cropped_mesh.obj and convert its y-up axes to the COLMAP world frame: (x, y, z) -> (x, -z, y).",
+    "Project every mesh vertex into every view with the COLMAP pose and pinhole intrinsics.",
+    "Label a vertex as wound when, among views where it faces the camera, more than half of the masks are > 40/255 at its pixel; keep the largest connected wound patch.",
+    "Build a tangent frame by PCA of the skin within 2.5 wound radii; align e1 with the wound's long axis.",
+    "Resample the mesh as a 0.1 mDU height field by linear interpolation.",
+    "Fit a quadratic surface to the healthy ring (band up to 0.4 wound radii outside the wound) and use it as the illustrative operator-accepted target.",
+    "Tile the wound with the modules.honeycomb lattice and run the previous whole-cell staged fill (kept as the audited baseline V1_LATTICE).",
+    "Classify every height-field pixel with the unchanged safety rules (pipeline.coverage.eligibility): edge margin, surface support, uncertainty gate and at least one layer of room below the lower envelope.",
+    "Search hexagon side (5 sizes from the previous side down to two strand widths), rotation (0-50 deg in 10 deg steps) and 16 staggered offsets for three planners: whole cells, adaptive whole cells and whole cells plus boundary cells clipped to the eligible region (clipped piece >= 1/4 hexagon and >= 2 strand widths wide).",
+    "Stage the fill one whole layer per accepted cell below the lower envelope; re-measure and repeat until no cell has room; count every boundary, support, envelope and self-intersection violation.",
+    "Select the first planner (whole -> adaptive -> clipped) with zero violations and >= 90% eligible-area coverage; otherwise report the best coverage as PARTIAL.",
+    "Map the scaffold and toolpath back to world coordinates and project them into the display photograph.",
+    "Vertex colours for the 3D panels are sampled from the display photograph; no numbers are taken from RGB pixels."
+  ],
+  "output_paths": [
+    "results/patient_pipeline/patient_pipeline.png",
+    "results/patient_pipeline/patient_pipeline.pdf",
+    "results/patient_pipeline/coverage_audit.png",
+    "results/patient_pipeline/coverage_audit.pdf",
+    "results/patient_pipeline/coverage_audit.json",
+    "results/patient_pipeline/coverage_search.csv",
+    "results/patient_pipeline/coverage_planners.csv",
+    "results/patient_pipeline/summary.json",
+    "results/patient_pipeline/scaffold_toolpath_world.csv",
+    "results/patient_pipeline/provenance.json",
+    "results/patient_pipeline/caption.md"
+  ],
+  "raw_data_committed": false
+}

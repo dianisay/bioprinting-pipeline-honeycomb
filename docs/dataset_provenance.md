@@ -30,6 +30,28 @@ The exact Figure 3 sequence is
 `Syn3DWound_slough-pressure-ulcer-008_sacrum_weak_lighting_phi`; its input
 image path and SHA-256 are in `paper/data/figure03_provenance.json`.
 
+### Syn3DWound leg sequence for the patient figure
+
+`scripts/run_patient_pipeline.py` uses
+`Syn3DWound/subject_1/Syn3DWound_0415_leg_strong_lighting_phi` (same DOI and
+CC BY-NC-SA 4.0 licence). Download that one sequence folder from the CSIRO
+collection and arrange it as:
+
+```text
+data/rgb_wound/syn3dwound_leg/
+  cropped_mesh.obj
+  BB.txt
+  images/image_XXX.png          # 4000 x 2160 rendered photographs
+  mask/mask_XXX.png             # shaded wound masks; wound pixels > 40/255
+  jamal_0415_leg_strong_lighting_phi_colmap/
+    .../cameras.txt             # SIMPLE_PINHOLE intrinsics
+    .../images.txt              # world-to-camera poses, one per image
+```
+
+The script uses every image that has both a photograph and a mask (40 in our
+copy). The SHA-256 of every input file is written to
+`results/patient_pipeline/provenance.json`.
+
 ## SALVE
 
 - **Origin:** Public silicone wound-phantom data and author-published

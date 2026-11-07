@@ -64,6 +64,42 @@ launch CoppeliaSim, robot control, or deposition. All command authority and
 printing remain disabled. These generated records are distinct from the
 sealed 18-case architecture decision in the publication evidence.
 
+## Unified pipeline
+
+```powershell
+python scripts/run_unified_pipeline.py
+python -m pytest tests/test_unified_pipeline.py -q
+```
+
+This command chains observation, wound identification, the depth-derived
+surface, routing, the operator target, the honeycomb lattice, and staged fill
+into one run over the same five synthetic cases. It writes `summary.json`,
+`supported_case_toolpath.csv`, and `unified_pipeline.png`/`.svg` to
+`results/unified_pipeline/`. See [unified_pipeline.md](unified_pipeline.md).
+Printing remains disabled.
+
+## Patient-level pipeline figure
+
+```powershell
+python scripts/run_patient_pipeline.py
+python -m pytest tests/test_patient_pipeline.py -q
+```
+
+This run needs the public Syn3DWound sequence
+`subject_1/Syn3DWound_0415_leg_strong_lighting_phi` under
+`data/rgb_wound/syn3dwound_leg/` (layout in
+[dataset_provenance.md](dataset_provenance.md#syn3dwound-leg-sequence-for-the-patient-figure)).
+Without it, the script exits with code 2 and names the missing files, and
+the end-to-end test is skipped. The script writes `patient_pipeline.png`
+(300 dpi) and `.pdf`, `summary.json`, `scaffold_toolpath_world.csv`,
+`provenance.json` (input SHA-256 hashes and licence), and `caption.md` to
+`results/patient_pipeline/`. It also writes the honeycomb coverage audit:
+`coverage_audit.png`/`.pdf` (coverage maps and planner search),
+`coverage_audit.json` (pixel categories, rejected-cell reasons, planner
+results), `coverage_search.csv` (all 480 searched lattices), and
+`coverage_planners.csv` (one row per planner). The run takes about a minute.
+It is deterministic (seed 0). Printing remains disabled.
+
 ## Notebook
 
 Open `notebooks/04_rgb_wound_3d_reconstruction.ipynb`. Its default

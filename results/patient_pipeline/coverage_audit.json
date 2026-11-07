@@ -1,0 +1,1211 @@
+{
+  "question": "Can the planner cover the eligible wound region adequately while keeping zero deposition outside the wound, zero exclusion-zone violations, zero unsupported deposition and the unchanged uncertainty gates?",
+  "units": "areas in mDU^2 = 1e-6 DU^2; lengths in DU unless stated; grid pixel = 0.1 mDU",
+  "regions": {
+    "wound_area_mdu2": 54.14,
+    "boundary_margin_area_mdu2": 24.91,
+    "boundary_margin_width_px": 7.7,
+    "supported_area_mdu2": 29.23,
+    "eligible_safe_area_mdu2": 29.17,
+    "maximum_possible_total_wound_coverage": 0.5387883265607684,
+    "supported_room_du": {
+      "min": 0.00013968769916937912,
+      "median": 0.00044804083617843425,
+      "max": 0.0005506211089909126
+    },
+    "pixels_failing_uncertainty_gate": 0,
+    "pixels_without_surface_support": 0
+  },
+  "v1_lattice_audit": {
+    "cells_touching_wound": 50,
+    "cells_accepted": 8,
+    "cells_rejected": 42,
+    "rejected_complete_hexagon_did_not_fit_supported_region": 42,
+    "rejected_by_reason_any": {
+      "complete_hexagon_outside_wound": 31,
+      "boundary_margin": 42,
+      "missing_support": 0,
+      "uncertainty_gate": 0,
+      "below_one_layer": 1
+    },
+    "rejected_by_primary_reason": {
+      "complete_hexagon_outside_wound": 31,
+      "boundary_margin": 11,
+      "missing_support": 0,
+      "uncertainty_gate": 0,
+      "below_one_layer": 0
+    },
+    "primary_reason_order": [
+      "complete_hexagon_outside_wound",
+      "boundary_margin",
+      "missing_support",
+      "uncertainty_gate",
+      "below_one_layer"
+    ],
+    "rejected_cells_with_eligible_pixels": 25,
+    "eligible_pixels_in_rejected_cells": 1679,
+    "cells": [
+      {
+        "cell": 89,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 156
+      },
+      {
+        "cell": 91,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 154
+      },
+      {
+        "cell": 93,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 156
+      },
+      {
+        "cell": 95,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 154
+      },
+      {
+        "cell": 97,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 156
+      },
+      {
+        "cell": 104,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 163
+      },
+      {
+        "cell": 105,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 3,
+        "pixels": 162
+      },
+      {
+        "cell": 106,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 118,
+        "pixels": 163
+      },
+      {
+        "cell": 107,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 11,
+        "pixels": 164
+      },
+      {
+        "cell": 108,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 77,
+        "pixels": 163
+      },
+      {
+        "cell": 109,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 17,
+        "pixels": 162
+      },
+      {
+        "cell": 110,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 125,
+        "pixels": 163
+      },
+      {
+        "cell": 111,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 25,
+        "pixels": 164
+      },
+      {
+        "cell": 112,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 112,
+        "pixels": 163
+      },
+      {
+        "cell": 113,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 38,
+        "pixels": 162
+      },
+      {
+        "cell": 114,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 105,
+        "pixels": 163
+      },
+      {
+        "cell": 115,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 164
+      },
+      {
+        "cell": 116,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 163
+      },
+      {
+        "cell": 121,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 155
+      },
+      {
+        "cell": 122,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 108,
+        "pixels": 155
+      },
+      {
+        "cell": 123,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 155,
+        "pixels": 155
+      },
+      {
+        "cell": 124,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 154,
+        "pixels": 154
+      },
+      {
+        "cell": 125,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 155,
+        "pixels": 155
+      },
+      {
+        "cell": 126,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 155,
+        "pixels": 155
+      },
+      {
+        "cell": 127,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 155,
+        "pixels": 155
+      },
+      {
+        "cell": 128,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 154,
+        "pixels": 154
+      },
+      {
+        "cell": 129,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 155,
+        "pixels": 155
+      },
+      {
+        "cell": 130,
+        "primary": "accepted",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": false,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 155,
+        "pixels": 155
+      },
+      {
+        "cell": 131,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 151,
+        "pixels": 155
+      },
+      {
+        "cell": 132,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 82,
+        "pixels": 154
+      },
+      {
+        "cell": 133,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 17,
+        "pixels": 155
+      },
+      {
+        "cell": 134,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 155
+      },
+      {
+        "cell": 138,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 163
+      },
+      {
+        "cell": 139,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 45,
+        "pixels": 164
+      },
+      {
+        "cell": 140,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 13,
+        "pixels": 163
+      },
+      {
+        "cell": 141,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 104,
+        "pixels": 162
+      },
+      {
+        "cell": 142,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 49,
+        "pixels": 163
+      },
+      {
+        "cell": 143,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 148,
+        "pixels": 164
+      },
+      {
+        "cell": 144,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": true,
+        "partially_eligible": true,
+        "eligible_pixels": 54,
+        "pixels": 163
+      },
+      {
+        "cell": 145,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 135,
+        "pixels": 162
+      },
+      {
+        "cell": 146,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 8,
+        "pixels": 163
+      },
+      {
+        "cell": 147,
+        "primary": "boundary_margin",
+        "complete_hexagon_outside_wound": false,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 93,
+        "pixels": 164
+      },
+      {
+        "cell": 148,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 1,
+        "pixels": 163
+      },
+      {
+        "cell": 149,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": true,
+        "eligible_pixels": 40,
+        "pixels": 162
+      },
+      {
+        "cell": 150,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 163
+      },
+      {
+        "cell": 151,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 164
+      },
+      {
+        "cell": 158,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 163
+      },
+      {
+        "cell": 160,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 162
+      },
+      {
+        "cell": 162,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 163
+      },
+      {
+        "cell": 164,
+        "primary": "complete_hexagon_outside_wound",
+        "complete_hexagon_outside_wound": true,
+        "boundary_margin": true,
+        "missing_support": false,
+        "uncertainty_gate": false,
+        "below_one_layer": false,
+        "partially_eligible": false,
+        "eligible_pixels": 0,
+        "pixels": 162
+      }
+    ]
+  },
+  "planners": {
+    "V1_LATTICE": {
+      "planner": "V1_LATTICE",
+      "status": "PARTIAL",
+      "coverage_gate": 0.9,
+      "cells": 8,
+      "cells_by_kind": {
+        "v1": 8
+      },
+      "wound_area_du2": 5.414e-05,
+      "supported_area_du2": 2.923e-05,
+      "eligible_area_du2": 2.917e-05,
+      "covered_area_du2": 1.238e-05,
+      "covered_eligible_area_du2": 1.238e-05,
+      "total_wound_coverage": 0.2286664203915774,
+      "eligible_coverage": 0.4244086390126843,
+      "uncovered_eligible_area_du2": 1.679e-05,
+      "category_area_du2": {
+        "outside the wound": 0.00059102,
+        "excluded boundary margin": 2.491e-05,
+        "ineligible: no measured surface support": 0.0,
+        "ineligible: measurement uncertainty above gate": 0.0,
+        "ineligible: < 1 layer below lower uncertainty envelope": 6.000000000000001e-08,
+        "eligible but uncovered": 1.679e-05,
+        "covered by accepted honeycomb": 1.238e-05
+      },
+      "remaining_cavity_area_du2_by_stage": [
+        4.485e-05,
+        4.485e-05,
+        3.402e-05
+      ],
+      "remaining_fillable_supported_area_du2_by_stage": [
+        2.917e-05,
+        2.9160000000000002e-05,
+        1.833e-05
+      ],
+      "stage_count": 2,
+      "active_cells_by_stage": [
+        8,
+        7
+      ],
+      "stop_reason": "NO_SAFE_SUPPORTED_REGION",
+      "stop_detail": {
+        "supported_pixels_with_one_layer_room": 1832,
+        "of_which_inside_accepted_cells": 153,
+        "of_which_outside_every_accepted_cell": 1679,
+        "cells_with_some_room_but_min_below_one_layer": 1,
+        "largest_cell_min_room_du": 0.00018686336083798574,
+        "max_room_du": 0.0005598783705866874
+      },
+      "violations": {
+        "deposit_pixels_outside_wound": 0,
+        "deposit_pixels_in_exclusion_margin": 0,
+        "deposit_pixels_unsupported": 0,
+        "deposit_pixels_above_lower_envelope": 0,
+        "path_points_outside_wound": 0,
+        "path_points_in_exclusion_margin": 0,
+        "path_points_unsupported": 0,
+        "path_self_intersections": 0,
+        "overlapping_cell_pixels": 0,
+        "deposit_pixels_outside_initial_eligible_region": 0
+      },
+      "boundary_violations": 0,
+      "unsupported_cells": 0,
+      "max_overfill_vs_target_du": 0.0,
+      "final_max_gap_du": 0.000576174013932585,
+      "final_max_gap_in_eligible_du": 0.0005706211089909125,
+      "final_eligible_area_still_one_layer_below_envelope_du2": 1.833e-05,
+      "unresolved_area_fraction_of_wound": 0.6283708902844477,
+      "deposited_volume_du3": 4.642000000000001e-09,
+      "travel_greedy_du": 0.026804798785070517,
+      "travel_two_opt_du": 0.026804798785070517
+    },
+    "WHOLE_CELL": {
+      "planner": "WHOLE_CELL",
+      "status": "PARTIAL",
+      "coverage_gate": 0.9,
+      "cells": 51,
+      "cells_by_kind": {
+        "whole": 51
+      },
+      "wound_area_du2": 5.414e-05,
+      "supported_area_du2": 2.923e-05,
+      "eligible_area_du2": 2.917e-05,
+      "covered_area_du2": 2.117e-05,
+      "covered_eligible_area_du2": 2.117e-05,
+      "total_wound_coverage": 0.3910232729959365,
+      "eligible_coverage": 0.7257456290709633,
+      "uncovered_eligible_area_du2": 8e-06,
+      "category_area_du2": {
+        "outside the wound": 0.00059102,
+        "excluded boundary margin": 2.491e-05,
+        "ineligible: no measured surface support": 0.0,
+        "ineligible: measurement uncertainty above gate": 0.0,
+        "ineligible: < 1 layer below lower uncertainty envelope": 6.000000000000001e-08,
+        "eligible but uncovered": 8e-06,
+        "covered by accepted honeycomb": 2.117e-05
+      },
+      "remaining_cavity_area_du2_by_stage": [
+        4.485e-05,
+        4.468e-05,
+        2.602e-05
+      ],
+      "remaining_fillable_supported_area_du2_by_stage": [
+        2.917e-05,
+        2.887e-05,
+        1.021e-05
+      ],
+      "stage_count": 2,
+      "active_cells_by_stage": [
+        51,
+        45
+      ],
+      "stop_reason": "NO_SAFE_SUPPORTED_REGION",
+      "stop_detail": {
+        "supported_pixels_with_one_layer_room": 1018,
+        "of_which_inside_accepted_cells": 218,
+        "of_which_outside_every_accepted_cell": 800,
+        "cells_with_some_room_but_min_below_one_layer": 6,
+        "largest_cell_min_room_du": 0.0001668604570210538,
+        "max_room_du": 0.0005598783705866874
+      },
+      "violations": {
+        "deposit_pixels_outside_wound": 0,
+        "deposit_pixels_in_exclusion_margin": 0,
+        "deposit_pixels_unsupported": 0,
+        "deposit_pixels_above_lower_envelope": 0,
+        "path_points_outside_wound": 0,
+        "path_points_in_exclusion_margin": 0,
+        "path_points_unsupported": 0,
+        "path_self_intersections": 0,
+        "overlapping_cell_pixels": 0,
+        "deposit_pixels_outside_initial_eligible_region": 0
+      },
+      "boundary_violations": 0,
+      "unsupported_cells": 0,
+      "max_overfill_vs_target_du": 0.0,
+      "final_max_gap_du": 0.000576174013932585,
+      "final_max_gap_in_eligible_du": 0.0005706211089909125,
+      "final_eligible_area_still_one_layer_below_envelope_du2": 1.021e-05,
+      "unresolved_area_fraction_of_wound": 0.4806058367196158,
+      "deposited_volume_du3": 7.966000000000002e-09,
+      "travel_greedy_du": 0.08399230628579947,
+      "travel_two_opt_du": 0.07451420463615599
+    },
+    "ADAPTIVE_WHOLE_CELL": {
+      "planner": "ADAPTIVE_WHOLE_CELL",
+      "status": "PARTIAL",
+      "coverage_gate": 0.9,
+      "cells": 51,
+      "cells_by_kind": {
+        "whole": 51
+      },
+      "wound_area_du2": 5.414e-05,
+      "supported_area_du2": 2.923e-05,
+      "eligible_area_du2": 2.917e-05,
+      "covered_area_du2": 2.117e-05,
+      "covered_eligible_area_du2": 2.117e-05,
+      "total_wound_coverage": 0.3910232729959365,
+      "eligible_coverage": 0.7257456290709633,
+      "uncovered_eligible_area_du2": 8e-06,
+      "category_area_du2": {
+        "outside the wound": 0.00059102,
+        "excluded boundary margin": 2.491e-05,
+        "ineligible: no measured surface support": 0.0,
+        "ineligible: measurement uncertainty above gate": 0.0,
+        "ineligible: < 1 layer below lower uncertainty envelope": 6.000000000000001e-08,
+        "eligible but uncovered": 8e-06,
+        "covered by accepted honeycomb": 2.117e-05
+      },
+      "remaining_cavity_area_du2_by_stage": [
+        4.485e-05,
+        4.468e-05,
+        2.602e-05
+      ],
+      "remaining_fillable_supported_area_du2_by_stage": [
+        2.917e-05,
+        2.887e-05,
+        1.021e-05
+      ],
+      "stage_count": 2,
+      "active_cells_by_stage": [
+        51,
+        45
+      ],
+      "stop_reason": "NO_SAFE_SUPPORTED_REGION",
+      "stop_detail": {
+        "supported_pixels_with_one_layer_room": 1018,
+        "of_which_inside_accepted_cells": 218,
+        "of_which_outside_every_accepted_cell": 800,
+        "cells_with_some_room_but_min_below_one_layer": 6,
+        "largest_cell_min_room_du": 0.0001668604570210538,
+        "max_room_du": 0.0005598783705866874
+      },
+      "violations": {
+        "deposit_pixels_outside_wound": 0,
+        "deposit_pixels_in_exclusion_margin": 0,
+        "deposit_pixels_unsupported": 0,
+        "deposit_pixels_above_lower_envelope": 0,
+        "path_points_outside_wound": 0,
+        "path_points_in_exclusion_margin": 0,
+        "path_points_unsupported": 0,
+        "path_self_intersections": 0,
+        "overlapping_cell_pixels": 0,
+        "deposit_pixels_outside_initial_eligible_region": 0
+      },
+      "boundary_violations": 0,
+      "unsupported_cells": 0,
+      "max_overfill_vs_target_du": 0.0,
+      "final_max_gap_du": 0.000576174013932585,
+      "final_max_gap_in_eligible_du": 0.0005706211089909125,
+      "final_eligible_area_still_one_layer_below_envelope_du2": 1.021e-05,
+      "unresolved_area_fraction_of_wound": 0.4806058367196158,
+      "deposited_volume_du3": 7.966000000000002e-09,
+      "travel_greedy_du": 0.08399230628579947,
+      "travel_two_opt_du": 0.07451420463615599
+    },
+    "CLIPPED_BOUNDARY": {
+      "planner": "CLIPPED_BOUNDARY",
+      "status": "COMPLETE",
+      "coverage_gate": 0.9,
+      "cells": 29,
+      "cells_by_kind": {
+        "clipped": 20,
+        "whole": 9
+      },
+      "wound_area_du2": 5.414e-05,
+      "supported_area_du2": 2.923e-05,
+      "eligible_area_du2": 2.917e-05,
+      "covered_area_du2": 2.749e-05,
+      "covered_eligible_area_du2": 2.749e-05,
+      "total_wound_coverage": 0.5077576653121537,
+      "eligible_coverage": 0.9424065821049022,
+      "uncovered_eligible_area_du2": 1.68e-06,
+      "category_area_du2": {
+        "outside the wound": 0.00059102,
+        "excluded boundary margin": 2.491e-05,
+        "ineligible: no measured surface support": 0.0,
+        "ineligible: measurement uncertainty above gate": 0.0,
+        "ineligible: < 1 layer below lower uncertainty envelope": 6.000000000000001e-08,
+        "eligible but uncovered": 1.68e-06,
+        "covered by accepted honeycomb": 2.749e-05
+      },
+      "remaining_cavity_area_du2_by_stage": [
+        4.485e-05,
+        4.389e-05,
+        2.3840000000000002e-05
+      ],
+      "remaining_fillable_supported_area_du2_by_stage": [
+        2.917e-05,
+        2.775e-05,
+        7.7e-06
+      ],
+      "stage_count": 2,
+      "active_cells_by_stage": [
+        29,
+        20
+      ],
+      "stop_reason": "NO_SAFE_SUPPORTED_REGION",
+      "stop_detail": {
+        "supported_pixels_with_one_layer_room": 763,
+        "of_which_inside_accepted_cells": 595,
+        "of_which_outside_every_accepted_cell": 168,
+        "cells_with_some_room_but_min_below_one_layer": 9,
+        "largest_cell_min_room_du": 0.0001705948098609105,
+        "max_room_du": 0.0005514332005309659
+      },
+      "violations": {
+        "deposit_pixels_outside_wound": 0,
+        "deposit_pixels_in_exclusion_margin": 0,
+        "deposit_pixels_unsupported": 0,
+        "deposit_pixels_above_lower_envelope": 0,
+        "path_points_outside_wound": 0,
+        "path_points_in_exclusion_margin": 0,
+        "path_points_unsupported": 0,
+        "path_self_intersections": 0,
+        "overlapping_cell_pixels": 0,
+        "deposit_pixels_outside_initial_eligible_region": 0
+      },
+      "boundary_violations": 0,
+      "unsupported_cells": 0,
+      "max_overfill_vs_target_du": 0.0,
+      "final_max_gap_du": 0.000576174013932585,
+      "final_max_gap_in_eligible_du": 0.0005659850223224346,
+      "final_eligible_area_still_one_layer_below_envelope_du2": 7.7e-06,
+      "unresolved_area_fraction_of_wound": 0.4403398596231991,
+      "deposited_volume_du3": 9.508000000000001e-09,
+      "travel_greedy_du": 0.06523067148113657,
+      "travel_two_opt_du": 0.05710401101051529
+    }
+  },
+  "search": {
+    "sides_px": [
+      7.833333333333333,
+      6.875,
+      5.916666666666666,
+      4.958333333333333,
+      4.0
+    ],
+    "v1_side_px": 7.833333333333333,
+    "min_side_px": 4.0,
+    "rotations_deg": [
+      0,
+      10,
+      20,
+      30,
+      40,
+      50
+    ],
+    "offsets": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.25
+      ],
+      [
+        0.0,
+        0.5
+      ],
+      [
+        0.0,
+        0.75
+      ],
+      [
+        0.25,
+        0.0
+      ],
+      [
+        0.25,
+        0.25
+      ],
+      [
+        0.25,
+        0.5
+      ],
+      [
+        0.25,
+        0.75
+      ],
+      [
+        0.5,
+        0.0
+      ],
+      [
+        0.5,
+        0.25
+      ],
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.5,
+        0.75
+      ],
+      [
+        0.75,
+        0.0
+      ],
+      [
+        0.75,
+        0.25
+      ],
+      [
+        0.75,
+        0.5
+      ],
+      [
+        0.75,
+        0.75
+      ]
+    ],
+    "configurations_per_planner": 480,
+    "best": {
+      "WHOLE_CELL": {
+        "config": {
+          "side_px": 4.0,
+          "theta_deg": 50,
+          "offset_u": 0.25,
+          "offset_v": 0.5
+        },
+        "planned_cells": 51,
+        "planned_eligible_coverage": 0.725745629
+      },
+      "ADAPTIVE_WHOLE_CELL": {
+        "config": {
+          "levels": [
+            {
+              "side_px": 4.0,
+              "theta_deg": 50,
+              "offset_u": 0.25,
+              "offset_v": 0.5,
+              "cells": 51
+            }
+          ]
+        },
+        "planned_cells": 51,
+        "planned_eligible_coverage": 0.725745629
+      },
+      "CLIPPED_BOUNDARY": {
+        "config": {
+          "side_px": 6.875,
+          "theta_deg": 30,
+          "offset_u": 0.25,
+          "offset_v": 0.75
+        },
+        "planned_cells": 29,
+        "planned_eligible_coverage": 0.942406582
+      }
+    },
+    "adaptive_records": [
+      {
+        "base_side_px": 7.833333333333333,
+        "levels": [
+          {
+            "side_px": 7.833333333333333,
+            "theta_deg": 10,
+            "offset_u": 0.75,
+            "offset_v": 0.75,
+            "cells": 10
+          },
+          {
+            "side_px": 4.958333333333333,
+            "theta_deg": 40,
+            "offset_u": 0.0,
+            "offset_v": 0.75,
+            "cells": 2
+          },
+          {
+            "side_px": 4.0,
+            "theta_deg": 50,
+            "offset_u": 0.0,
+            "offset_v": 0.25,
+            "cells": 3
+          }
+        ],
+        "cells": 15,
+        "coverage": 0.6342132327733974
+      },
+      {
+        "base_side_px": 6.875,
+        "levels": [
+          {
+            "side_px": 6.875,
+            "theta_deg": 0,
+            "offset_u": 0.75,
+            "offset_v": 0.5,
+            "cells": 14
+          },
+          {
+            "side_px": 5.916666666666666,
+            "theta_deg": 0,
+            "offset_u": 0.0,
+            "offset_v": 0.25,
+            "cells": 1
+          },
+          {
+            "side_px": 4.958333333333333,
+            "theta_deg": 0,
+            "offset_u": 0.0,
+            "offset_v": 0.25,
+            "cells": 2
+          },
+          {
+            "side_px": 4.0,
+            "theta_deg": 0,
+            "offset_u": 0.5,
+            "offset_v": 0.75,
+            "cells": 2
+          }
+        ],
+        "cells": 19,
+        "coverage": 0.6948920123414467
+      },
+      {
+        "base_side_px": 5.916666666666666,
+        "levels": [
+          {
+            "side_px": 5.916666666666666,
+            "theta_deg": 0,
+            "offset_u": 0.75,
+            "offset_v": 0.0,
+            "cells": 21
+          },
+          {
+            "side_px": 4.958333333333333,
+            "theta_deg": 10,
+            "offset_u": 0.0,
+            "offset_v": 0.0,
+            "cells": 1
+          },
+          {
+            "side_px": 4.0,
+            "theta_deg": 20,
+            "offset_u": 0.0,
+            "offset_v": 0.25,
+            "cells": 2
+          }
+        ],
+        "cells": 24,
+        "coverage": 0.6935207404868015
+      },
+      {
+        "base_side_px": 4.958333333333333,
+        "levels": [
+          {
+            "side_px": 4.958333333333333,
+            "theta_deg": 0,
+            "offset_u": 0.75,
+            "offset_v": 0.75,
+            "cells": 30
+          },
+          {
+            "side_px": 4.0,
+            "theta_deg": 10,
+            "offset_u": 0.75,
+            "offset_v": 0.0,
+            "cells": 2
+          }
+        ],
+        "cells": 32,
+        "coverage": 0.6798080219403497
+      },
+      {
+        "base_side_px": 4.0,
+        "levels": [
+          {
+            "side_px": 4.0,
+            "theta_deg": 50,
+            "offset_u": 0.25,
+            "offset_v": 0.5,
+            "cells": 51
+          }
+        ],
+        "cells": 51,
+        "coverage": 0.7257456290709633
+      }
+    ],
+    "diagnostic_below_printable_minimum": [
+      {
+        "side_strand_widths": 1.5,
+        "side_px": 3.0,
+        "best_whole_coverage": 0.7864244086390126,
+        "printable": false
+      },
+      {
+        "side_strand_widths": 1.0,
+        "side_px": 2.0,
+        "best_whole_coverage": 0.856359273225917,
+        "printable": false
+      }
+    ]
+  },
+  "selected_planner": "CLIPPED_BOUNDARY",
+  "selection_rule": "first planner in the order WHOLE_CELL, ADAPTIVE_WHOLE_CELL, CLIPPED_BOUNDARY whose staged fill has zero violations and eligible coverage >= the gate; otherwise the highest coverage",
+  "binding_constraint_if_no_planner_passes": null,
+  "whole_cell_limit": "Whole-cell planners reach at most 72.6% of the eligible area. Their best lattice already uses the smallest printable side (2 strand widths); the uncovered eligible pixels lie along the curved eligible boundary where no complete hexagon fits. Diagnostic (not plannable, below the printable minimum): 1.5 strand widths -> 78.6%, 1 strand widths -> 85.6%. The binding constraint for whole cells is the minimum printable cell size combined with the requirement that every deposited pixel be eligible.",
+  "gates_unchanged": "boundary margin, surface support, uncertainty <= 0.5 layer and >= 1 layer of room below the lower envelope are identical to the v1 planner (pipeline.patient._supported)"
+}

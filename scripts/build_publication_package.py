@@ -693,6 +693,152 @@ def _write_csv(path: Path, rows: list[dict[str, Any]], columns: list[tuple[str, 
         writer.writerows([{field: row.get(field) for field in fields} for row in rows])
 
 
+def _latex_grid(headers: list[str], rows: list[list[Any]], layout: str) -> str:
+    lines = [
+        r"\begin{tabularx}{\linewidth}{" + layout + "}",
+        r"\toprule",
+        " & ".join(headers) + r" \\",
+        r"\midrule",
+    ]
+    for row in rows:
+        if len(row) != len(headers):
+            raise ValueError("LaTeX table row does not match its header.")
+        lines.append(" & ".join(_escape_latex(value) for value in row) + r" \\")
+    lines.extend([r"\bottomrule", r"\end{tabularx}"])
+    return "\n".join(lines)
+
+
+def _display_number(value: Any) -> str:
+    if value is None:
+        return "--"
+    if isinstance(value, float):
+        return f"{value:.2f}"
+    return str(value)
+
+
+def _compact_latex_table(name: str, rows: list[dict[str, Any]]) -> str | None:
+    if name == "table_02_sensor_routes":
+        labels = {
+            "RGB_ONLY_60_VIEW": "RGB-only (60 views)",
+            "GENERIC_ALIGNED_RGBD": "Aligned RGB-D",
+            "HIGH_RES_RGB_PLUS_DEPTH": "High-res RGB + depth",
+            "LOW_DEPTH_COVERAGE": "Low depth coverage",
+            "HIGH_DEPTH_NOISE": "High depth noise",
+            "MISALIGNED_DEPTH": "Misaligned depth",
+        }
+        decisions = []
+        errors = []
+        for row in rows:
+            label = labels.get(row["route"], row["route"].replace("_", " "))
+            decisions.append([
+                label,
+                row["sequences"],
+                row["subsets"],
+                f'{row["surface_successes"]}/{row["surface_failures"]}',
+                f'{row["measurement_successes"]}/{row["measurement_failures"]}',
+                f'{row["router_acceptances"]}/{row["router_rejections"]}',
+            ])
+            errors.append([
+                label,
+                _display_number(row["mean_surface_error_percent_wound_width"]),
+                _display_number(row["mean_reference_volume_error_percent"]),
+                _display_number(row["worst_reference_volume_error_percent"]),
+            ])
+        return "\n\n".join([
+            _latex_grid(
+                ["Route", "Seq.", "Subsets", r"\shortstack{Surface\\pass/fail}",
+                 r"\shortstack{Measurement\\pass/fail}", r"\shortstack{Router\\accept/reject}"],
+                decisions, r">{\raggedright\arraybackslash}X r r r r r",
+            ),
+            _latex_grid(
+                ["Route", r"\shortstack{Surface MAE\\(\% width)}",
+                 r"\shortstack{Mean volume\\error (\%)}",
+                 r"\shortstack{Worst volume\\error (\%)}"],
+                errors, r">{\raggedright\arraybackslash}X r r r",
+            ),
+        ])
+    if name == "table_03_calibration":
+        labels = {
+            "Strict holdout, total error": "Total error",
+            "Strict holdout, incremental error": "Incremental error",
+            "Strict holdout clean false alarms": "Clean false alarms",
+            "Stepped target fault rejection": "Stepped target faults",
+            "Planar target fault rejection": "Planar target faults",
+        }
+        compact = []
+        for row in rows:
+            threshold = row["threshold"]
+            if threshold == "\u2014":
+                threshold = "--"
+            compact.append([
+                labels.get(row["evaluation"], row["evaluation"]),
+                threshold,
+                f'{row["numerator"]}/{row["denominator"]}',
+                _display_number(100 * row["rate"]),
+            ])
+        return _latex_grid(
+            ["Evaluation", "Threshold", "Flagged / total", r"Rate (\%)"],
+            compact, r">{\raggedright\arraybackslash}X l r r",
+        )
+    if name == "table_05_offline_cases":
+        cases = {
+            "A_supported_rgbd": "A: supported RGB-D",
+            "B_boundary_resolution": "B: boundary resolution",
+            "C_incomplete_depth": "C: incomplete depth",
+            "D_rgb_depth_misalignment": "D: RGB-depth mismatch",
+            "E_reference_disagreement": "E: reference disagreement",
+        }
+        labels = {
+            "RECONSTRUCTION_ACCEPTED_FOR_SIMULATION": "Accepted for simulation",
+            "BOUNDARY_RESOLUTION_INSUFFICIENT": "Boundary resolution insufficient",
+            "SURFACE_INCOMPLETE": "Surface incomplete",
+            "RGB_DEPTH_CALIBRATION_FAILED": "RGB-depth calibration failed",
+            "EXTERNAL_TARGET_REQUIRED": "External target required",
+            "SIMULATION_PLAN_COMPLETE": "Simulation plan complete",
+            "REFUSE_TO_PLAN": "Refuse to plan",
+            "NO_SAFE_DEPOSITION_REGION": "No safe deposition region",
+        }
+
+        def display_label(value: str) -> str:
+            return labels.get(value, value.replace("_", " "))
+
+        decisions = []
+        outcomes = []
+        for row in rows:
+            case = cases.get(row["case_id"], row["case_id"].replace("_", " "))
+            if not isinstance(row["route_expected_match"], bool):
+                raise TypeError("Offline case match must be a boolean.")
+            decisions.append([
+                case,
+                display_label(row["expected_decision"]),
+                display_label(row["actual_decision"]),
+                row["stage_count"],
+            ])
+            outcomes.append([
+                case,
+                display_label(row["planning_decision"]),
+                row["boundary_violations"],
+                row["exclusion_zone_violations"],
+                _display_number(row["unsupported_deposition_fraction"]),
+                "Yes" if row["route_expected_match"] else "No",
+            ])
+        return "\n\n".join([
+            _latex_grid(
+                ["Case", "Expected decision", "Actual decision", "Stages"],
+                decisions,
+                r">{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X "
+                r">{\raggedright\arraybackslash}X r",
+            ),
+            _latex_grid(
+                ["Case", "Planning status", "Boundary", "Exclusion",
+                 r"\shortstack{Unsupported\\fraction}", "Match"],
+                outcomes,
+                r">{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X r r r r",
+            ),
+        ])
+    return None
+
+
 def _write_table(name: str, rows: list[dict[str, Any]], columns: list[tuple[str, str]]) -> None:
     TABLES.mkdir(parents=True, exist_ok=True)
     _write_csv(TABLES / f"{name}.csv", rows, columns)
@@ -707,21 +853,22 @@ def _write_table(name: str, rows: list[dict[str, Any]], columns: list[tuple[str,
         md.append("| " + " | ".join(values) + " |")
     (TABLES / f"{name}.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 
-    tex_lines = [
-        r"\begin{tabularx}{\linewidth}{" + " ".join(
-            "l" if i == 0 else "X" if len(columns) <= 5 else "r"
-            for i, _ in enumerate(columns)
-        ) + "}",
-        r"\toprule",
-        " & ".join(_escape_latex(label) for _, label in columns) + r" \\",
-        r"\midrule",
-    ]
-    for row in rows:
-        tex_lines.append(
-            " & ".join(_escape_latex(row.get(field)) for field, _ in columns) + r" \\"
+    compact = _compact_latex_table(name, rows)
+    if compact is None:
+        if name == "table_01_datasets":
+            layout = " ".join([r">{\raggedright\arraybackslash}p{0.12\linewidth}"]
+                              + [r">{\raggedright\arraybackslash}X"] * (len(columns) - 1))
+        else:
+            layout = " ".join(
+                "l" if i == 0 else "X" if len(columns) <= 5 else "r"
+                for i, _ in enumerate(columns)
+            )
+        compact = _latex_grid(
+            [_escape_latex(label) for _, label in columns],
+            [[row.get(field) for field, _ in columns] for row in rows],
+            layout,
         )
-    tex_lines.extend([r"\bottomrule", r"\end{tabularx}"])
-    (TABLES / f"{name}.tex").write_text("\n".join(tex_lines) + "\n", encoding="utf-8")
+    (TABLES / f"{name}.tex").write_text(compact + "\n", encoding="utf-8")
 
 
 def build_tables(evidence: dict[str, Any]) -> dict[str, int]:
