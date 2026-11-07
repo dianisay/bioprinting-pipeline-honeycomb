@@ -1,15 +1,15 @@
-\begin{tabularx}{\linewidth}{l r r r r r r}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X l r r}
 \toprule
-Evaluation & Threshold & Detected / false alarms & Denominator & Rate & Metric unit & Aggregation \\
+Evaluation & Threshold & Flagged / total & Rate (\%) \\
 \midrule
-Strict holdout, total error & 5\% & 73 & 112 & 0.6517857142857143 & fraction of dangerous configurations detected & configuration-level; worst of two disjoint 20-view subsets \\
-Strict holdout, total error & 10\% & 53 & 86 & 0.6162790697674418 & fraction of dangerous configurations detected & configuration-level; worst of two disjoint 20-view subsets \\
-Strict holdout, total error & 20\% & 24 & 29 & 0.8275862068965517 & fraction of dangerous configurations detected & configuration-level; worst of two disjoint 20-view subsets \\
-Strict holdout, incremental error & 5\% & 41 & 42 & 0.9761904761904762 & fraction of dangerous configurations detected & configuration-level; worst of two disjoint 20-view subsets \\
-Strict holdout, incremental error & 10\% & 28 & 29 & 0.9655172413793104 & fraction of dangerous configurations detected & configuration-level; worst of two disjoint 20-view subsets \\
-Strict holdout, incremental error & 20\% & 16 & 16 & 1.0 & fraction of dangerous configurations detected & configuration-level; worst of two disjoint 20-view subsets \\
-Strict holdout clean false alarms & — & 2 & 48 & 0.041666666666666664 & fraction of clean configurations & configuration-level \\
-Stepped target fault rejection & V2 target ablation & 65 & 72 & 0.9027777777777778 & fraction of non-clean target configurations & clean FA 0/24 \\
-Planar target fault rejection & V2 target ablation & 41 & 72 & 0.5694444444444444 & fraction of non-clean target configurations & clean FA 0/24 \\
+Total error & 5\% & 73/112 & 65.18 \\
+Total error & 10\% & 53/86 & 61.63 \\
+Total error & 20\% & 24/29 & 82.76 \\
+Incremental error & 5\% & 41/42 & 97.62 \\
+Incremental error & 10\% & 28/29 & 96.55 \\
+Incremental error & 20\% & 16/16 & 100.00 \\
+Clean false alarms & -- & 2/48 & 4.17 \\
+Stepped target faults & V2 target ablation & 65/72 & 90.28 \\
+Planar target faults & V2 target ablation & 41/72 & 56.94 \\
 \bottomrule
 \end{tabularx}

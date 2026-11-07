@@ -44,7 +44,23 @@ python -m pip install -e ".[dev]"
 python -m pytest -q
 python scripts/build_publication_package.py --replay
 python -m robot.simulation.observable_demo
+python scripts/run_unified_pipeline.py
+python scripts/run_patient_pipeline.py   # needs the public Syn3DWound leg sequence, see docs/dataset_provenance.md
 ```
+
+### One pipeline, end to end
+
+[`scripts/run_unified_pipeline.py`](scripts/run_unified_pipeline.py) runs every component in one chain:
+**observe → identify wound → depth surface → quality route → operator target → conformal honeycomb → staged fill**.
+Any stage can stop the run with a stated reason. In the supported synthetic case, the honeycomb lattice from `modules/honeycomb.py` is laid onto the measured wound bed, rather than the original cylinder. Its toolpath is then re-planned after each simulated layer. See [docs/unified_pipeline.md](docs/unified_pipeline.md).
+
+![Unified offline pipeline](results/unified_pipeline/unified_pipeline.png)
+
+### From photographs to a scaffold on the patient
+
+[`scripts/run_patient_pipeline.py`](scripts/run_patient_pipeline.py) runs the same chain on a rendered human leg from the public Syn3DWound dataset. It uses 40 photographs, their wound masks, the camera poses, and the dataset's leg mesh. The wound masks are voted onto the 3D mesh, and the skin around the wound is turned into a height map. A quadratic surface fitted to the healthy ring stands in for the operator's target. The honeycomb cells are then filled in stages, and the planned scaffold is mapped back onto the leg and into the original photograph. A coverage audit showed that the first planner covered only 42.4% of the safe (eligible) wound area. The revised planner searches 480 lattices and clips boundary cells to the safe region. It covers 94.2% of the safe area (50.8% of the whole wound, out of a possible 53.9%) with zero safety violations. This passes the 90% coverage gate. The depth is still not fully filled when the stop rule fires (see `results/patient_pipeline/coverage_audit.png`). The geometry is mesh-rendered, units are dataset units, and the target is illustrative, not anatomical truth. Printing remains disabled. See [docs/unified_pipeline.md](docs/unified_pipeline.md#patient-level-run).
+
+![Full pipeline on a rendered patient leg](results/patient_pipeline/patient_pipeline.png)
 
 Figure generation uses the compact evidence bundle in `paper/data/`. Regenerating Figure 3 also requires the identified public Syn3DWound RGB example at the path recorded in `paper/data/figure03_provenance.json`. Exporting a fresh evidence bundle requires the sealed local experiment outputs; do not rerun or retune sealed experiments to regenerate the committed package.
 

@@ -14,6 +14,30 @@
   `STAGED_FILL_WITH_OPERATOR_FINAL_TARGET`.
 - The five-case offline integration demo is a deterministic software
   simulation. It does not show CoppeliaSim or a physical robot.
+- The unified pipeline (`scripts/run_unified_pipeline.py`) connects wound
+  identification, the depth-derived surface, the frozen quality route, the
+  operator target, the honeycomb lattice, and staged fill in one
+  deterministic synthetic run. It shows that the software stages are
+  compatible and that the run stops correctly when a stage cannot continue.
+  It does not validate wound measurement, toolpath accuracy on a robot, or
+  material deposition.
+- The patient-level run (`scripts/run_patient_pipeline.py`) applies the same
+  chain to a rendered Syn3DWound leg. It shows that the wound masks, cameras,
+  and mesh can be combined into a staged honeycomb plan placed on a body
+  surface. The geometry is mesh-rendered, the units are dataset units without
+  certified physical scale, and the quadratic healthy-ring target is an
+  illustrative operator-accepted target, not anatomical truth.
+- The first patient-level planner covered only 42.4% of the eligible area
+  (22.9% of the wound) and is reported as `PARTIAL`, not as a complete
+  scaffold. The revised planner, which clips boundary cells to the eligible
+  region, covers 94.2% of the eligible area (50.8% of the wound; the edge
+  margin caps this at 53.9%) with zero safety violations. It passes the 90%
+  coverage gate (`COMPLETE`). This status refers to footprint coverage only.
+  The staged fill stopped with 7.7 mDU² of eligible area still at least one
+  layer short, so the depth is not fully filled. Twenty of the 29 cells are
+  clipped, non-hexagonal pores whose printability is untested. The simulated
+  deposit raises each cell's whole footprint even though the path traces only
+  its outline.
 
 ## Explicit limitations
 
