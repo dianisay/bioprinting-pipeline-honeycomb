@@ -1,0 +1,5 @@
+planner,status,cells,cells_by_kind,eligible_coverage,total_wound_coverage,uncovered_eligible_area_mdu2,stage_count,active_cells_by_stage,stop_reason,violations_total,max_overfill_vs_target_du,final_eligible_area_still_one_layer_below_envelope_mdu2
+V1_LATTICE,PARTIAL,8,"{""v1"": 8}",0.4244,0.2287,16.79,2,"[8, 7]",NO_SAFE_SUPPORTED_REGION,0,0.0,18.33
+WHOLE_CELL,PARTIAL,51,"{""whole"": 51}",0.7257,0.391,8.0,2,"[51, 45]",NO_SAFE_SUPPORTED_REGION,0,0.0,10.21
+ADAPTIVE_WHOLE_CELL,PARTIAL,51,"{""whole"": 51}",0.7257,0.391,8.0,2,"[51, 45]",NO_SAFE_SUPPORTED_REGION,0,0.0,10.21
+CLIPPED_BOUNDARY,COMPLETE,29,"{""clipped"": 20, ""whole"": 9}",0.9424,0.5078,1.68,2,"[29, 20]",NO_SAFE_SUPPORTED_REGION,0,0.0,7.7
